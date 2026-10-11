@@ -2,7 +2,7 @@
 
 An imagined courtyard, three moments in early Islamic history, and an invitation to keep asking questions.
 
-The initial implementation is a static, accessible TypeScript/Three.js experience. Its layered color, oversized Bebas Neue/Abril Fatface typography, patterns, and offset shadows follow the requested [maximalist design reference](https://github.com/chrismccoy/claude-design-styles/blob/master/spec/maximalist.md). The courtyard itself remains restrained and explicitly interpretive.
+A static, accessible TypeScript experience with a photographic visual treatment. The imagined courtyard is rendered in Blender Cycles using Poly Haven CC0 materials and sky lighting. A small Three.js viewer lets visitors look around the three rendered panoramas. These are images of an invented setting, not photographs of a documented historical place.
 
 ![The After 632 opening and full experience in desktop layout](docs/preview-desktop.jpg)
 
@@ -28,15 +28,15 @@ Upload the **contents of `dist/`** to any static HTTP(S) host. Asset URLs are re
 
 ## What works
 
-- A maximalist opening and an original courtyard illustration.
-- Opt-in Three.js courtyard built from primitives, with bounded pointer controls and equivalent keyboard-accessible view buttons.
+- A full photographic opening, restrained typography, and neutral page colors.
+- Opt-in panoramic courtyard with detailed rendered geometry, bounced light, bounded pointer controls, and equivalent keyboard-accessible view buttons.
 - 632, 661, and 680 CE passages; direct selection in either direction and cancellable sunlight transitions.
 - Reading mode, complete built HTML with JavaScript disabled, and recovery from unavailable WebGL or context loss.
 - Reduced-motion support, pause/skip movement, and rendering that stops when idle, offscreen, or in a background tab.
 - Shared Muslim foundations, historical/source notes, two dated AP reports, and an open reflection invitation.
 - Locally bundled fonts, dependency license notices, and no external runtime asset requests.
 
-Narration is optional in the brief and is not included in this version. There is no autoplay or inactive audio UI; all historical passages are always available as text. No Poly Haven assets are used yet, so no texture downloads are required.
+Narration is optional in the brief and is not included in this version. There is no autoplay or inactive audio UI; all historical passages are always available as text. The interactive view loads three local panoramic images on entry. The Poly Haven maps are the offline render inputs; there are no runtime requests to Poly Haven. The visitor looks from one fixed camera position. Date changes blend between separately rendered lighting conditions in the same scene.
 
 ## Checks
 
@@ -61,10 +61,12 @@ See [validation evidence](docs/validation.md), the [first milestone record](docs
 | `content/experience.json` | Opening, shared foundations, three passages, optional notes, final invitation |
 | `content/sources.json` | Historical and contextual citations, locators, check dates |
 | `content/news.json` | Exactly two exit reports, exact publication dates, checked links |
-| `content/assets.json` | Artwork/font/library provenance |
+| `content/assets.json` | Artwork, Poly Haven, font, and library provenance |
 | `scripts/content.ts` | Validation and escaped build-time HTML rendering |
 | `src/main.ts` / `src/state.ts` | DOM enhancement, lifecycle coordination, state |
-| `src/scene/` | Courtyard primitives, lighting presets, bounded view controls |
+| `src/scene/createScene.ts` | Panorama projection, date transitions, bounded look controls, disposal |
+| `scripts/render-courtyard.py` | Reproducible detailed courtyard scene and Cycles render settings |
+| `scripts/process-render.py` | Render denoising and WebP asset conversion |
 | `src/styles.css` | Typography, color, responsive layout, focus, reduced motion |
 
 Keep each main historical passage at 60 words or fewer. Attribute differing understandings of authority carefully. Recheck all reporting and the instructor's recency requirements before a new term. The May 2025 report is retained from the handoff and is never labelled the latest news. The October 6, 2026 AP report links to its verified ABC News syndication because direct AP access failed in the research tool; its original URL is preserved in the data.
@@ -73,6 +75,10 @@ Restart the dev server after editing content JSON. It uses the same build-time r
 
 ## Build and contribution boundaries
 
-The product brief is [HANDOFF.md](HANDOFF.md). [ARCHITECTURE.md](ARCHITECTURE.md) records the phased plan and an implementation update. The first complete courtyard/632 slice was checked before adding the later moments. This commit is an initial end-to-end implementation, not a claim that learner observation or instructor review has occurred.
+The product brief is [HANDOFF.md](HANDOFF.md). [ARCHITECTURE.md](ARCHITECTURE.md) records the phased plan and an implementation update. The first complete courtyard/632 slice was checked before adding the later moments. The photographic edition replaces the primitive browser geometry with rendered views. Learner observation and instructor review remain separate steps.
 
 Before course use, complete the pending checks in `docs/validation.md`. Optional follow-up work includes reviewed prerecorded narration with synchronized captions and testing on real student laptops/phones. Keep the reflection outside the application; do not add quiz scoring or automated essay writing.
+
+## Recreate the photographs
+
+See [photographic rendering](docs/photographic-rendering.md) for the scene source, render tools, and asset pipeline. Normal development and production builds use the committed WebP files and do not require Blender.

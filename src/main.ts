@@ -23,12 +23,12 @@ function render() {
   pause.setAttribute('aria-pressed', String(state.paused || state.reduced));
   pause.textContent = state.reduced ? 'Reduced motion on' : state.paused ? 'Resume movement' : 'Pause movement';
   pause.disabled = state.reduced;
-  document.querySelectorAll<HTMLButtonElement>('button[data-enter]').forEach(button => { button.disabled = state.sceneStatus === 'loading'; button.textContent = state.sceneStatus === 'loading' ? 'Opening the courtyard…' : state.sceneStatus === 'failed' ? 'Try 3D again' : 'Look around in 3D'; });
+  document.querySelectorAll<HTMLButtonElement>('button[data-enter]').forEach(button => { button.disabled = state.sceneStatus === 'loading'; button.textContent = state.sceneStatus === 'loading' ? 'Opening the courtyard…' : state.sceneStatus === 'failed' ? 'Try the view again' : 'Look around'; });
 }
 function disposeScene() { ++generation; clearTimeout(timeout); scene?.dispose(); scene = null; }
 function fail() {
   disposeScene(); dispatch({ type: 'scene', status: 'failed' });
-  get('scene-status').textContent = 'The 3D view is unavailable. All of the history is here to read. You can try 3D again whenever you like.';
+  get('scene-status').textContent = 'The courtyard view is unavailable. All of the history is here to read. You can try the view again whenever you like.';
 }
 async function enter() {
   if (state.sceneStatus === 'loading') return;

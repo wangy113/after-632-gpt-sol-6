@@ -19,6 +19,7 @@ test('3D is opt-in, renders, supports controls, and stops drawing when idle', as
   const canvas = page.locator('canvas');
   await expect(canvas).toBeVisible();
   await expect(canvas).toHaveAttribute('data-moment', '632');
+  await expect(canvas).toHaveAttribute('data-assets', 'ready');
   await page.getByRole('button', { name: 'Look left', exact: true }).click();
   await page.getByRole('button', { name: 'Reset view', exact: true }).click();
   await page.getByRole('button', { name: 'Pause movement', exact: true }).click();
@@ -52,7 +53,7 @@ test('unsupported WebGL keeps all content and offers a retry', async ({ page }) 
   });
   await page.goto('/');
   await page.locator('button[data-enter]').click();
-  await expect(page.getByRole('button', { name: 'Try 3D again' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Try the view again' })).toBeVisible();
   for (const moment of experience.moments) await expect(page.locator(`#moment-${moment.id}`)).toBeVisible();
 });
 
@@ -62,7 +63,18 @@ test('context loss recovers to reading with no orphaned canvas', async ({ page }
   await expect(page.locator('canvas')).toBeVisible();
   await page.locator('canvas').evaluate(canvas => canvas.dispatchEvent(new Event('webglcontextlost', { cancelable: true })));
   await expect(page.locator('canvas')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Try 3D again' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Try the view again' })).toBeVisible();
+});
+
+test('a missing dated photograph recovers to the complete reading view', async ({ page }) => {
+  await page.route('**/assets/courtyard-661.webp', route => route.abort());
+  await page.goto('/');
+  await page.locator('button[data-enter]').click();
+  await expect(page.locator('canvas')).toHaveAttribute('data-assets', 'degraded');
+  await page.locator('[data-date="661"]').click();
+  await expect(page.locator('canvas')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Try the view again' })).toBeVisible();
+  for (const moment of experience.moments) await expect(page.locator(`#moment-${moment.id}`)).toBeVisible();
 });
 
 test('reduced motion takes precedence and content remains accessible', async ({ page }) => {

@@ -8,6 +8,14 @@
 
 **Status:** Initial implementation added after this plan. See the implementation update below; the remaining sections preserve the original plan and acceptance targets.
 
+### Current implementation — photographic edition
+
+The current visual system uses a full-width photographic hero, quiet serif/sans typography, and neutral colors. The courtyard scene is authored by `scripts/render-courtyard.py` and rendered with Blender Cycles using local Poly Haven materials. Curved palm fronds, weathered wood, uneven walls, and surface details are lit with direct sunlight and indirect light.
+
+Three pre-rendered equirectangular views preserve the same setting and camera for 632, 661, and 680. `src/scene/createScene.ts` projects them with bounded yaw/pitch controls and transitions between their lighting conditions. This is a fixed-position panoramic view; it does not translate the camera through the courtyard. The opening and fallback use a perspective render from the same scene. The earlier primitive geometry and maximalist styling below describe previous implementations.
+
+See `docs/photographic-rendering.md` for reproduction and `docs/validation.md` for checks. Historical content, source links, and reading access retain the original product contract.
+
 ### Implementation update — October 10, 2026
 
 The user subsequently requested the [maximalist style reference](https://github.com/chrismccoy/claude-design-styles/blob/master/spec/maximalist.md). The implementation uses locally bundled Bebas Neue, Abril Fatface, and DM Sans, bold section colors, patterns, and offset shadows. This supersedes the original system-font default; the courtyard and historical passages retain the handoff's cultural restraint.
@@ -16,7 +24,7 @@ The repository now contains a Vite/TypeScript application, static content genera
 
 The previously unverified October 2026 report has been identified as the October 6 AP article and verified through its ABC News syndication. The site uses that accessible link and retains the original URL in content data. No alternative report was substituted.
 
-Implementation differences from proposed file names: the small state/controller modules are `src/state.ts` and `src/main.ts`; view controls and transitions are contained in `src/scene/createScene.ts`. Narration and external textures remain optional and are not included. `source-checked` denotes the coding agent's source comparison, not independent historical approval. Real-device, cross-browser, screen-reader, and learner validation remain separate follow-up work.
+Implementation differences from proposed file names: the small state/controller modules are `src/state.ts` and `src/main.ts`; view controls and transitions are contained in `src/scene/createScene.ts`. A later visual pass added local Poly Haven CC0 materials and a pure sky HDRI; the sky is visible, but contains no geographic landscape. Narration remains optional and is not included. `source-checked` denotes the coding agent's source comparison, not independent historical approval. Real-device, cross-browser, screen-reader, and learner validation remain separate follow-up work.
 
 The handoff is the product brief. This document translates it into implementation decisions; proposed stack choices, budgets, copy, and timings below are recommendations, not previously approved requirements. If a technical decision changes, update this document and preserve the handoff's historical, experiential, and accessibility boundaries.
 
@@ -312,7 +320,7 @@ Keep the camera at a comfortable, approximately eye-level view focused inside th
 
 Use approximately 1–1.5 seconds for a user-triggered light transition as an initial design setting. No continuous sun cycle or automatic date progression is required. Explicit dates carry chronology; sun position is a visual metaphor, not astronomical evidence.
 
-Begin with flat materials and a directional plus hemisphere light. Add at most a few 1–2K local Poly Haven textures only after the first milestone is clear and fast. If using an HDRI, use it for environment lighting with a plain/procedural background; never display a photographed landscape as an Arabian setting. Avoid domes, minarets, ornate tilework, prayer niches, religious inscriptions, and decorative objects that imply an identified mosque.
+Begin with flat materials and a directional plus hemisphere light. Add at most a few 1–2K local Poly Haven textures only after the first milestone is clear and fast. An HDRI may light the environment; a pure-sky HDRI may also provide the visible sky. Never display a photographed landscape as an Arabian setting. Avoid domes, minarets, ornate tilework, prayer niches, religious inscriptions, and decorative objects that imply an identified mosque.
 
 Every downloaded asset needs an `assets.json` record with source URL, creator/provider, license, downloaded date, local variants, and file size. Preserve license notices for dependencies and give Poly Haven visible credit. No runtime hotlinks, embedded news images, or external fonts are necessary. Use system fonts and strong editorial typography.
 
@@ -452,7 +460,7 @@ Work in the following dependency order. Each phase ends with a reviewable result
 **Depends on:** Phase 4's end-to-end behavior; no unresolved first-milestone performance defects.
 
 1. Add only the textures or environment light that improve the reviewed primitive composition; optimize local files and record provenance.
-2. Ensure any HDRI is lighting-only, scene geometry is unchanged across dates, and reading contrast is stable.
+2. Ensure any visible HDRI contains sky only, scene geometry is unchanged across dates, and reading contrast is stable.
 3. Re-measure the load and rendering budgets after asset additions; remove costly detail before accepting regressions.
 4. If narration is in scope and recordings are available, implement the single-player contract, controls, synchronized captions, and transcripts from §8.
 5. Test blocked playback, missing tracks, switching moments while audio loads, replay, and mute/silent use. Confirm a stale track cannot begin after a date change.

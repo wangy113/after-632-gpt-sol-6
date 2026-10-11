@@ -1,5 +1,95 @@
 [
-  {"id":"courtyard-illustration","provider":"After 632","license":"Project-original artwork","path":"Inline SVG in scripts/content.ts","note":"An original interpretive illustration; no documented place is depicted."},
-  {"id":"fonts","provider":"Fontsource / Google Fonts contributors","license":"SIL Open Font License 1.1","path":"Bundled local WOFF2 files","note":"Bebas Neue, Abril Fatface, and DM Sans; license notices copied into public/assets/fonts during build."},
-  {"id":"three","provider":"Three.js contributors","license":"MIT","path":"Locally bundled dependency","note":"All courtyard geometry is generated from primitives. No Poly Haven textures or HDRI are used in this initial version."}
+  {
+    "id": "courtyard-still",
+    "provider": "After 632",
+    "license": "Project-original render with CC0 Poly Haven assets",
+    "path": "public/assets/courtyard-still.webp",
+    "sizeBytes": 107678,
+    "note": "Browser render of the interpretive Three.js courtyard; no documented place is depicted."
+  },
+  {
+    "id": "clay_plaster",
+    "provider": "Poly Haven",
+    "creator": "Amal Kumar",
+    "license": "CC0",
+    "sourceUrl": "https://polyhaven.com/a/clay_plaster",
+    "downloadedOn": "2026-10-11",
+    "paths": [
+      "public/assets/polyhaven/clay_plaster-diffuse.webp",
+      "public/assets/polyhaven/clay_plaster-nor_gl.webp",
+      "public/assets/polyhaven/clay_plaster-rough.webp"
+    ],
+    "sizeBytes": 148426,
+    "note": "Local 1K original converted to WebP for texture maps; HDRI retains 1K HDR."
+  },
+  {
+    "id": "sand_01",
+    "provider": "Poly Haven",
+    "creator": "Rob Tuytel",
+    "license": "CC0",
+    "sourceUrl": "https://polyhaven.com/a/sand_01",
+    "downloadedOn": "2026-10-11",
+    "paths": [
+      "public/assets/polyhaven/sand_01-diffuse.webp",
+      "public/assets/polyhaven/sand_01-nor_gl.webp",
+      "public/assets/polyhaven/sand_01-rough.webp"
+    ],
+    "sizeBytes": 475552,
+    "note": "Local 1K original converted to WebP for texture maps; HDRI retains 1K HDR."
+  },
+  {
+    "id": "palm_tree_bark",
+    "provider": "Poly Haven",
+    "creator": "Dimitrios Savva and Rico Cilliers",
+    "license": "CC0",
+    "sourceUrl": "https://polyhaven.com/a/palm_tree_bark",
+    "downloadedOn": "2026-10-11",
+    "paths": [
+      "public/assets/polyhaven/palm_tree_bark-diffuse.webp",
+      "public/assets/polyhaven/palm_tree_bark-nor_gl.webp"
+    ],
+    "sizeBytes": 861452,
+    "note": "Local 1K original converted to WebP for texture maps; HDRI retains 1K HDR."
+  },
+  {
+    "id": "rough_wood",
+    "provider": "Poly Haven",
+    "creator": "Rob Tuytel",
+    "license": "CC0",
+    "sourceUrl": "https://polyhaven.com/a/rough_wood",
+    "downloadedOn": "2026-10-11",
+    "paths": [
+      "public/assets/polyhaven/rough_wood-diffuse.webp",
+      "public/assets/polyhaven/rough_wood-nor_gl.webp"
+    ],
+    "sizeBytes": 458394,
+    "note": "Local 1K original converted to WebP for texture maps; HDRI retains 1K HDR."
+  },
+  {
+    "id": "syferfontein_18d_clear_puresky",
+    "provider": "Poly Haven",
+    "creator": "Greg Zaal and Jarod Guest",
+    "license": "CC0",
+    "sourceUrl": "https://polyhaven.com/a/syferfontein_18d_clear_puresky",
+    "downloadedOn": "2026-10-11",
+    "paths": [
+      "public/assets/polyhaven/syferfontein_18d_clear_puresky-hdri.hdr"
+    ],
+    "sizeBytes": 1107348,
+    "note": "1K HDRI used for environment lighting and a pure-sky background; it does not depict the courtyard location."
+  },
+  {
+    "id": "fonts",
+    "provider": "Fontsource / Google Fonts contributors",
+    "license": "SIL Open Font License 1.1",
+    "path": "Bundled local WOFF2 files",
+    "note": "Bebas Neue, Abril Fatface, and DM Sans; license notices copied into public/assets/fonts during build."
+  },
+  {
+    "id": "three",
+    "provider": "Three.js contributors",
+    "license": "MIT",
+    "path": "Locally bundled dependency",
+    "note": "Courtyard geometry is generated from primitives."
+  }
 ]
