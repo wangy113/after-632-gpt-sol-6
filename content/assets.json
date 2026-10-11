@@ -1,11 +1,48 @@
 [
   {
-    "id": "courtyard-still",
+    "id": "courtyard-hero",
     "provider": "After 632",
     "license": "Project-original render with CC0 Poly Haven assets",
-    "path": "public/assets/courtyard-still.webp",
-    "sizeBytes": 107678,
-    "note": "Browser render of the interpretive Three.js courtyard; no documented place is depicted."
+    "path": "public/assets/courtyard-hero.webp",
+    "sizeBytes": 353918,
+    "source": "scripts/render-courtyard.py",
+    "note": "Perspective opening and reading image of one invented courtyard; no documented place is depicted."
+  },
+  {
+    "id": "courtyard-632",
+    "provider": "After 632",
+    "license": "Project-original render with CC0 Poly Haven assets",
+    "path": "public/assets/courtyard-632.webp",
+    "sizeBytes": 378584,
+    "source": "scripts/render-courtyard.py",
+    "note": "Equirectangular interactive view for 632 CE of one invented courtyard; no documented place is depicted."
+  },
+  {
+    "id": "courtyard-661",
+    "provider": "After 632",
+    "license": "Project-original render with CC0 Poly Haven assets",
+    "path": "public/assets/courtyard-661.webp",
+    "sizeBytes": 351736,
+    "source": "scripts/render-courtyard.py",
+    "note": "Equirectangular interactive view for 661 CE of one invented courtyard; no documented place is depicted."
+  },
+  {
+    "id": "courtyard-680",
+    "provider": "After 632",
+    "license": "Project-original render with CC0 Poly Haven assets",
+    "path": "public/assets/courtyard-680.webp",
+    "sizeBytes": 398098,
+    "source": "scripts/render-courtyard.py",
+    "note": "Equirectangular interactive view for 680 CE of one invented courtyard; no documented place is depicted."
+  },
+  {
+    "id": "favicon",
+    "provider": "After 632",
+    "license": "Project-original crop with CC0 Poly Haven assets",
+    "path": "public/assets/favicon.png",
+    "sizeBytes": 5678,
+    "source": "public/assets/courtyard-hero.webp",
+    "note": "Small photographic crop of the interpretive render."
   },
   {
     "id": "clay_plaster",
@@ -83,13 +120,13 @@
     "provider": "Fontsource / Google Fonts contributors",
     "license": "SIL Open Font License 1.1",
     "path": "Bundled local WOFF2 files",
-    "note": "Bebas Neue, Abril Fatface, and DM Sans; license notices copied into public/assets/fonts during build."
+    "note": "DM Sans is bundled locally; its license notice is copied into public/assets/fonts during build. Georgia uses the browser system font."
   },
   {
     "id": "three",
     "provider": "Three.js contributors",
     "license": "MIT",
     "path": "Locally bundled dependency",
-    "note": "Courtyard geometry is generated from primitives."
+    "note": "Projects the three photographic panoramas from a fixed camera position."
   }
 ]

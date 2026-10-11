@@ -9,7 +9,7 @@ export default defineConfig({
     buildStart() {
       validateContent();
       mkdirSync('public/assets/fonts', { recursive: true });
-      for (const font of ['bebas-neue', 'abril-fatface', 'dm-sans']) {
+      for (const font of ['dm-sans']) {
         copyFileSync(`node_modules/@fontsource/${font}/LICENSE`, `public/assets/fonts/${font}-LICENSE.txt`);
       }
       copyFileSync('node_modules/three/LICENSE', 'public/assets/three-LICENSE.txt');
