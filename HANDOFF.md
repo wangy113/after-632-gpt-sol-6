@@ -2,7 +2,7 @@
 
 ## Status and purpose
 
-Concept approved in October 2026. This repository is currently empty; this document is the starting brief. The repository is public, so keep student work, credentials, and unpublished course material out of it.
+Concept approved in October 2026. No implementation files have been added yet; this document is the starting brief. The repository is public, so keep student work, credentials, and unpublished course material out of it.
 
 Build a short, standalone HTML experience using Three.js. It should help early college students in the United States feel the distance between the seventh century and today's news, then give them a few accurate historical bearings. The experience is a doorway into historical thinking, not a quiz, game, or automated discussion-post writer.
 
@@ -48,7 +48,7 @@ The first implementation milestone is one complete courtyard and one historicall
 ## Source shelf
 
 - Brian Parkinson, [chapter 8, “Islam to the Mamluks,” in World History: Cultures, States, and Societies to 1500](https://alg.manifoldapp.org/read/world-history/section/b5b7defa-a694-4cff-bdc7-cc550c80af5d). Especially §§8.6.1, 8.8, and 8.9 for shared foundations, succession, and Karbala.
-- The Metropolitan Museum of Art, [Islamic Art and Geometric Design educator resource, Unit 1](https://www.metmuseum.org/-/media/files/learn/for%20educators/publications%20for%20educators/islamic%20teacher%20resource/unit1.pdf), for cautious architectural context.
+- The Metropolitan Museum of Art, [Islamic art educator resource, Unit 1](https://www.metmuseum.org/-/media/files/learn/for%20educators/publications%20for%20educators/islamic%20teacher%20resource/unit1.pdf), for cautious architectural context.
 - Associated Press, [May 6, 2025 report on the U.S.–Houthi ceasefire](https://www.ap.org/news-highlights/spotlights/2025/trump-says-the-us-will-stop-bombing-yemens-houthis-after-rebels-say-theyll-stop-targeting-ships/).
 - Associated Press, [October 2026 report on renewed fighting near Bab el-Mandeb](https://apnews.com/article/yemen-houthis-iran-saudi-mandeb-hormuz-oil-67d70a6b39c0c4fb3149e3f3981805ee).
 - Allison Minor, [2024 Brookings paper on the Yemen war](https://www.brookings.edu/wp-content/uploads/2024/09/Minor_How-the-US-could-have-prevented-the-Yemen-War_2024.pdf), for the Zaydi/Twelver distinction and political context.
