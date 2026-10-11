@@ -21,6 +21,15 @@ Checked October 11, 2026 (America/Chicago). This record covers the source-backed
 
 ## Pending before classroom use
 
+### Small phase: keyboard focus after 3D failure — October 11, 2026
+
+- Reproduced lost focus when WebGL context loss hides a focused view control or the in-scene reading button. The fallback now focuses the selected moment's heading without forcing a scroll. Focus elsewhere, such as a report link, is preserved.
+- Expanded the context-loss browser check to cover both hidden-control groups and an unaffected report link, with 680 selected. All three passages remain visible, the canvas is disposed, and retry stays available.
+- Before the fix, both hidden-control focus assertions failed; the report-link assertion passed. After the fix, all five targeted Chromium checks passed (three focus scenarios, unavailable WebGL, and repeated reading/3D switches). Release validation, all four unit tests, typechecking, and the production build also passed. The full browser suite was not rerun in this small phase.
+- Next small phase: broaden browser coverage to Firefox or WebKit. Real-device, screen-reader, historical, and learner reviews below remain pending.
+
+### Remaining checks
+
 - Instructor or qualified historical reviewer acceptance of final wording and context.
 - Confirm that the May 2025 report meets the course term's definition of “recent”; recheck both report links and the news context each term.
 - Test with an actual phone and ordinary student laptop, including load time, active frame rate, touch handling, and memory use. Headless SwiftShader results do not establish hardware performance.
