@@ -56,14 +56,22 @@ test('unsupported WebGL keeps all content and offers a retry', async ({ page }) 
   for (const moment of experience.moments) await expect(page.locator(`#moment-${moment.id}`)).toBeVisible();
 });
 
-test('context loss recovers to reading with no orphaned canvas', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('button[data-enter]').click();
-  await expect(page.locator('canvas')).toBeVisible();
-  await page.locator('canvas').evaluate(canvas => canvas.dispatchEvent(new Event('webglcontextlost', { cancelable: true })));
-  await expect(page.locator('canvas')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Try 3D again' })).toBeVisible();
-});
+for (const focusTarget of ['#pause-motion', '#scene-help button', '.report-card a']) {
+  test(`context loss preserves a usable reading focus from ${focusTarget}`, async ({ page }) => {
+    await page.goto('/');
+    await page.locator('button[data-enter]').click();
+    await expect(page.locator('canvas')).toBeVisible();
+    await page.locator('[data-date="680"]').click();
+    const focused = page.locator(focusTarget).first();
+    await focused.focus();
+    await page.locator('canvas').evaluate(canvas => canvas.dispatchEvent(new Event('webglcontextlost', { cancelable: true })));
+    await expect(page.locator('canvas')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Try 3D again' })).toBeVisible();
+    for (const moment of experience.moments) await expect(page.locator(`#moment-${moment.id}`)).toBeVisible();
+    const expectedFocus = focusTarget === '.report-card a' ? focused : page.locator('#moment-680 h3');
+    await expect(expectedFocus).toBeFocused();
+  });
+}
 
 test('reduced motion takes precedence and content remains accessible', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
