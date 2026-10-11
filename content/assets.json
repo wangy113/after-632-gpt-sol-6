@@ -1,0 +1,5 @@
+[
+  {"id":"courtyard-illustration","provider":"After 632","license":"Project-original artwork","path":"Inline SVG in scripts/content.ts","note":"An original interpretive illustration; no documented place is depicted."},
+  {"id":"fonts","provider":"Fontsource / Google Fonts contributors","license":"SIL Open Font License 1.1","path":"Bundled local WOFF2 files","note":"Bebas Neue, Abril Fatface, and DM Sans; license notices copied into public/assets/fonts during build."},
+  {"id":"three","provider":"Three.js contributors","license":"MIT","path":"Locally bundled dependency","note":"All courtyard geometry is generated from primitives. No Poly Haven textures or HDRI are used in this initial version."}
+]

@@ -6,7 +6,17 @@
 
 **Repository inspected:** commit `84dbb63`; only `HANDOFF.md` existed before this document. No application, package manifest, assets, or tests were present.
 
-**Status:** Architecture only. Implementation and device testing have not occurred.
+**Status:** Initial implementation added after this plan. See the implementation update below; the remaining sections preserve the original plan and acceptance targets.
+
+### Implementation update — October 10, 2026
+
+The user subsequently requested the [maximalist style reference](https://github.com/chrismccoy/claude-design-styles/blob/master/spec/maximalist.md). The implementation uses locally bundled Bebas Neue, Abril Fatface, and DM Sans, bold section colors, patterns, and offset shadows. This supersedes the original system-font default; the courtyard and historical passages retain the handoff's cultural restraint.
+
+The repository now contains a Vite/TypeScript application, static content generation, a lazy-loaded Three.js courtyard, three dated moments, accessible reading/failure modes, verified exit reports, and tests. `docs/milestone-1.md` records the courtyard/632 check before expansion. `README.md`, `docs/content-review.md`, and `docs/validation.md` record actual implementation decisions, commands, evidence, and pending review.
+
+The previously unverified October 2026 report has been identified as the October 6 AP article and verified through its ABC News syndication. The site uses that accessible link and retains the original URL in content data. No alternative report was substituted.
+
+Implementation differences from proposed file names: the small state/controller modules are `src/state.ts` and `src/main.ts`; view controls and transitions are contained in `src/scene/createScene.ts`. Narration and external textures remain optional and are not included. `source-checked` denotes the coding agent's source comparison, not independent historical approval. Real-device, cross-browser, screen-reader, and learner validation remain separate follow-up work.
 
 The handoff is the product brief. This document translates it into implementation decisions; proposed stack choices, budgets, copy, and timings below are recommendations, not previously approved requirements. If a technical decision changes, update this document and preserve the handoff's historical, experiential, and accessibility boundaries.
 
