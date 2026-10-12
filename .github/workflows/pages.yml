@@ -6,16 +6,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: github-pages
   cancel-in-progress: false
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,19 +25,15 @@ jobs:
       - run: npm run check:release
       - run: npm test
       - run: npm run build
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Update Pages branch
+        run: |
+          git fetch origin gh-pages
+          git worktree add -b gh-pages "$RUNNER_TEMP/after-632-pages" origin/gh-pages
+          find "$RUNNER_TEMP/after-632-pages" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf -- {} +
+          cp -a dist/. "$RUNNER_TEMP/after-632-pages/"
+          touch "$RUNNER_TEMP/after-632-pages/.nojekyll"
+          git -C "$RUNNER_TEMP/after-632-pages" add -A
+          if ! git -C "$RUNNER_TEMP/after-632-pages" diff --cached --quiet; then
+            git -C "$RUNNER_TEMP/after-632-pages" -c user.name=github-actions -c user.email=github-actions@users.noreply.github.com commit -m "Publish site from $GITHUB_SHA"
+            git -C "$RUNNER_TEMP/after-632-pages" push origin HEAD:gh-pages
+          fi

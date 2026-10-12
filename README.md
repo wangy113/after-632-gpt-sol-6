@@ -4,6 +4,8 @@ An imagined courtyard, three moments in early Islamic history, and an invitation
 
 A static, accessible TypeScript experience with a photographic visual treatment. The imagined courtyard is rendered in Blender Cycles using Poly Haven CC0 materials and sky lighting. A small Three.js viewer lets visitors look around the three rendered panoramas. These are images of an invented setting, not photographs of a documented historical place.
 
+**Live preview:** [After 632 on GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/).
+
 ![The After 632 opening and full experience in desktop layout](docs/preview-desktop.jpg)
 
 The [interactive courtyard view](docs/preview-courtyard.jpg) and [mobile layout](docs/preview-mobile.jpg) are captured from the production build.
@@ -24,7 +26,7 @@ npm run build
 npm run preview
 ```
 
-Upload the **contents of `dist/`** to any static HTTP(S) host. Asset URLs are relative so a repository subpath works. This is a self-contained static folder, not a single-file `file://` application. No backend, environment variables, account, or API key is required. No live site has been deployed by this implementation task.
+Upload the **contents of `dist/`** to any static HTTP(S) host. Asset URLs are relative so a repository subpath works. This is a self-contained static folder, not a single-file `file://` application. No backend, environment variables, account, or API key is required. The Pages workflow builds `main` and updates the `gh-pages` branch, which GitHub Pages serves.
 
 ## What works
 

@@ -16,6 +16,7 @@ Checked October 11, 2026 (America/Chicago). This record covers the source-backed
 - Screenshots from the built artifact are [desktop](preview-desktop.jpg), [courtyard](preview-courtyard.jpg), and [mobile](preview-mobile.jpg). The final browser capture reported no page or console errors and no failed photo requests.
 - The build uses relative asset paths, local DM Sans, local scene images, and bundled code. It makes no runtime request to Poly Haven or any external asset host. The source maps and HDRI are supplied in the repository for reproducing the images.
 - The content check now verifies every listed local asset path and byte size. A nested-path production check at `/course/after-632/` loaded the 680 reading image and interactive panoramas with no failed requests.
+- GitHub Pages serves the built `gh-pages` branch at `https://wangy113.github.io/after-632-gpt-sol-6/`. A public Chromium check entered the courtyard, selected 680, observed `data-assets="ready"`, and recorded no failed requests or page errors.
 
 ## Content and culture
 
