@@ -6,7 +6,8 @@ Checked October 11, 2026 (America/Chicago). This record covers the source-backed
 
 - The opening, reading fallback, and all three dated interactive views now show images rendered from one detailed Blender Cycles courtyard. The render uses four local Poly Haven CC0 material sets and one pure sky HDRI. The page calls the courtyard an invented interpretive setting, not a photograph of a real site. Asset creators, links, files, and output sizes are recorded in `content/assets.json`; the pipeline and fixed camera limitation are in `docs/photographic-rendering.md`.
 - The opening WebP is 1920 × 1200 and 353,918 bytes. The three 3072 × 1536 panorama WebPs are 378,584 bytes (632), 351,736 bytes (661), and 398,098 bytes (680). The browser projects each from the same point, lets visitors look within bounded yaw/pitch, and crossfades the sunlight changes. No geometry is drawn in the browser. All three views loaded in headless Chromium with one draw call and two triangles per displayed frame.
-- `npm run check:release`, `npm test`, `npm run build`, and all 10 Playwright browser checks pass. The browser suite covers dates, keyboard controls, idle rendering, re-entry, unavailable WebGL, lost context, a missing dated image, reduced motion, responsive overflow, and automated accessibility scans. Desktop and 390px mobile captures were visually checked. These browser checks used software WebGL and do not establish real-device frame rate.
+- The reading and unavailable-WebGL view now uses additional 1920 × 1200 perspective images for 661 (341,658 bytes) and 680 (296,008 bytes), with the opening image for 632. All three show the same scene and camera under their date's sunlight. The two new images were visually inspected, and a production browser check confirmed that selecting 661 loads the correct image.
+- `npm run check:release`, `npm test`, `npm run build`, and all 11 Playwright browser checks pass. The browser suite covers dates, matching reading images, keyboard controls, idle rendering, re-entry, unavailable WebGL, lost context, a missing dated panorama, reduced motion, responsive overflow, and automated accessibility scans. Desktop and 390px mobile captures were visually checked. These browser checks used software WebGL and do not establish real-device frame rate.
 
 ## Production and behavior
 
@@ -14,6 +15,7 @@ Checked October 11, 2026 (America/Chicago). This record covers the source-backed
 - The 10 Playwright scenarios cover no-JavaScript reading, opt-in WebGL, keyboard view controls, idle rendering, reduced motion, unavailable WebGL, missing image fallback, context loss, repeated entry/disposal, three-date navigation, 320/390/1440px reflow, and WCAG-tagged axe scans. Automated checks are evidence for their tested views, not accessibility certification.
 - Screenshots from the built artifact are [desktop](preview-desktop.jpg), [courtyard](preview-courtyard.jpg), and [mobile](preview-mobile.jpg). The final browser capture reported no page or console errors and no failed photo requests.
 - The build uses relative asset paths, local DM Sans, local scene images, and bundled code. It makes no runtime request to Poly Haven or any external asset host. The source maps and HDRI are supplied in the repository for reproducing the images.
+- The content check now verifies every listed local asset path and byte size. A nested-path production check at `/course/after-632/` loaded the 680 reading image and interactive panoramas with no failed requests.
 
 ## Content and culture
 

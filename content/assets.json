@@ -9,6 +9,24 @@
     "note": "Perspective opening and reading image of one invented courtyard; no documented place is depicted."
   },
   {
+    "id": "courtyard-661-still",
+    "provider": "After 632",
+    "license": "Project-original render with CC0 Poly Haven assets",
+    "path": "public/assets/courtyard-661-still.webp",
+    "sizeBytes": 341658,
+    "source": "scripts/render-courtyard.py",
+    "note": "Perspective reading and unavailable-WebGL image for 661 CE of the same invented courtyard."
+  },
+  {
+    "id": "courtyard-680-still",
+    "provider": "After 632",
+    "license": "Project-original render with CC0 Poly Haven assets",
+    "path": "public/assets/courtyard-680-still.webp",
+    "sizeBytes": 296008,
+    "source": "scripts/render-courtyard.py",
+    "note": "Perspective reading and unavailable-WebGL image for 680 CE of the same invented courtyard."
+  },
+  {
     "id": "courtyard-632",
     "provider": "After 632",
     "license": "Project-original render with CC0 Poly Haven assets",

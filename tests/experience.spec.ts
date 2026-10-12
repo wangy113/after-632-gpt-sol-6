@@ -43,6 +43,16 @@ test('reading mode disposes 3D and re-entry creates only one canvas', async ({ p
   }
 });
 
+test('reading mode shows the photograph for the selected date', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Read the history' }).click();
+  for (const date of ['661', '680', '632']) {
+    await page.locator(`[data-date="${date}"]`).click();
+    await expect(page.locator('.courtyard-art')).toHaveAttribute('src', new RegExp(`courtyard-${date === '632' ? 'hero' : `${date}-still`}\\.webp$`));
+    await expect.poll(() => page.locator('.courtyard-art').evaluate(image => (image as HTMLImageElement).naturalWidth)).toBe(1920);
+  }
+});
+
 test('unsupported WebGL keeps all content and offers a retry', async ({ page }) => {
   await page.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext;
@@ -74,6 +84,7 @@ test('a missing dated photograph recovers to the complete reading view', async (
   await page.locator('[data-date="661"]').click();
   await expect(page.locator('canvas')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Try the view again' })).toBeVisible();
+  await expect(page.locator('.courtyard-art')).toHaveAttribute('src', /courtyard-661-still\.webp$/);
   for (const moment of experience.moments) await expect(page.locator(`#moment-${moment.id}`)).toBeVisible();
 });
 

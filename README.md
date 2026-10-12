@@ -31,7 +31,7 @@ Upload the **contents of `dist/`** to any static HTTP(S) host. Asset URLs are re
 - A full photographic opening, restrained typography, and neutral page colors.
 - Opt-in panoramic courtyard with detailed rendered geometry, bounced light, bounded pointer controls, and equivalent keyboard-accessible view buttons.
 - 632, 661, and 680 CE passages; direct selection in either direction and cancellable sunlight transitions.
-- Reading mode, complete built HTML with JavaScript disabled, and recovery from unavailable WebGL or context loss.
+- Reading mode with a dated courtyard photograph for each moment, complete built HTML with JavaScript disabled, and recovery from unavailable WebGL or context loss.
 - Reduced-motion support, pause/skip movement, and rendering that stops when idle, offscreen, or in a background tab.
 - Shared Muslim foundations, historical/source notes, two dated AP reports, and an open reflection invitation.
 - Locally bundled fonts, dependency license notices, and no external runtime asset requests.

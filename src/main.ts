@@ -10,11 +10,19 @@ let generation = 0;
 let timeout: ReturnType<typeof setTimeout> | undefined;
 const moments = [...document.querySelectorAll<HTMLElement>('[data-moment-id]')];
 const dateLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-date]')];
+const posterPhoto = document.querySelector<HTMLImageElement>('.courtyard-art')!;
+posterPhoto.addEventListener('error', () => {
+  if (!posterPhoto.src.endsWith('/courtyard-hero.webp')) posterPhoto.src = `${import.meta.env.BASE_URL}assets/courtyard-hero.webp`;
+});
 function dispatch(action: Action) { state = reduce(state, action); render(); }
 function render() {
   const interactive = state.mode === 'interactive' && state.sceneStatus === 'ready';
   moments.forEach(moment => { moment.hidden = interactive && moment.dataset.momentId !== state.moment; });
   dateLinks.forEach(link => { if (link.dataset.date === state.moment) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current'); });
+  if (!interactive && posterPhoto.dataset.photoMoment !== state.moment) {
+    posterPhoto.src = `${import.meta.env.BASE_URL}assets/${state.moment === '632' ? 'courtyard-hero.webp' : `courtyard-${state.moment}-still.webp`}`;
+    posterPhoto.dataset.photoMoment = state.moment;
+  }
   get('scene-poster').hidden = interactive;
   get('scene-entry').hidden = interactive;
   get('view-controls').hidden = !interactive;

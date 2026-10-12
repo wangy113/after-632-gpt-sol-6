@@ -27,6 +27,8 @@ python3 scripts/process-render.py work/renders/panorama-632.png public/assets/co
 
 Repeat the panorama commands for `661` and `680`. `preview` renders a smaller perspective image for checking changes before full rendering. Intermediate PNG, PFM, and Blender files are written under ignored `work/renders/`.
 
-The opening image is 1920 × 1200. Each panorama is 3072 × 1536. The browser projects the panoramas from one fixed location, allowing limited horizontal and vertical looking. It does not perform camera translation or reconstruct depth from a photograph. Date changes crossfade the separate lighting renders; geometry remains the same.
+The reading and unavailable-WebGL view also has a perspective still for each later date. Render `hero 661` and `hero 680` with the same Blender command, then process their PNGs to `public/assets/courtyard-661-still.webp` and `public/assets/courtyard-680-still.webp`.
+
+The opening and dated reading images are 1920 × 1200. Each panorama is 3072 × 1536. The browser projects the panoramas from one fixed location, allowing limited horizontal and vertical looking. It does not perform camera translation or reconstruct depth from a photograph. Date changes crossfade the separate lighting renders; geometry remains the same.
 
 The source texture files remain available in the repository and static build for reproduction. The browser loads only the final photographs, fonts, and local code. Rendering stops when idle, offscreen, or in a background tab. An image request failure or unavailable WebGL returns the complete reading experience with a still image.

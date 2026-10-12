@@ -27,7 +27,7 @@ export function validateContent(release = false) {
 }
 
 function courtyardPhoto() {
-  return `<img class="courtyard-art" src="./assets/courtyard-hero.webp" width="1920" height="1200" alt="An imagined earthen courtyard with palm-branch shade and sunlight; an interpretive rendering." decoding="async">`;
+  return `<img class="courtyard-art" src="./assets/courtyard-hero.webp" width="1920" height="1200" data-photo-moment="632" alt="An imagined earthen courtyard with palm-branch shade and sunlight; an interpretive rendering." decoding="async">`;
 }
 
 function reportCards() {
