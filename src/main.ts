@@ -17,6 +17,9 @@ posterPhoto.addEventListener('error', () => {
 function dispatch(action: Action) { state = reduce(state, action); render(); }
 function render() {
   const interactive = state.mode === 'interactive' && state.sceneStatus === 'ready';
+  const themes: Record<MomentId, string> = { '632': 'SUCCESSION', '661': 'RULE & AUTHORITY', '680': 'KARBALA & MEMORY' };
+  get('scene-year').textContent = state.moment;
+  get('scene-theme').textContent = themes[state.moment];
   moments.forEach(moment => { moment.hidden = interactive && moment.dataset.momentId !== state.moment; });
   dateLinks.forEach(link => { if (link.dataset.date === state.moment) link.setAttribute('aria-current', 'true'); else link.removeAttribute('aria-current'); });
   if (!interactive && posterPhoto.dataset.photoMoment !== state.moment) {

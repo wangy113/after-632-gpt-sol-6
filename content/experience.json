@@ -7,18 +7,24 @@
     {
       "id": "632", "year": 632, "title": "A question of succession", "label": "Succession",
       "body": "After Muhammad died in 632, Abu Bakr became the first caliph, the leader of the Muslim community. Supporters of Ali understood rightful leadership differently. The question of who should lead, and on what grounds, would shape later disagreements within Islam.",
+      "change": "The first caliph was chosen after Muhammad's death. Who had the right to lead was disputed.",
+      "notice": "What different grounds for leadership can you identify?",
       "sourceIds": ["HIST-01"], "reviewStatus": "source-checked",
       "note": "These dates illuminate origins, not a fully formed pair of denominations. Sunni and Shi'a traditions developed over centuries, including differences in religious authority and practice. This short experience leaves much of that later history for further reading."
     },
     {
       "id": "661", "year": 661, "title": "Authority in dispute", "label": "Political struggle",
       "body": "Ali died in 661, and Umayyad rule took shape under Mu'awiya. Disagreement over leadership developed through political struggles within the Muslim community. These events were part of a longer history; Sunni and Shi'a traditions did not emerge fully formed in a single moment.",
+      "change": "The question of succession had become a struggle over rule. Mu'awiya established Umayyad leadership after Ali's death.",
+      "notice": "How is this political situation different from the question faced in 632?",
       "sourceIds": ["HIST-01"], "reviewStatus": "source-checked",
       "note": "The courtyard stays the same because this is a history within a shared Muslim community. The changing light is a metaphor for time, not a reconstruction of an event. The textbook's sections 8.8 and 8.9 provide a fuller account of the political struggles."
     },
     {
       "id": "680", "year": 680, "title": "A memory that endures", "label": "Remembrance",
       "body": "Husayn, Muhammad's grandson and Ali's son, was killed at Karbala in 680. His death became central to Shi'a remembrance of injustice and rightful leadership. Here, changes in light mark a moment for reflection; this imagined courtyard does not recreate Karbala or its violence.",
+      "change": "Husayn's death at Karbala became a lasting focus of Shi'a memory and commemoration.",
+      "notice": "Why might remembering Karbala matter long after the struggle over rule?",
       "sourceIds": ["HIST-01"], "reviewStatus": "source-checked",
       "note": "Karbala became central to Shi'a memory and commemoration. These three dates are a starting point, not a complete account of Sunni and Shi'a belief or practice. The source below offers further context, including later developments in the history of Islam."
     }
