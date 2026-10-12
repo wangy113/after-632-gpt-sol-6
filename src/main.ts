@@ -35,8 +35,12 @@ function render() {
 }
 function disposeScene() { ++generation; clearTimeout(timeout); scene?.dispose(); scene = null; }
 function fail() {
+  const restoreReadingFocus = !!document.activeElement?.closest('#view-controls, #scene-help');
   disposeScene(); dispatch({ type: 'scene', status: 'failed' });
   get('scene-status').textContent = 'The courtyard view is unavailable. All of the history is here to read. You can try the view again whenever you like.';
+  if (restoreReadingFocus) {
+    get(`moment-${state.moment}`).querySelector<HTMLElement>('h3')?.focus({ preventScroll: true });
+  }
 }
 async function enter() {
   if (state.sceneStatus === 'loading') return;
