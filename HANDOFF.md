@@ -2,22 +2,23 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` still contains the retired site.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Gray-box review packet” is the current completed chunk; wait for approval before starting another.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “First CC0 asset records” is the current completed chunk; wait for approval before starting another.
 
 ## Verified checkpoint · 2026-10-13
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; last chunk commit `04df9f1` (review packet) |
+| Implementation branch | `codex/phase0-scaffold`; last chunk commit `8817f61` (first CC0 asset records) |
 | Public preview branch | `gh-pages`; still at `f655a72` (Arrival still) |
-| GitHub Pages | Build for `f655a72` reported `built`; no site files changed in this documentation chunk |
-| Checks at this checkpoint | Packet links resolve to existing files and `git diff --check` passed; last app checkpoint: 17 unit tests, build, 20 browser tests passed |
+| GitHub Pages | Build for `f655a72` reported `built`; no site files changed in this asset-config chunk |
+| Checks at this checkpoint | Config parsed; six URLs, hashes, and byte sizes matched the live Poly Haven files API; official source pages and CC0 license checked; last app checkpoint: 17 unit tests, build, 20 browser tests passed |
 | Working tree before this handoff update | Clean |
 
-The user's “Go ahead” authorized preparation of the review packet. No participant sessions or results have been recorded. This handoff commit follows `04df9f1` on the implementation branch. `main` and `gh-pages` do not carry the source work. The public site serves only the built files, so the packet and this handoff are available on the source branch in GitHub, not on the site.
+The user's “continue” authorized the first CC0 asset records. No textures have been downloaded or applied to the room, and no participant sessions or results have been recorded. This handoff commit follows `8817f61` on the implementation branch. `main` and `gh-pages` do not carry the source work. The public site serves only the built files, so the config, review packet, and this handoff are available on the source branch in GitHub, not on the site.
 
 ## What works now
 
+- [The asset config](assets.config.json) pins two Poly Haven CC0 texture candidates: `clay_plaster` for walls and `clay_floor_001` for the floor. Each records its source page, 1k JPG Diffuse/normal/ARM map URLs, API-listed MD5 hashes, and byte sizes. The six maps total 1,806,383 API-listed bytes. Their visual and historical suitability still need review; the current gray-box room does not use them.
 - The [gray-box review packet](docs/phase0/GRAYBOX_REVIEW_PACKET.md) gives a neutral image-only sequence, a separate reading-context pass, and a response sheet for 3 to 5 participants. It uses the three same-view doorway captures and names details that cannot be judged from those captures. The study still needs real participants; the packet contains no findings.
 - The arrival page loads a 632 doorway WebP still before any 3D. Its alt text and caption identify the gray model as imagined. The Enter and Read controls stay above the image, and the image remains available without JavaScript. `npm run capture:arrival` regenerates `public/stills/632-arrival.webp` from the room in Chromium; the current image is 864 × 487 pixels and 3,964 bytes.
 - An opt-in WebGPU room with a WebGL2 fallback and a readable, source-linked page that works without JavaScript or 3D.
@@ -30,9 +31,9 @@ The user's “Go ahead” authorized preparation of the review packet. No partic
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent toggle. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: first CC0 asset records
+## Next proposed chunk: fetch pinned texture candidates
 
-Pending user approval, verify and pin one wall and one floor texture candidate from the Poly Haven IDs in the plan, recording their source URLs, CC0 license, and chosen resolution in a small `assets.config.json`. Keep this as source and license groundwork while the user arranges the gray-box review. Do not change the rendered room or claim the pedagogy test is complete. Commit the one small chunk and stop for review.
+Pending user approval, add a small fetch script for the six pinned map URLs in `assets.config.json`. Download into an ignored local cache, identify this app with a User-Agent as the Poly Haven API terms request, and verify file sizes and MD5 hashes after download. Keep this as asset groundwork while the user arranges the gray-box review. Do not change the rendered room or claim the pedagogy test is complete. Commit the one small chunk and stop for review.
 
 When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
@@ -41,6 +42,7 @@ When the user supplies completed response sheets, synthesize what participants n
 | Purpose | Files |
 | --- | --- |
 | Requirements and historical decisions | `docs/PLAN.md`, `docs/DECISIONS.md` |
+| Texture candidate records | `assets.config.json` |
 | Text, citations, and scene labels | `content/*.json`, `scripts/content.ts`, `src/schema/changeIds.ts` |
 | UI state and Compare inputs | `src/main.ts`, `src/state/*.ts` |
 | Camera, renderer, and dated geometry | `src/scene/createRoomView.ts`, `src/render/renderer.ts`, `src/world/*.ts` |
@@ -70,7 +72,7 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
 npm run build
 ```
 
-This documentation chunk checked the packet's relative image and plan links and passed `git diff --check`; app tests were not rerun. The previous “Arrival still” checkpoint passed 17 unit tests and 20 browser tests. Its new browser check confirms the image loads before Enter and without JavaScript; a focused rerun passed after moving the entry controls above the image. Desktop and phone layouts were inspected. Turned-view descriptions stay broad; detailed date-specific prose describes each place's starting direction and is labeled as such. A manual screen-reader check is still needed. Playwright serves the built page on `127.0.0.1:4173`; `/usr/bin/chromium` is the installed browser in this workspace. Elsewhere, install Chromium with `npx playwright install chromium` and adjust or omit the path override. The build output is `dist/` and is ignored by Git.
+This source-only asset chunk checked that the JSON parses, all six map URLs, hashes, and byte sizes match the live Poly Haven files API, and both asset pages and the official license page confirm CC0. These hashes are API-listed metadata; the image files have not been downloaded and independently hashed. App tests were not rerun. The previous “Arrival still” checkpoint passed 17 unit tests and 20 browser tests. Its new browser check confirms the image loads before Enter and without JavaScript; a focused rerun passed after moving the entry controls above the image. Desktop and phone layouts were inspected. Turned-view descriptions stay broad; detailed date-specific prose describes each place's starting direction and is labeled as such. A manual screen-reader check is still needed. Playwright serves the built page on `127.0.0.1:4173`; `/usr/bin/chromium` is the installed browser in this workspace. Elsewhere, install Chromium with `npx playwright install chromium` and adjust or omit the path override. The build output is `dist/` and is ignored by Git.
 
 ## Publish the preview
 
