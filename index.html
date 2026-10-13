@@ -31,11 +31,6 @@
       <div class="room-dates" role="group" aria-label="Room date">
         <button type="button" data-room-date="632" data-room-lens="absent" aria-pressed="true">632 CE · Absent</button><button type="button" data-room-date="661" data-room-lens="added" aria-pressed="false">661 CE · Added</button><button type="button" data-room-date="680" data-room-lens="missing" aria-pressed="false">680 CE · Missing</button>
       </div>
-      <div class="compare-controls" role="group" aria-label="Compare room dates">
-        <button type="button" id="compare-hold" aria-pressed="false" aria-describedby="compare-help" disabled>Hold to compare</button>
-        <button type="button" id="compare-toggle" aria-pressed="false" aria-describedby="compare-help" disabled>Keep earlier date visible</button>
-      </div>
-      <p id="compare-help" class="room-note">Choose 661 or 680 CE to compare with the previous date from the same viewpoint.</p>
       <div class="room-places" role="group" aria-label="Place to stand">
         <button type="button" data-room-place="doorway" aria-pressed="true">Doorway</button><button type="button" data-room-place="head" aria-pressed="false">Head of room</button><button type="button" data-room-place="pegs" aria-pressed="false">By the pegs</button><button type="button" data-room-place="yard" aria-pressed="false">Yard looking back</button>
       </div>
@@ -44,6 +39,11 @@
         <p id="date-transition-caption" class="date-transition-caption" aria-hidden="true" hidden></p>
       </div>
       <p id="room-help">At the doorway, facing into the room. Turn around to see the yard and well. Drag to look around, or focus the view and use the arrow keys.</p>
+      <div class="compare-controls" role="group" aria-label="Compare room dates">
+        <button type="button" id="compare-hold" aria-pressed="false" aria-describedby="compare-help" disabled>Hold to compare</button>
+        <button type="button" id="compare-toggle" aria-pressed="false" aria-describedby="compare-help" disabled>Keep earlier date visible</button>
+      </div>
+      <p id="compare-help" class="room-note">Choose 661 or 680 CE to compare with the previous date from the same viewpoint.</p>
       <details id="describe-view" class="describe-view">
         <summary>Describe this view</summary>
         <div id="view-description" aria-live="polite" aria-atomic="true">
