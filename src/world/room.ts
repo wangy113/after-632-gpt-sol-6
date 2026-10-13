@@ -3,16 +3,37 @@ import type { RoomDate } from '../schema/changeIds';
 import { addAbsent632 } from './absent632';
 import { addAdded661 } from './added661';
 import { addMissing680 } from './missing680';
+import type { RoomTextures } from './roomTextures';
 
-/** A stable imagined room and yard with all three dated gray-box details. */
-export function createRoomWorld(): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
+/** A stable imagined room and yard with all three dated details. */
+export function createRoomWorld(textures?: RoomTextures): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xd9dad8);
 
   const geometries = new Set<THREE.BufferGeometry>();
   const materials = new Set<THREE.Material>();
-  const plaster = new THREE.MeshStandardMaterial({ color: 0xbabbb8, roughness: 1 });
-  const ground = new THREE.MeshStandardMaterial({ color: 0xaaa9a4, roughness: 1 });
+  const plaster = new THREE.MeshStandardMaterial({
+    color: textures ? 0xffffff : 0xbabbb8,
+    roughness: 1,
+    aoMapIntensity: 0.6,
+    ...(textures ? {
+      map: textures.wall.diffuse,
+      normalMap: textures.wall.normal,
+      aoMap: textures.wall.arm,
+      roughnessMap: textures.wall.arm,
+    } : {}),
+  });
+  const ground = new THREE.MeshStandardMaterial({
+    color: textures ? 0xffffff : 0xaaa9a4,
+    roughness: 1,
+    aoMapIntensity: 0.6,
+    ...(textures ? {
+      map: textures.floor.diffuse,
+      normalMap: textures.floor.normal,
+      aoMap: textures.floor.arm,
+      roughnessMap: textures.floor.arm,
+    } : {}),
+  });
   const roof = new THREE.MeshStandardMaterial({ color: 0x9d9e9b, roughness: 1 });
   const beam = new THREE.MeshStandardMaterial({ color: 0x7e807d, roughness: 1 });
   const stone = new THREE.MeshStandardMaterial({ color: 0x898b88, roughness: 1, side: THREE.DoubleSide });
@@ -44,7 +65,24 @@ export function createRoomWorld(): { scene: THREE.Scene; setDate(date: RoomDate)
     z: number,
     material: THREE.Material,
   ): THREE.Mesh {
-    const mesh = add(name, new THREE.BoxGeometry(width, height, depth), material);
+    const geometry = new THREE.BoxGeometry(width, height, depth);
+    if (textures && (material === plaster || material === ground)) {
+      const uv = geometry.getAttribute('uv') as THREE.BufferAttribute;
+      const tileSize = material === plaster ? 2.5 : 2;
+      const faces: [number, number][] = [
+        [depth, height], [depth, height],
+        [width, depth], [width, depth],
+        [width, height], [width, height],
+      ];
+      for (const [face, [uSpan, vSpan]] of faces.entries()) {
+        for (let vertex = 0; vertex < 4; vertex += 1) {
+          const index = face * 4 + vertex;
+          uv.setXY(index, uv.getX(index) * uSpan / tileSize, uv.getY(index) * vSpan / tileSize);
+        }
+      }
+      uv.needsUpdate = true;
+    }
+    const mesh = add(name, geometry, material);
     mesh.position.set(x, y, z);
     return mesh;
   }
@@ -128,6 +166,7 @@ export function createRoomWorld(): { scene: THREE.Scene; setDate(date: RoomDate)
       scene.clear();
       for (const geometry of geometries) geometry.dispose();
       for (const material of materials) material.dispose();
+      textures?.dispose();
     },
   };
 }

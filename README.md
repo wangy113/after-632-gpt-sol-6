@@ -4,11 +4,11 @@ This repository is being rebuilt from [the meeting-room plan](docs/PLAN.md). The
 
 For the current checkpoint, next proposed chunk, and publishing steps, see [HANDOFF.md](HANDOFF.md).
 
-The optional, untextured 3D view shows the same imagined room in 632, 661, and 680 CE. In 632, an unfinished circle of mats, untouched cups, an empty head position, and footprints suggest an unsettled moment. In 661, mats face a plain seat, a sealed letter and interpretive coin replica rest on a low table, and ordinary travel things sit by the door. In 680, the seat remains; the travel things are gone, leaving a clean floor patch and an empty hook. The yard palm is taller. Date changes cross-dissolve for 0.8 seconds at the same viewpoint, or switch immediately under reduced motion. Four place buttons move between the doorway, head of room, pegs, and yard in 0.8 seconds, or immediately under reduced motion. “Things here” separates each invented detail from a sourced historical fact. Drag, use the arrow keys while the view is focused, or use the look buttons to turn. WebGPU is used when available, with a WebGL2 fallback; the reading page remains available if rendering fails.
+The optional 3D view shows the same imagined room in 632, 661, and 680 CE. Its walls and floors use CC0 Poly Haven textures as a material preview; the geometry and other surfaces remain a prototype. In 632, an unfinished circle of mats, untouched cups, an empty head position, and footprints suggest an unsettled moment. In 661, mats face a plain seat, a sealed letter and interpretive coin replica rest on a low table, and ordinary travel things sit by the door. In 680, the seat remains; the travel things are gone, leaving a clean floor patch and an empty hook. The yard palm is taller. Date changes cross-dissolve for 0.8 seconds at the same viewpoint, or switch immediately under reduced motion. Four place buttons move between the doorway, head of room, pegs, and yard in 0.8 seconds, or immediately under reduced motion. “Things here” separates each invented detail from a sourced historical fact. Drag, use the arrow keys while the view is focused, or use the look buttons to turn. WebGPU is used when available, with a WebGL2 fallback; the reading page remains available if rendering fails.
 
 In the 661 or 680 room, hold Compare to see the preceding date immediately from the same viewpoint. The selected date stays selected while the view and its “Things here” notes show the earlier date; releasing Compare restores the selection. The hold button works with a mouse, touch, or keyboard. Holding C while the room is active also compares, and a separate toggle button keeps the comparison visible without holding. Compare is unavailable in 632 because the room has no earlier scene.
 
-The pure state model defines all three dates, four viewpoints, Compare, and movement policy. The three date views, four viewpoints, and Compare are connected to the scene. A rendered still and the reporting exit are later chunks.
+The pure state model defines all three dates, four viewpoints, Compare, and movement policy. The three date views, four viewpoints, and Compare are connected to the scene. A doorway still appears before the 3D room opens. The reporting exit remains later work.
 
 ## Run
 
@@ -18,6 +18,8 @@ Use Node.js 22.12 or later.
 npm ci
 npm run dev
 ```
+
+The six pinned Poly Haven JPGs are committed under `public/assets/polyhaven/`. Run `npm run fetch:assets` to re-fetch missing files or verify existing copies against the sizes and MD5 hashes in `assets.config.json`; this command requires `curl`.
 
 For the production build and checks:
 

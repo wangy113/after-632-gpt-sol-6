@@ -4,6 +4,7 @@ import type { RoomDate } from '../schema/changeIds';
 import type { PlaceId } from '../state/places';
 import { viewDirection, type ViewDirection } from '../state/viewDirections';
 import { createRoomWorld } from '../world/room';
+import { loadRoomTextures } from '../world/roomTextures';
 
 export interface RoomView {
   look(direction: 'left' | 'right' | 'up' | 'down' | 'reset'): void;
@@ -49,8 +50,16 @@ export async function createRoomView(
   forceWebGL: boolean,
   onLookChange?: () => void,
 ): Promise<RoomView> {
-  const { renderer, backend } = await createRenderer({ antialias: true, forceWebGL });
-  const world = createRoomWorld();
+  const textures = await loadRoomTextures();
+  let rendered;
+  try {
+    rendered = await createRenderer({ antialias: true, forceWebGL });
+  } catch (error) {
+    textures.dispose();
+    throw error;
+  }
+  const { renderer, backend } = rendered;
+  const world = createRoomWorld(textures);
   const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 100);
   camera.position.set(...viewpoints.doorway.position);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));

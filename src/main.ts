@@ -219,7 +219,7 @@ async function enter() {
   enterButton.disabled = true;
   enterButton.textContent = 'Opening the room…';
   status.textContent = 'Opening the imagined room. You can keep reading while it loads.';
-  deadline = setTimeout(() => { if (generation === token) fail(); }, 10000);
+  deadline = setTimeout(() => { if (generation === token) fail(); }, 30000);
 
   try {
     const { createRoomView } = await import('./scene/createRoomView');

@@ -58,3 +58,9 @@
 
 - The room's existing methods snap an active camera glide to its chosen standing place and end an active date dissolve on its chosen date. The Skip movement button invokes both and clears transition state; Escape does the same while focus is in the room.
 - The control applies only to the current transition. It leaves the system reduced-motion preference and future transitions alone. If no transition is active, it reports that there is no movement to skip.
+
+## Wall and floor material preview · 2026-10-13
+
+- The [Poly Haven clay_plaster](https://polyhaven.com/a/clay_plaster) and [clay_floor_001](https://polyhaven.com/a/clay_floor_001) candidates add 1k CC0 texture sets to the wall and floor surfaces. The room and yard keep the same geometry and lighting across all dates, so the dated traces remain the changes to inspect. The reading page credits the assets and links to [Poly Haven's CC0 terms](https://polyhaven.com/license).
+- These are stock artist textures used to judge legibility and atmosphere. Weathered plaster and a painted clay floor do not establish the materials of any seventh-century meeting room. The yard ground also uses the floor candidate for this preview; a separate yard surface remains future work. The roof, props, and sky retain prototype materials.
+- Visual and historical suitability still need review, including whether the new surfaces obscure the mats, footprints, and 680 clean patch. This preview does not settle the planned photoreal finish, real-device performance, or instructor and community review.

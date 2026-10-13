@@ -272,8 +272,8 @@ export function renderPage(
       </div>
       <p id="scene-status" role="status" aria-live="polite"></p>
       <figure class="arrival-still">
-        <img id="arrival-still" src="./stills/632-arrival.webp" width="864" height="487" fetchpriority="high" alt="A gray illustration of the imagined 632 CE room from the doorway: mats sit in an open circle around three cups, and footprints cross the floor.">
-        <figcaption>632 CE · A gray model of an imagined room, not a reconstruction of a documented place.</figcaption>
+        <img id="arrival-still" src="./stills/632-arrival.webp" width="864" height="487" fetchpriority="high" alt="A rendered view of the imagined 632 CE room from the doorway: mats sit in an open circle around three cups, and footprints cross the floor.">
+        <figcaption>632 CE · A material preview of an imagined room, not a reconstruction of a documented place.</figcaption>
       </figure>
     </header>
     <section id="room-view" aria-labelledby="room-title" hidden>
@@ -330,6 +330,8 @@ export function renderPage(
   <footer>
     <h2>Sources</h2>
     <ol>${sourceList}</ol>
+    <h2>Texture credits</h2>
+    <p>Room wall and floor textures: <a href="https://polyhaven.com/a/clay_plaster">clay_plaster</a> and <a href="https://polyhaven.com/a/clay_floor_001">clay_floor_001</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>.</p>
     <p>This room is imagined. Its objects are interpretations, not evidence of these events.</p>
   </footer>`;
 }
