@@ -1,6 +1,7 @@
 import type { RoomView } from './scene/createRoomView';
 import type { RoomDate } from './schema/changeIds';
 import { dateChangeCaption } from './state/dates';
+import { compareAvailable, initialState, isComparing, reduce, visibleDate } from './state/store';
 
 const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
 const readLink = document.querySelector<HTMLAnchorElement>('#read-link')!;
@@ -9,16 +10,61 @@ const roomSection = document.querySelector<HTMLElement>('#room-view')!;
 const roomTitle = document.querySelector<HTMLElement>('#room-title')!;
 const roomLens = document.querySelector<HTMLElement>('#room-lens')!;
 const dateButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-room-date]'));
+const compareHold = document.querySelector<HTMLButtonElement>('#compare-hold')!;
+const compareToggle = document.querySelector<HTMLButtonElement>('#compare-toggle')!;
 const roomPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-room-panel]'));
 const readingTitle = document.querySelector<HTMLElement>('#reading-title')!;
 const sceneFrame = document.querySelector<HTMLElement>('#scene-frame')!;
 const status = document.querySelector<HTMLElement>('#scene-status')!;
 
 let room: RoomView | null = null;
-let selectedDate: RoomDate = '632';
+let state = initialState;
+let pointerHoldId: number | null = null;
+let cKeyHeld = false;
+let buttonKeyHeld = false;
 let loading = false;
 let generation = 0;
 let deadline: ReturnType<typeof setTimeout> | undefined;
+
+function clearHeldInputs() {
+  const pointerId = pointerHoldId;
+  pointerHoldId = null;
+  if (pointerId !== null && compareHold.hasPointerCapture(pointerId)) {
+    compareHold.releasePointerCapture(pointerId);
+  }
+  cKeyHeld = false;
+  buttonKeyHeld = false;
+  state = reduce(state, { type: 'setCompareHeld', held: false });
+}
+
+function resetCompare() {
+  clearHeldInputs();
+  if (state.compareToggled) state = reduce(state, { type: 'toggleCompare' });
+}
+
+function renderRoomDate(message?: string): boolean {
+  // Only 632 and 661 have room scenes in this chunk.
+  const date = visibleDate(state) as RoomDate;
+  try { room?.setDate(date); } catch { fail(); return false; }
+  const comparing = isComparing(state);
+  roomTitle.textContent = comparing
+    ? `${date} CE · Comparing with ${state.date} CE`
+    : `${date} CE · Inside the imagined room`;
+  const visibleButton = dateButtons.find(button => button.dataset.roomDate === date)!;
+  roomLens.textContent = `Look for what is ${visibleButton.dataset.roomLens}`;
+  for (const button of dateButtons) button.setAttribute('aria-pressed', String(button.dataset.roomDate === state.date));
+  for (const panel of roomPanels) panel.hidden = panel.dataset.roomPanel !== date;
+  sceneFrame.setAttribute('aria-describedby', `room-description-${date} room-help`);
+  const canCompare = compareAvailable(state);
+  compareHold.disabled = !canCompare;
+  compareToggle.disabled = !canCompare;
+  compareHold.setAttribute('aria-pressed', String(state.compareHeld));
+  compareToggle.setAttribute('aria-pressed', String(state.compareToggled));
+  status.textContent = message ?? (comparing
+    ? `Comparing ${date} CE from the same viewpoint. ${state.date} CE remains selected.`
+    : `${date} CE restored at the same viewpoint.`);
+  return true;
+}
 
 function closeRoom(message = '') {
   generation++;
@@ -27,6 +73,7 @@ function closeRoom(message = '') {
   loading = false;
   const currentRoom = room;
   room = null;
+  resetCompare();
   try { currentRoom?.dispose(); } catch { sceneFrame.replaceChildren(); }
   roomSection.hidden = true;
   enterButton.setAttribute('aria-expanded', 'false');
@@ -36,17 +83,28 @@ function closeRoom(message = '') {
 }
 
 function selectDate(date: RoomDate) {
-  if (date === selectedDate) return;
-  const previous = selectedDate;
-  try { room?.setDate(date); } catch { fail(); return; }
-  selectedDate = date;
-  roomTitle.textContent = `${date} CE · Inside the imagined room`;
-  const selectedButton = dateButtons.find(button => button.dataset.roomDate === date)!;
-  roomLens.textContent = `Look for what is ${selectedButton.dataset.roomLens}`;
-  for (const button of dateButtons) button.setAttribute('aria-pressed', String(button === selectedButton));
-  for (const panel of roomPanels) panel.hidden = panel.dataset.roomPanel !== date;
-  sceneFrame.setAttribute('aria-describedby', `room-description-${date} room-help`);
-  status.textContent = `${date} room view open. ${dateChangeCaption(previous, date)}. The viewpoint stayed the same.`;
+  if (date === state.date && !isComparing(state)) return;
+  const previous = state.date;
+  resetCompare();
+  state = reduce(state, { type: 'selectDate', date });
+  const message = date === previous
+    ? `${date} CE restored at the same viewpoint.`
+    : `${date} room view open. ${dateChangeCaption(previous, date)}. The viewpoint stayed the same.`;
+  renderRoomDate(message);
+}
+
+function syncHeld() {
+  if (!room) return;
+  const next = reduce(state, { type: 'setCompareHeld', held: pointerHoldId !== null || cKeyHeld || buttonKeyHeld });
+  if (next === state) return;
+  state = next;
+  renderRoomDate();
+}
+
+function releasePointer(pointerId: number) {
+  if (pointerHoldId !== pointerId) return;
+  pointerHoldId = null;
+  syncHeld();
 }
 
 function fail() {
@@ -80,7 +138,6 @@ async function enter() {
       new URLSearchParams(location.search).get('gl') === '1',
     );
     if (generation !== token) { created.dispose(); return; }
-    created.setDate(selectedDate);
     clearTimeout(deadline);
     deadline = undefined;
     room = created;
@@ -89,7 +146,7 @@ async function enter() {
     loading = false;
     enterButton.disabled = false;
     enterButton.textContent = 'Enter the room';
-    status.textContent = `${selectedDate} room view open. The full reading remains below.`;
+    if (!renderRoomDate(`${state.date} room view open. The full reading remains below.`)) return;
     roomTitle.focus({ preventScroll: true });
     roomSection.scrollIntoView({ block: 'start' });
   } catch {
@@ -121,6 +178,51 @@ document.querySelectorAll<HTMLAnchorElement>('[data-read-room-date]').forEach(li
 for (const button of dateButtons) {
   button.addEventListener('click', () => selectDate(button.dataset.roomDate as RoomDate));
 }
+compareHold.addEventListener('pointerdown', event => {
+  if (!room || !compareAvailable(state) || !event.isPrimary || event.button !== 0 || pointerHoldId !== null) return;
+  pointerHoldId = event.pointerId;
+  compareHold.setPointerCapture(event.pointerId);
+  syncHeld();
+});
+compareHold.addEventListener('pointerup', event => releasePointer(event.pointerId));
+compareHold.addEventListener('pointercancel', event => releasePointer(event.pointerId));
+compareHold.addEventListener('lostpointercapture', event => releasePointer(event.pointerId));
+compareToggle.addEventListener('click', () => {
+  if (!room || !compareAvailable(state)) return;
+  state = reduce(state, { type: 'toggleCompare' });
+  renderRoomDate();
+});
+window.addEventListener('keydown', event => {
+  if (!room || !compareAvailable(state) || event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.target instanceof HTMLElement &&
+      (event.target.isContentEditable || event.target.closest('input, textarea, select'))) return;
+  if (event.code === 'KeyC' && roomSection.contains(document.activeElement)) {
+    event.preventDefault();
+    if (!cKeyHeld) { cKeyHeld = true; syncHeld(); }
+  } else if (event.target === compareHold && (event.code === 'Space' || event.code === 'Enter')) {
+    event.preventDefault();
+    if (!buttonKeyHeld) { buttonKeyHeld = true; syncHeld(); }
+  }
+});
+window.addEventListener('keyup', event => {
+  if (event.code === 'KeyC' && cKeyHeld) {
+    cKeyHeld = false;
+    syncHeld();
+  } else if ((event.code === 'Space' || event.code === 'Enter') && buttonKeyHeld) {
+    buttonKeyHeld = false;
+    syncHeld();
+  }
+});
+window.addEventListener('blur', () => {
+  if (pointerHoldId === null && !cKeyHeld && !buttonKeyHeld) return;
+  clearHeldInputs();
+  if (room) renderRoomDate();
+});
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden || (pointerHoldId === null && !cKeyHeld && !buttonKeyHeld)) return;
+  clearHeldInputs();
+  if (room) renderRoomDate();
+});
 returnButton.addEventListener('click', () => {
   closeRoom('Reading view. All three moments are available below.');
   readingTitle.focus({ preventScroll: true });

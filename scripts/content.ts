@@ -237,6 +237,11 @@ export function renderPage(
       <div class="room-dates" role="group" aria-label="Room date">
         ${roomDateButtons}
       </div>
+      <div class="compare-controls" role="group" aria-label="Compare room dates">
+        <button type="button" id="compare-hold" aria-pressed="false" aria-describedby="compare-help" disabled>Hold to see 632 CE</button>
+        <button type="button" id="compare-toggle" aria-pressed="false" aria-describedby="compare-help" disabled>Keep 632 CE visible</button>
+      </div>
+      <p id="compare-help" class="room-note">In 661 CE, hold the first button or the C key to see 632 CE from the same viewpoint. Release to return. Press the second button again to turn off a lasting comparison.</p>
       <div id="scene-frame" class="scene-frame" role="group" tabindex="0" aria-label="Look around the imagined room" aria-describedby="room-description-632 room-help"></div>
       <p id="room-help">Drag to look around, or focus the view and use the arrow keys.</p>
       <div class="look-controls" role="group" aria-label="View controls">

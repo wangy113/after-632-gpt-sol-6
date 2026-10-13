@@ -160,3 +160,99 @@ test('switching to 661 changes the same room and keeps its source-backed reading
   await expect(room).toBeHidden();
   await expect(page.locator('#reading-title')).toBeFocused();
 });
+
+test('Compare previews 632 at the same viewpoint and clears on release, blur, and date change', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = page.locator('#scene-frame canvas');
+  const date632 = room.getByRole('button', { name: '632 CE · Absent' });
+  const date661 = room.getByRole('button', { name: '661 CE · Added' });
+  const hold = room.locator('#compare-hold');
+  const toggle = room.locator('#compare-toggle');
+  await date661.click();
+  await room.getByRole('button', { name: 'Look right' }).click();
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+
+  await hold.hover();
+  await page.mouse.down();
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+  await expect(canvas).toHaveCount(1);
+  await expect(date661).toHaveAttribute('aria-pressed', 'true');
+  await expect(room.locator('#room-title')).toHaveText('632 CE · Comparing with 661 CE');
+  await expect(room.locator('#room-lens')).toHaveText('Look for what is absent');
+  await expect(room.locator('[data-room-panel="632"]')).toBeVisible();
+  await expect(room.locator('[data-room-panel="661"]')).toBeHidden();
+  await expect(room.locator('#scene-frame')).toHaveAttribute('aria-describedby', 'room-description-632 room-help');
+  await page.mouse.move(10, 10);
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await page.mouse.up();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+
+  await page.keyboard.down('c');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await page.keyboard.up('c');
+  await expect(canvas).toHaveAttribute('data-date', '661');
+
+  await hold.focus();
+  await page.keyboard.down('Space');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await page.keyboard.up('Space');
+  await expect(canvas).toHaveAttribute('data-date', '661');
+
+  await page.keyboard.down('c');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await page.keyboard.up('c');
+
+  await toggle.focus();
+  await page.keyboard.press('Space');
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await page.keyboard.press('Space');
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await page.keyboard.press('Space');
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await date632.click();
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await date661.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await expect(canvas).toHaveAttribute('data-date', '661');
+
+  await page.keyboard.down('c');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await room.getByRole('button', { name: 'Return to reading' }).click();
+  await expect(canvas).toHaveCount(0);
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await page.keyboard.up('c');
+  await expect(canvas).toHaveAttribute('data-date', '661');
+});
+
+test('touch holds Compare only until release', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  const room = page.locator('#room-view');
+  const canvas = page.locator('#scene-frame canvas');
+  await room.getByRole('button', { name: '661 CE · Added' }).click();
+  const hold = room.locator('#compare-hold');
+  await hold.scrollIntoViewIfNeeded();
+  const bounds = await hold.boundingBox();
+  expect(bounds).not.toBeNull();
+  const x = bounds!.x + bounds!.width / 2;
+  const y = bounds!.y + bounds!.height / 2;
+  const client = await page.context().newCDPSession(page);
+  await client.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 1 });
+  try {
+    await client.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
+    await expect(canvas).toHaveAttribute('data-date', '632');
+  } finally {
+    await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  }
+  await expect(canvas).toHaveAttribute('data-date', '661');
+});

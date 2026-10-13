@@ -21,3 +21,9 @@
 - All four 661 object groups match the sourced labels. The plain coin disc carries no museum image or invented ancient writing. The letter is unmarked, and the seat has no ornament or personal association.
 - The 661 labels also appear under the static passage when JavaScript is off. The room date buttons expose their pressed state, and the current passage link follows the selected date.
 - The [Chromium WebGL2 gray-box capture](phase0/661-graybox.png) records the 661 doorway composition. The screenshot and automated browser checks do not replace instructor or community review of the symbols.
+
+## 632/661 Compare · 2026-10-13
+
+- Compare in the 661 room shows the earlier 632 change set immediately from the same camera. It does not change the selected date or rebuild the room. The 661 date button remains selected while the visible notes, lens, and view description follow the 632 scene; releasing Compare restores the 661 view and notes.
+- A hold button supports mouse, touch, and keyboard press-and-hold. Holding C while the room is active is an alternate shortcut. A separate native toggle button supports persistent comparison and exposes its pressed state. The hold ends on release or cancellation, and leaving the room clears Compare.
+- Compare is unavailable in 632 because it has no preceding scene. The 680 passage remains in the reading page; a 680 room view awaits its own change set.
