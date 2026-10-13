@@ -1,6 +1,6 @@
 # After 632
 
-This repository is being rebuilt from [the meeting-room plan](docs/PLAN.md). The first small chunk is a runnable, source-linked reading page. Its three passages are the plan's drafts and still need instructor review. The imagined 3D room, rendered still, object labels, and reporting exit are later chunks.
+This repository is being rebuilt from [the meeting-room plan](docs/PLAN.md). The reading page is runnable and source-linked. Its three passages are the plan's drafts and still need instructor review. A pure state model now defines date selection, four viewpoints, Compare, and movement policy; the 3D room, rendered still, object labels, and reporting exit are later chunks.
 
 ## Run
 
