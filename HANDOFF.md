@@ -2,25 +2,26 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` currently contains only the plan.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Asset integrity check” is the current completed source-only chunk. The latest visual preview is still the wall and floor material preview. Wait for feedback or approval before starting another chunk.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Clear-morning sky comparison” is the current completed chunk. Wait for feedback or approval before starting another chunk.
 
 ## Verified checkpoint · 2026-10-13
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; last chunk commit `45aa029` (asset integrity check) |
-| Public preview branch | `gh-pages`; published at `aed7145` (wall and floor material preview) |
-| GitHub Pages | No new publish for this source-only check; the prior build for `aed7145` reported `built` and showed the material preview |
-| Checks at this checkpoint | `npm run check:assets` rebuilt and verified six source and built JPGs, their pinned records, and the 15 MB visit budget; 17 unit tests passed. Temporary negative fixtures rejected a corrupted map, invalid CC0 record, and oversized build. The prior material preview also passed 20 browser tests and live texture requests. |
+| Implementation branch | `codex/phase0-scaffold`; last chunk commit `73d5133` (clear-morning sky comparison) |
+| Public preview branch | `gh-pages`; published at `7483680` (sky candidate preview) |
+| GitHub Pages | Build for `7483680` reported `built`; both live `?sky=` rooms opened in Chromium and fetched their HDR with status 200 |
+| Checks at this checkpoint | `npm run check:assets` verified six texture JPGs and two sky HDRs plus the 15 MB budget; 17 unit and 20 browser tests passed. `npm run capture:sky` saved matching-pose WebGL2 screenshots, and a temporary fixture with a corrupted HDR was rejected. |
 | Working tree before this handoff update | Clean |
 
-The user's latest request authorized picking up the next handoff chunk. No participant sessions or results have been recorded. This handoff commit follows `45aa029` on the implementation branch. `main` currently contains only the plan; `gh-pages` carries only built files. The config, review packet, asset checker, and this handoff are available on the source branch in GitHub, not on the public site.
+The user's “continue” authorized the sky comparison. No participant sessions or results have been recorded. This handoff commit follows `73d5133` on the implementation branch. `main` currently contains only the plan; `gh-pages` carries only built files. The config, review packet, asset checker, comparison report, and this handoff are available on the source branch in GitHub, not on the public site.
 
 ## What works now
 
-- `npm run check:assets` makes a fresh production build, then checks the six source and built Poly Haven JPGs against their pinned download URLs, byte sizes, and MD5 hashes. It verifies the recorded CC0 license and source links, rejects unlisted Poly Haven files, and sums **all** files in `dist/` against the 15,000,000-byte visit budget. The check is offline and does not change the source assets. Current totals are 1,806,383 texture bytes and 2,767,152 built bytes. It verifies the recorded provenance, not the live Poly Haven license page.
+- The [Phase 0 sky comparison](docs/phase0/SKY_COMPARISON.md) pins two 1k CC0 Qwantani clear-morning HDRIs and shows side-by-side 632 yard screenshots from the same upward camera pose. The morning candidate appears lighter in the sampled sky area. A `?sky=qwantani_morning_puresky` or `?sky=qwantani_mid_morning_puresky` query previews one as the background; neither has been selected as the default. The HDRIs do not alter room lighting in this comparison. The reading page credits the candidates.
+- `npm run check:assets` makes a fresh production build, then checks six source and built Poly Haven JPGs and two HDRIs against their pinned download URLs, byte sizes, and MD5 hashes. It verifies the recorded CC0 license and source links, rejects unlisted Poly Haven files, and sums **all** files in `dist/` against the 15,000,000-byte visit budget. The check is offline and does not change the source assets. Current totals are 1,806,383 texture bytes, 2,240,209 sky bytes, and 5,016,211 built bytes. It verifies recorded provenance, not the live Poly Haven license page.
 - [The asset config](assets.config.json) pins two Poly Haven CC0 texture candidates: `clay_plaster` for walls and `clay_floor_001` for the floor. Each records its source page, 1k JPG Diffuse/normal/ARM map URLs, API-listed MD5 hashes, and byte sizes. The six files total 1,806,383 verified bytes and are committed under `public/assets/polyhaven/`; `npm run fetch:assets` rechecks them or downloads missing copies. The room and yard now use their diffuse, normal, ambient-occlusion, and roughness maps, with world-scaled UVs. Their visual and historical suitability still need review.
-- The updated 632 doorway still and the live room show the material preview. The reading page credits both assets and links to Poly Haven's CC0 terms. Roof, props, sky, geometry, and lighting remain prototype work. The 680 clean floor patch remained distinct in Chromium; a user and instructor should still judge the scenes.
+- The updated 632 doorway still and the live room show the material preview. The reading page credits the assets and links to Poly Haven's CC0 terms. Roof, props, default sky, geometry, and lighting remain prototype work. The 680 clean floor patch remained distinct in Chromium; a user and instructor should still judge the scenes.
 - The [gray-box review packet](docs/phase0/GRAYBOX_REVIEW_PACKET.md) gives a neutral image-only sequence, a separate reading-context pass, and a response sheet for 3 to 5 participants. It uses the three same-view doorway captures and names details that cannot be judged from those captures. The study still needs real participants; the packet contains no findings.
 - The arrival page loads a 632 doorway WebP still before any 3D. Its alt text and caption identify the material preview as imagined. The Enter and Read controls stay above the image, and the image remains available without JavaScript. `npm run capture:arrival` regenerates `public/stills/632-arrival.webp` from the room in Chromium; the current image is 864 × 487 pixels and 13,180 bytes.
 - An opt-in WebGPU room with a WebGL2 fallback and a readable, source-linked page that works without JavaScript or 3D.
@@ -33,9 +34,9 @@ The user's latest request authorized picking up the next handoff chunk. No parti
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent toggle. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: sky candidate comparison
+## Next proposed chunk: sky selection after review
 
-First address any specific feedback the user gives on the published material preview. Otherwise, pending user approval, make the plan's Phase 0 clear-morning sky comparison: pin two candidate pure-sky HDRIs, capture matching-view A/B screenshots, and record the comparison for review before choosing a sky. Keep it one small chunk and stop for review.
+First address any specific feedback the user gives on the published material or sky comparison. If the user chooses a sky, make that candidate the default, check the room and arrival still, publish the visual change, and stop for review. If neither candidate is suitable, keep the prototype background and record the reason before another visual change. Do not present the current A/B as a completed sky choice.
 
 When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
@@ -44,7 +45,8 @@ When the user supplies completed response sheets, synthesize what participants n
 | Purpose | Files |
 | --- | --- |
 | Requirements and historical decisions | `docs/PLAN.md`, `docs/DECISIONS.md` |
-| Texture records, fetch script, committed files | `assets.config.json`, `scripts/fetch-polyhaven.mjs`, `public/assets/polyhaven/` |
+| Texture and sky records, fetch script, committed files | `assets.config.json`, `scripts/fetch-polyhaven.mjs`, `public/assets/polyhaven/` |
+| Sky comparison and capture | `docs/phase0/SKY_COMPARISON.md`, `scripts/capture-sky-comparison.mjs` |
 | Text, citations, and scene labels | `content/*.json`, `scripts/content.ts`, `src/schema/changeIds.ts` |
 | UI state and Compare inputs | `src/main.ts`, `src/state/*.ts` |
 | Camera, renderer, and dated geometry | `src/scene/createRoomView.ts`, `src/render/renderer.ts`, `src/world/*.ts` |
@@ -54,7 +56,7 @@ When the user supplies completed response sheets, synthesize what participants n
 
 The 680 Medina-to-Mecca claim is supported by the Madelung source in `content/sources.json`; the travel objects are invented and are not Husayn's belongings. The 661 coin is an interpretive replica linked to a museum catalog record, with no museum image. Keep the plan's guardrails: no people, relics, battle scene, weapons, or symbolic lighting. The passages and room symbolism still need instructor and community review. Other later work includes photoreal materials and lighting, reporting exit, device and screen-reader checks, and student testing.
 
-The current room is still a gray-box prototype in its geometry and most surfaces, but its walls and floors now have candidate textures. The arrival still matches that material preview. The plan also describes other assets, rendering features, exit content, checks, and a Pages workflow that have not all been implemented; treat those passages as future requirements, not descriptions of this checkout. Turned camera descriptions are deliberately broad, and the description changes to the destination date when a dissolve starts. WebGPU hardware, mobile devices, and a screen reader have not been manually checked. Do not infer historical evidence from the invented props or stock textures.
+The current room is still a gray-box prototype in its geometry and most surfaces, but its walls and floors now have candidate textures. The arrival still matches that material preview. The sky captures use a background HDRI with fixed prototype lights, so they do not test the planned sun patch or an irradiance bake. The plan also describes other assets, rendering features, exit content, checks, and a Pages workflow that have not all been implemented; treat those passages as future requirements, not descriptions of this checkout. Turned camera descriptions are deliberately broad, and the description changes to the destination date when a dissolve starts. WebGPU hardware, mobile devices, and a screen reader have not been manually checked. Do not infer historical evidence from the invented props, stock textures, or stock skies.
 
 ## Run and verify
 
@@ -66,6 +68,7 @@ npm test
 npm run build
 npm run check:assets
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run e2e
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:sky
 ```
 
 To regenerate the arrival still after changing the room, run:
@@ -75,7 +78,9 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
 npm run build
 ```
 
-This asset-check chunk passed `npm run check:assets` (including typecheck and a fresh build) and 17 unit tests. It verified all six source and built JPGs against the pins, and measured the full production `dist/` at 2,767,152 / 15,000,000 bytes. Temporary offline fixtures showed the checker rejects a corrupted JPG, an invalid CC0 record, and an oversized `dist/`. There were no visual or runtime changes, so the browser suite and public Pages preview were not rerun for this chunk.
+This sky-comparison chunk passed `npm run check:assets` (including typecheck and a fresh build), 17 unit tests, and 20 browser tests. It verified six JPGs and two HDRIs against their pins and measured the full production `dist/` at 5,016,211 / 15,000,000 bytes. A temporary offline fixture showed the checker rejects a corrupted HDR. `npm run capture:sky` saved two 864 × 486 WebGL2 captures with the same 632 yard camera position, yaw, and pitch; both were inspected. Pages reported `7483680` built, and live Chromium opened both candidate rooms with each HDR request returning 200. The default room view still uses the flat prototype background. The sky images are modern visual candidates, not historical evidence.
+
+The earlier asset-check chunk also used temporary fixtures to reject a corrupted JPG, invalid CC0 record, and oversized `dist/`.
 
 The earlier material-preview chunk passed 20 browser tests. Chromium WebGL2 captures of the 632 doorway, 680 doorway, and 680 yard were inspected. `public/stills/632-arrival.webp` was regenerated from the textured room. The browser suite ran before the room-open timeout changed from 10 to 30 seconds; the final build passed after that small change. After Pages reported `built`, a live Chromium smoke check opened the 632 room and observed 200 responses for all six textures. The managed environment's Chromium needed `ignoreHTTPSErrors` for its proxy certificate; `curl` verified the live HTML without that override. A manual screen-reader check is still needed. Playwright serves the built page on `127.0.0.1:4173`; `/usr/bin/chromium` is the installed browser in this workspace. Elsewhere, install Chromium with `npx playwright install chromium` and adjust or omit the path override. The build output is `dist/` and is ignored by Git.
 
