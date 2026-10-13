@@ -20,6 +20,9 @@ h3 { font-size: 1.3rem; margin: .5rem 0 1rem; }
 p { max-width: 70ch; }
 .setting { font-weight: 700; }
 .intro { padding-bottom: 2rem; border-bottom: 1px solid #b7b4a8; }
+.arrival-still { margin: 1.5rem 0 0; }
+.arrival-still img { display: block; width: 100%; height: auto; background: #d5d2c7; }
+.arrival-still figcaption { margin-top: .35rem; color: #575c50; font-size: .9rem; }
 .entry-actions, .look-controls, .room-dates, .compare-controls, .room-places { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
 .entry-actions { margin-top: 1.5rem; }
 .entry-actions button, .look-controls button, .room-dates button, .compare-controls button, .room-places button {

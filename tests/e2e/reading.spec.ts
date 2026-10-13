@@ -43,3 +43,29 @@ test('all historical text is available without JavaScript or 3D', async ({ brows
   await expect(page.locator('canvas')).toHaveCount(0);
   await context.close();
 });
+
+test('the 632 arrival still loads before entering and without JavaScript', async ({ browser, page }) => {
+  await page.goto('/?gl=1');
+  const still = page.locator('#arrival-still');
+  await expect(still).toBeVisible();
+  await expect(still).toHaveAttribute('alt', /imagined 632 CE room from the doorway/i);
+  await expect(page.getByRole('img', { name: /imagined 632 CE room from the doorway/i })).toBeVisible();
+  await expect.poll(() => still.evaluate(img => (img as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  await expect(page.locator('#scene-frame canvas')).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  await expect(page.locator('#scene-frame canvas')).toHaveCount(1);
+
+  const noScriptContext = await browser.newContext({ javaScriptEnabled: false });
+  try {
+    const noScriptPage = await noScriptContext.newPage();
+    await noScriptPage.goto('/');
+    const noScriptStill = noScriptPage.locator('#arrival-still');
+    await expect(noScriptStill).toBeVisible();
+    await expect(noScriptStill).toHaveAttribute('alt', /imagined 632 CE room from the doorway/i);
+    await expect.poll(() => noScriptStill.evaluate(img => (img as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+    await expect(noScriptPage.locator('canvas')).toHaveCount(0);
+  } finally {
+    await noScriptContext.close();
+  }
+});

@@ -271,6 +271,10 @@ export function renderPage(
         <a class="read-link" id="read-link" href="#reading">Read without 3D</a>
       </div>
       <p id="scene-status" role="status" aria-live="polite"></p>
+      <figure class="arrival-still">
+        <img id="arrival-still" src="./stills/632-arrival.webp" width="864" height="487" fetchpriority="high" alt="A gray illustration of the imagined 632 CE room from the doorway: mats sit in an open circle around three cups, and footprints cross the floor.">
+        <figcaption>632 CE · A gray model of an imagined room, not a reconstruction of a documented place.</figcaption>
+      </figure>
     </header>
     <section id="room-view" aria-labelledby="room-title" hidden>
       <h2 id="room-title" tabindex="-1">632 CE · Inside the imagined room</h2>
