@@ -202,7 +202,8 @@ export function renderPage(
   ).join('');
   const moments = data.moments.map(moment => {
     const date = roomDates.find(date => date === moment.id);
-    const sceneNotes = date ? `<details class="things-here">
+    const sceneNotes = date ? `
+      <details class="things-here">
         <summary>${date} scene notes and sources</summary>
         <p class="room-note">${e(changeSets[date].description)}</p>
         <ol>${renderLabels(date)}</ol>
@@ -211,8 +212,7 @@ export function renderPage(
       <p class="lens">Look for what is ${e(moment.lens.toLowerCase())}</p>
       <h3 tabindex="-1">${e(moment.id)} CE — ${e(moment.title)}</h3>
       <p>${e(moment.passage)}</p>
-      <a href="#source-${e(moment.sourceId)}">Historical source</a>
-      ${sceneNotes}
+      <a href="#source-${e(moment.sourceId)}">Historical source</a>${sceneNotes}
     </article>`;
   }).join('');
   const sourceList = records.map(source =>
