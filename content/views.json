@@ -1,0 +1,59 @@
+{
+  "632": {
+    "recordLabelId": "mats-and-cups",
+    "places": {
+      "doorway": "Loose mats curve around three untouched cups. A gap remains at the far head of the room, and faint footprints lead toward the doorway.",
+      "head": "Facing the doorway, you look past the loose mats and cups toward the yard. Faint footprints cross one side of the room toward the threshold.",
+      "pegs": "The wall beside the door is bare. Turn toward the room to find the unfinished mat circle and cups.",
+      "yard": "The doorway frames the loose mats and cups inside. Faint footprints lead across the threshold."
+    }
+  },
+  "661": {
+    "recordLabelId": "facing-seat",
+    "places": {
+      "doorway": "Two short mat rows face a plain seat. A low table holds an invented sealed letter and interpretive coin replica; ordinary bags sit by the door.",
+      "head": "Mat rows lead toward the doorway and the well beyond it. The plain seat is behind this starting view.",
+      "pegs": "Three pegs stand empty against pale outlines. A separate hook holds an imagined waterskin.",
+      "yard": "Through the doorway, two rows of mats face a plain seat. A low table stands beside it."
+    }
+  },
+  "680": {
+    "recordLabelId": "clean-patch",
+    "places": {
+      "doorway": "The mat rows, plain seat, and table remain. A pale floor patch marks where the imagined bags stood in 661.",
+      "head": "The mat rows still lead toward the doorway and well. The seat remains behind this starting view; the missing travel things are near the door.",
+      "pegs": "Three empty pegs and their pale outlines remain. The separate hook is bare; the imagined waterskin from 661 is gone.",
+      "yard": "Through the doorway, the rows, seat, and table remain. A pale floor patch marks the bags' former place. Turn around to see the taller palm."
+    }
+  },
+  "turned": {
+    "doorway": {
+      "left": "You are angled toward the left side of the room.",
+      "right": "You are angled toward the right side of the room.",
+      "back": "You are looking out into the yard, where the palm and well stand.",
+      "up": "You are looking toward the room's roof and beams.",
+      "down": "You are looking toward the room floor."
+    },
+    "head": {
+      "left": "You are angled toward one side wall of the room.",
+      "right": "You are angled toward the other side wall of the room.",
+      "back": "You are looking toward the back wall of the room.",
+      "up": "You are looking toward the room's roof and beams.",
+      "down": "You are looking toward the room floor."
+    },
+    "pegs": {
+      "left": "You are turning away from the peg wall toward the back of the room.",
+      "right": "You are turning from the peg wall toward the doorway and yard.",
+      "back": "You are looking across the room toward its opposite wall.",
+      "up": "You are looking toward the room's roof and beams.",
+      "down": "You are looking toward the room floor."
+    },
+    "yard": {
+      "left": "You are angled toward the yard palm, beside the room.",
+      "right": "You are angled toward the yard well, beside the room.",
+      "back": "You are looking away from the room toward the low yard wall.",
+      "up": "You are looking toward the open sky above the yard.",
+      "down": "You are looking toward the yard ground."
+    }
+  }
+}

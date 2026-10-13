@@ -2,10 +2,12 @@ import * as THREE from 'three/webgpu';
 import { createRenderer } from '../render/renderer';
 import type { RoomDate } from '../schema/changeIds';
 import type { PlaceId } from '../state/places';
+import { viewDirection, type ViewDirection } from '../state/viewDirections';
 import { createRoomWorld } from '../world/room';
 
 export interface RoomView {
   look(direction: 'left' | 'right' | 'up' | 'down' | 'reset'): void;
+  viewDirection(): ViewDirection;
   moveTo(place: PlaceId, animate: boolean, onArrive?: () => void): void;
   skipMovement(): void;
   setDate(date: RoomDate, animate?: boolean, onArrive?: () => void): void;
@@ -45,6 +47,7 @@ export async function createRoomView(
   container: HTMLElement,
   onLost: () => void,
   forceWebGL: boolean,
+  onLookChange?: () => void,
 ): Promise<RoomView> {
   const { renderer, backend } = await createRenderer({ antialias: true, forceWebGL });
   const world = createRoomWorld();
@@ -248,6 +251,7 @@ export async function createRoomView(
     if (direction === 'up') pitch = Math.min(0.5, pitch + 0.12);
     if (direction === 'down') pitch = Math.max(-0.5, pitch - 0.12);
     recordPose();
+    onLookChange?.();
     requestRender();
   }
 
@@ -268,6 +272,7 @@ export async function createRoomView(
     pointer.x = event.clientX;
     pointer.y = event.clientY;
     recordPose();
+    onLookChange?.();
     requestRender();
   }
 
@@ -298,6 +303,7 @@ export async function createRoomView(
 
   return {
     look,
+    viewDirection: () => viewDirection(yaw, pitch, viewpoints[place].yaw),
     moveTo,
     skipMovement: finishMovement,
     skipDateTransition,

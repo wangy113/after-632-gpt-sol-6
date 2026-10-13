@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import experience from '../../content/experience.json' with { type: 'json' };
 import changes from '../../content/changes.json' with { type: 'json' };
+import views from '../../content/views.json' with { type: 'json' };
 import sources from '../../content/sources.json' with { type: 'json' };
 
 test('the room is opt-in and returning to reading releases the canvas', async ({ page }) => {
@@ -599,4 +600,68 @@ test('reduced motion cuts between places and reopening keeps the chosen place', 
   await expect(canvas).toHaveAttribute('data-position', yardPosition!);
   await expect(canvas).toHaveAttribute('data-moving', 'false');
   await expect(room.locator('[data-room-place="yard"]')).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('Describe this view follows the visible date, place, Compare, and look direction', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const details = room.locator('#describe-view');
+  const summary = details.locator('summary');
+  await expect(room.locator('#scene-frame canvas')).toHaveCount(1);
+  await expect(room.locator('#room-title')).toBeFocused();
+  await summary.focus();
+  await page.keyboard.press('Enter');
+  await expect(summary).toBeFocused();
+  await expect(details).toHaveAttribute('open', '');
+  await expect(room.locator('#view-location')).toHaveText('632 CE · Doorway · starting view.');
+  await expect(room.locator('#view-imagined')).toHaveText(views['632'].places.doorway);
+
+  const date680 = room.locator('[data-room-date="680"]');
+  await date680.click();
+  await room.locator('[data-room-place="pegs"]').click();
+  await expect(details).toHaveAttribute('open', '');
+  await expect(room.locator('#view-location')).toHaveText('680 CE · By the pegs · starting view.');
+  await expect(room.locator('#view-imagined')).toHaveText(views['680'].places.pegs);
+  await expect(room.locator('#view-imagined')).toContainText('hook is bare');
+  await expect(room.locator('#view-record-source')).toHaveAttribute('href', '#source-HIST-04');
+
+  const hold = room.locator('#compare-hold');
+  await hold.hover();
+  await page.mouse.down();
+  await expect(room.locator('#view-location')).toHaveText('661 CE · By the pegs · starting view.');
+  await expect(room.locator('#view-imagined')).toHaveText(views['661'].places.pegs);
+  await expect(date680).toHaveAttribute('aria-pressed', 'true');
+  await page.mouse.up();
+  await expect(room.locator('#view-imagined')).toHaveText(views['680'].places.pegs);
+
+  await room.getByRole('button', { name: 'Look right' }).click();
+  await expect(room.locator('#view-location')).toContainText('looking right');
+  await expect(room.locator('#view-imagined')).toHaveText(views.turned.pegs.right);
+  await expect(room.locator('#view-starting')).toBeVisible();
+  await expect(room.locator('#view-starting-text')).toHaveText(views['680'].places.pegs);
+  await room.getByRole('button', { name: 'Reset view' }).click();
+  await expect(room.locator('#view-starting')).toBeHidden();
+  await expect(room.locator('#view-imagined')).toHaveText(views['680'].places.pegs);
+
+  await room.locator('#scene-frame').focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(room.locator('#view-imagined')).toHaveText(views.turned.pegs.left);
+  await room.getByRole('button', { name: 'Reset view' }).click();
+  const bounds = await room.locator('#scene-frame canvas').boundingBox();
+  expect(bounds).not.toBeNull();
+  const x = bounds!.x + bounds!.width / 2;
+  const y = bounds!.y + bounds!.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 100, y);
+  await page.mouse.up();
+  await expect(room.locator('#view-imagined')).toHaveText(views.turned.pegs.right);
+
+  await room.getByRole('button', { name: 'Return to reading' }).click();
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  await expect(details).toHaveAttribute('open', '');
+  await expect(room.locator('#view-location')).toHaveText('680 CE · By the pegs · starting view.');
 });

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import experience from '../../content/experience.json' with { type: 'json' };
 import sources from '../../content/sources.json' with { type: 'json' };
 import changes from '../../content/changes.json' with { type: 'json' };
+import views from '../../content/views.json' with { type: 'json' };
 import objects from '../../content/objects.json' with { type: 'json' };
 import { escapeHtml, renderPage, validateContent } from '../../scripts/content';
 
@@ -106,5 +107,23 @@ describe('the reading page', () => {
     const mismatched = structuredClone(changes);
     mismatched['680'].labels[0].id = 'not-a-scene-object';
     expect(() => validateContent(experience, sources, mismatched, objects)).toThrow('680: labels must match every scene object');
+  });
+
+  it('provides a sourced starting view for every date and standing place', () => {
+    const page = renderPage();
+    for (const date of ['632', '661', '680'] as const) {
+      for (const description of Object.values(views[date].places)) {
+        expect(page).toContain(escapeHtml(description));
+      }
+      expect(page).toContain(`Views from four places · ${date} CE`);
+    }
+
+    const missingPlace = structuredClone(views);
+    missingPlace['680'].places.pegs = ' ';
+    expect(() => validateContent(experience, sources, changes, objects, missingPlace)).toThrow('680: view description missing for pegs');
+
+    const missingRecord = structuredClone(views);
+    missingRecord['661'].recordLabelId = 'missing';
+    expect(() => validateContent(experience, sources, changes, objects, missingRecord)).toThrow('661: view description needs a sourced record label');
   });
 });

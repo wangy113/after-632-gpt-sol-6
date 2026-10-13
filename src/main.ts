@@ -1,7 +1,11 @@
 import type { RoomView } from './scene/createRoomView';
+import changes from '../content/changes.json' with { type: 'json' };
+import views from '../content/views.json' with { type: 'json' };
+import sources from '../content/sources.json' with { type: 'json' };
 import type { RoomDate } from './schema/changeIds';
 import { dateChangeCaption, previousDate } from './state/dates';
 import { PLACE_LABELS, PLACE_ORIENTATIONS, type PlaceId } from './state/places';
+import type { ViewDirection } from './state/viewDirections';
 import { compareAvailable, initialState, isComparing, reduce, visibleDate } from './state/store';
 
 const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
@@ -21,6 +25,12 @@ const sceneFrame = document.querySelector<HTMLElement>('#scene-frame')!;
 const dateCaption = document.querySelector<HTMLElement>('#date-transition-caption')!;
 const roomHelp = document.querySelector<HTMLElement>('#room-help')!;
 const status = document.querySelector<HTMLElement>('#scene-status')!;
+const viewLocation = document.querySelector<HTMLElement>('#view-location')!;
+const viewImagined = document.querySelector<HTMLElement>('#view-imagined')!;
+const viewStarting = document.querySelector<HTMLElement>('#view-starting')!;
+const viewStartingText = document.querySelector<HTMLElement>('#view-starting-text')!;
+const viewRecordText = document.querySelector<HTMLElement>('#view-record-text')!;
+const viewRecordSource = document.querySelector<HTMLAnchorElement>('#view-record-source')!;
 
 let room: RoomView | null = null;
 const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -31,6 +41,32 @@ let buttonKeyHeld = false;
 let loading = false;
 let generation = 0;
 let deadline: ReturnType<typeof setTimeout> | undefined;
+let lastViewDescription = '';
+
+function renderViewDescription(direction: ViewDirection | 'moving' = room?.viewDirection() ?? 'forward') {
+  const date = visibleDate(state);
+  const key = `${date}:${state.place}:${direction}`;
+  if (key === lastViewDescription) return;
+  lastViewDescription = key;
+  const startingText = views[date].places[state.place];
+  const directionLabel: Record<ViewDirection, string> = {
+    forward: 'starting view', left: 'looking left', right: 'looking right',
+    back: 'looking behind the starting view', up: 'looking up', down: 'looking down',
+  };
+  const record = changes[date].labels.find(label => label.id === views[date].recordLabelId)!;
+  const source = sources.find(item => item.id === record.sourceId)!;
+  viewLocation.textContent = direction === 'moving'
+    ? `${date} CE · Moving to ${PLACE_LABELS[state.place]}.`
+    : `${date} CE · ${PLACE_LABELS[state.place]} · ${directionLabel[direction]}.`;
+  viewImagined.textContent = direction === 'moving'
+    ? 'The camera is moving between places. The view description will update when it stops.'
+    : direction === 'forward' ? startingText : views.turned[state.place][direction];
+  viewStarting.hidden = direction === 'forward' || direction === 'moving';
+  viewStartingText.textContent = direction === 'forward' || direction === 'moving' ? '' : startingText;
+  viewRecordText.textContent = record.inRecord;
+  viewRecordSource.href = `#source-${record.sourceId}`;
+  viewRecordSource.textContent = `Source: ${source.author}, ${source.locator}`;
+}
 
 function clearHeldInputs() {
   const pointerId = pointerHoldId;
@@ -48,12 +84,13 @@ function resetCompare() {
   if (state.compareToggled) state = reduce(state, { type: 'toggleCompare' });
 }
 
-function renderRoomPlace() {
+function renderRoomPlace(moving = false) {
   for (const button of placeButtons) {
     button.setAttribute('aria-pressed', String(button.dataset.roomPlace === state.place));
   }
   sceneFrame.setAttribute('aria-label', `Look around from ${PLACE_LABELS[state.place].toLowerCase()}`);
   roomHelp.textContent = `${PLACE_ORIENTATIONS[state.place]} Drag to look around, or focus the view and use the arrow keys.`;
+  renderViewDescription(moving ? 'moving' : undefined);
 }
 
 function renderRoomDate(message?: string, transition?: { token: number; animate: boolean; caption: string }): boolean {
@@ -90,6 +127,7 @@ function renderRoomDate(message?: string, transition?: { token: number; animate:
   status.textContent = message ?? (comparing
     ? `Comparing ${date} CE from the same viewpoint. ${state.date} CE remains selected.`
     : `${date} CE restored at the same viewpoint.`);
+  renderViewDescription();
   return true;
 }
 
@@ -137,9 +175,10 @@ function selectPlace(place: PlaceId) {
   try {
     room.moveTo(place, token !== undefined, () => {
       if (token !== undefined) state = reduce(state, { type: 'finishPlaceTransition', token });
+      renderViewDescription();
     });
   } catch { fail(); return; }
-  renderRoomPlace();
+  renderRoomPlace(token !== undefined);
   const date = visibleDate(state);
   status.textContent = `${PLACE_LABELS[place]} selected. Showing ${date} CE${isComparing(state) ? ` while ${state.date} CE remains selected` : ''}.`;
 }
@@ -187,6 +226,7 @@ async function enter() {
       sceneFrame,
       () => { if (generation === token) fail(); },
       new URLSearchParams(location.search).get('gl') === '1',
+      () => renderViewDescription(),
     );
     if (generation !== token) { created.dispose(); return; }
     clearTimeout(deadline);

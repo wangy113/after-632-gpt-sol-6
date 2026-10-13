@@ -1,9 +1,11 @@
 import experience from '../content/experience.json' with { type: 'json' };
 import sources from '../content/sources.json' with { type: 'json' };
 import changes from '../content/changes.json' with { type: 'json' };
+import views from '../content/views.json' with { type: 'json' };
 import objects from '../content/objects.json' with { type: 'json' };
-import { ABSENT_632_IDS, ADDED_661_IDS, MISSING_680_IDS } from '../src/schema/changeIds';
-import { PLACE_IDS, PLACE_LABELS, PLACE_ORIENTATIONS } from '../src/state/places';
+import { ABSENT_632_IDS, ADDED_661_IDS, MISSING_680_IDS, type RoomDate } from '../src/schema/changeIds';
+import { PLACE_IDS, PLACE_LABELS, PLACE_ORIENTATIONS, type PlaceId } from '../src/state/places';
+import { TURN_DIRECTIONS } from '../src/state/viewDirections';
 
 export interface Moment {
   id: string;
@@ -46,6 +48,11 @@ export interface ChangeSet {
 
 export type Changes = Record<string, ChangeSet>;
 
+export type ViewDescriptions = Record<RoomDate, {
+  recordLabelId: string;
+  places: Record<PlaceId, string>;
+}> & { turned: Record<PlaceId, Record<typeof TURN_DIRECTIONS[number], string>> };
+
 export interface ObjectRecord {
   id: string;
   kind: string;
@@ -76,6 +83,7 @@ export function validateContent(
   records: Source[] = sources,
   changeSets: Changes = changes,
   objectRecords: ObjectRecord[] = objects,
+  viewDescriptions: ViewDescriptions = views,
 ): void {
   if (!data.opening.trim() || !data.setting.trim()) throw new Error('Opening and setting are required');
   if (data.moments.length !== expectedLenses.size) throw new Error('Exactly three moments are required');
@@ -156,6 +164,22 @@ export function validateContent(
       throw new Error(date + ': labels must match every scene object');
     }
   }
+  for (const date of expectedLenses.keys()) {
+    const view = viewDescriptions[date as RoomDate];
+    if (!view || !changeSets[date].labels.some(label => label.id === view.recordLabelId)) {
+      throw new Error(date + ': view description needs a sourced record label');
+    }
+    for (const place of PLACE_IDS) {
+      if (!view.places?.[place]?.trim()) throw new Error(date + ': view description missing for ' + place);
+    }
+  }
+  for (const place of PLACE_IDS) {
+    for (const direction of TURN_DIRECTIONS) {
+      if (!viewDescriptions.turned?.[place]?.[direction]?.trim()) {
+        throw new Error(place + ': turned view description missing for ' + direction);
+      }
+    }
+  }
 }
 
 export function escapeHtml(value: string): string {
@@ -173,11 +197,18 @@ export function renderPage(
   records: Source[] = sources,
   changeSets: Changes = changes,
   objectRecords: ObjectRecord[] = objects,
+  viewDescriptions: ViewDescriptions = views,
 ): string {
-  validateContent(data, records, changeSets, objectRecords);
+  validateContent(data, records, changeSets, objectRecords, viewDescriptions);
   const e = escapeHtml;
   const roomDates = ['632', '661', '680'] as const;
   const sourceById = new Map(records.map(source => [source.id, source]));
+  const viewRecord = (date: RoomDate) => changeSets[date].labels.find(label => label.id === viewDescriptions[date].recordLabelId)!;
+  const renderViewRecord = (date: RoomDate) => {
+    const record = viewRecord(date);
+    const source = sourceById.get(record.sourceId)!;
+    return `<strong>In the record:</strong> ${e(record.inRecord)} <a href="#source-${e(record.sourceId)}">Source: ${e(source.author)}, ${e(source.locator)}</a>`;
+  };
   const renderLabels = (date: typeof roomDates[number]) => changeSets[date].labels.map(label => {
     const source = sourceById.get(label.sourceId)!;
     return `<li data-change-id="${e(label.id)}">
@@ -208,6 +239,12 @@ export function renderPage(
   const moments = data.moments.map(moment => {
     const date = roomDates.find(date => date === moment.id);
     const sceneNotes = date ? `
+      <details class="view-notes">
+        <summary>Views from four places · ${date} CE</summary>
+        <p>These describe the starting direction at each place in the imagined room. You can read them without 3D.</p>
+        <dl>${PLACE_IDS.map(place => `<dt>${e(PLACE_LABELS[place])}</dt><dd>${e(viewDescriptions[date].places[place])}</dd>`).join('')}</dl>
+        <p>${renderViewRecord(date)}</p>
+      </details>
       <details class="things-here">
         <summary>${date} scene notes and sources</summary>
         <p class="room-note">${e(changeSets[date].description)}</p>
@@ -255,6 +292,15 @@ export function renderPage(
         <p id="date-transition-caption" class="date-transition-caption" aria-hidden="true" hidden></p>
       </div>
       <p id="room-help">${e(PLACE_ORIENTATIONS.doorway)} Drag to look around, or focus the view and use the arrow keys.</p>
+      <details id="describe-view" class="describe-view">
+        <summary>Describe this view</summary>
+        <div id="view-description" aria-live="polite" aria-atomic="true">
+          <p id="view-location">632 CE · Doorway · starting view.</p>
+          <p><strong>In this imagined view:</strong> <span id="view-imagined">${e(viewDescriptions['632'].places.doorway)}</span></p>
+          <p id="view-starting" hidden><strong>At the starting direction:</strong> <span id="view-starting-text"></span> Use Reset view to face it.</p>
+          <p id="view-history"><strong>In the record:</strong> <span id="view-record-text">${e(viewRecord('632').inRecord)}</span> <a id="view-record-source" href="#source-${e(viewRecord('632').sourceId)}">Source: ${e(sourceById.get(viewRecord('632').sourceId)!.author)}, ${e(sourceById.get(viewRecord('632').sourceId)!.locator)}</a></p>
+        </div>
+      </details>
       <div class="look-controls" role="group" aria-label="View controls">
         <button type="button" data-look="left">Look left</button>
         <button type="button" data-look="right">Look right</button>

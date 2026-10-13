@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import experience from '../../content/experience.json' with { type: 'json' };
 import changes from '../../content/changes.json' with { type: 'json' };
+import views from '../../content/views.json' with { type: 'json' };
 
 test('all historical text is available without JavaScript or 3D', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
@@ -17,6 +18,13 @@ test('all historical text is available without JavaScript or 3D', async ({ brows
   await expect(page.getByRole('button', { name: 'Enter the room' })).toBeHidden();
 
   for (const date of ['632', '661', '680'] as const) {
+    const viewNotes = page.locator(`#moment-${date} details.view-notes`);
+    await viewNotes.locator('summary').click();
+    for (const description of Object.values(views[date].places)) {
+      await expect(viewNotes).toContainText(description);
+    }
+    await expect(viewNotes.getByRole('link')).toHaveAttribute('href', `#source-${changes[date].labels.find(label => label.id === views[date].recordLabelId)!.sourceId}`);
+
     const sceneNotes = page.locator(`#moment-${date} details.things-here`);
     await sceneNotes.locator('summary').click();
     await expect(sceneNotes).toContainText(changes[date].description);

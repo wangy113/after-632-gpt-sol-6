@@ -47,3 +47,9 @@
 - A selected-date change captures the outgoing and incoming room at one camera pose, then blends those two images for 0.8 seconds in the existing canvas. The date, lens, and notes update immediately; a short caption such as “29 years later” accompanies the visual change.
 - Compare, reduced motion, a new place or look direction, resize, and leaving the room end the dissolve immediately. A rapid second date choice cuts to the newest date. The same renderer and world remain in use, and idle frames stop once the view settles.
 - The [632-to-661 gray-box blend](phase0/661-dissolve-graybox.png) shows both dated arrangements from the yard during the transition. This verifies the WebGL2 fallback visually; WebGPU hardware and mobile devices still need manual checks.
+
+## Describe this view · 2026-10-13
+
+- `content/views.json` holds a scene description for the starting camera direction at each of the 12 date and place combinations. Each date selects a validated label from `content/changes.json` for a separate “In the record” sentence and source link. The new text does not treat the invented room as historical evidence.
+- The room uses a native disclosure. While it is open, date, place, Compare, and camera turns update its text. A turned camera gets a broad description of its current direction; the dated starting-view detail is labeled separately with Reset view instructions. A moving camera gets a temporary movement description until it arrives.
+- The 12 starting-view descriptions and their record links also appear under the passages without JavaScript. Keyboard behavior and the resulting document structure were checked in Chromium; a manual screen-reader review remains open.
