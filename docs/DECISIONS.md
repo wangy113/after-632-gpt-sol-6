@@ -41,3 +41,9 @@
 - Camera moves take 0.8 seconds and use the doorway opening as a waypoint between the room and yard. A new selection replaces an unfinished move. Reduced motion cuts to the chosen position, and closing the room cancels the move and releases the canvas.
 - Each place allows one bounded turn in either direction and limits vertical looking. Reset view faces that place's default direction. The selected place and orientation are described beside the view for keyboard and screen-reader use.
 - The [head](phase0/680-head-graybox.png), [pegs](phase0/680-pegs-graybox.png), and [yard](phase0/680-yard-graybox.png) gray-box captures record their 680 compositions. These do not settle the planned material, lighting, mobile, or screen-reader checks.
+
+## Date cross-dissolve · 2026-10-13
+
+- A selected-date change captures the outgoing and incoming room at one camera pose, then blends those two images for 0.8 seconds in the existing canvas. The date, lens, and notes update immediately; a short caption such as “29 years later” accompanies the visual change.
+- Compare, reduced motion, a new place or look direction, resize, and leaving the room end the dissolve immediately. A rapid second date choice cuts to the newest date. The same renderer and world remain in use, and idle frames stop once the view settles.
+- The [632-to-661 gray-box blend](phase0/661-dissolve-graybox.png) shows both dated arrangements from the yard during the transition. This verifies the WebGL2 fallback visually; WebGPU hardware and mobile devices still need manual checks.

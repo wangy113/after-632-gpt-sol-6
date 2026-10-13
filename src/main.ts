@@ -18,6 +18,7 @@ const compareHelp = document.querySelector<HTMLElement>('#compare-help')!;
 const roomPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-room-panel]'));
 const readingTitle = document.querySelector<HTMLElement>('#reading-title')!;
 const sceneFrame = document.querySelector<HTMLElement>('#scene-frame')!;
+const dateCaption = document.querySelector<HTMLElement>('#date-transition-caption')!;
 const roomHelp = document.querySelector<HTMLElement>('#room-help')!;
 const status = document.querySelector<HTMLElement>('#scene-status')!;
 
@@ -55,9 +56,17 @@ function renderRoomPlace() {
   roomHelp.textContent = `${PLACE_ORIENTATIONS[state.place]} Drag to look around, or focus the view and use the arrow keys.`;
 }
 
-function renderRoomDate(message?: string): boolean {
+function renderRoomDate(message?: string, transition?: { token: number; animate: boolean; caption: string }): boolean {
   const date = visibleDate(state);
-  try { room?.setDate(date); } catch { fail(); return false; }
+  dateCaption.textContent = transition?.animate ? `${transition.caption}.` : '';
+  dateCaption.hidden = !transition?.animate;
+  const token = transition?.token ?? state.dateTransition?.token;
+  try {
+    room?.setDate(date, transition?.animate ?? false, () => {
+      if (token !== undefined) state = reduce(state, { type: 'finishDateTransition', token });
+      dateCaption.hidden = true;
+    });
+  } catch { fail(); return false; }
   const comparing = isComparing(state);
   roomTitle.textContent = comparing
     ? `${date} CE · Comparing with ${state.date} CE`
@@ -93,6 +102,7 @@ function closeRoom(message = '') {
   room = null;
   resetCompare();
   state = reduce(state, { type: 'skipMovement' });
+  dateCaption.hidden = true;
   try { currentRoom?.dispose(); } catch { sceneFrame.replaceChildren(); }
   roomSection.hidden = true;
   enterButton.setAttribute('aria-expanded', 'false');
@@ -104,12 +114,18 @@ function closeRoom(message = '') {
 function selectDate(date: RoomDate) {
   if (date === state.date && !isComparing(state)) return;
   const previous = state.date;
+  const wasComparing = isComparing(state);
   resetCompare();
   state = reduce(state, { type: 'selectDate', date });
   const message = date === previous
     ? `${date} CE restored at the same viewpoint.`
     : `${date} room view open. ${dateChangeCaption(previous, date)}. The viewpoint stayed the same.`;
-  renderRoomDate(message);
+  const token = state.dateTransition?.token;
+  renderRoomDate(message, token === undefined ? undefined : {
+    token,
+    animate: !wasComparing,
+    caption: dateChangeCaption(previous, date) ?? '',
+  });
 }
 
 function selectPlace(place: PlaceId) {
@@ -220,7 +236,10 @@ for (const button of placeButtons) {
 }
 motionQuery.addEventListener('change', () => {
   state = reduce(state, { type: 'setReducedMotion', reduced: motionQuery.matches });
-  if (motionQuery.matches) room?.skipMovement();
+  if (motionQuery.matches) {
+    room?.skipMovement();
+    room?.skipDateTransition();
+  }
 });
 compareHold.addEventListener('pointerdown', event => {
   if (!room || !compareAvailable(state) || !event.isPrimary || event.button !== 0 || pointerHoldId !== null) return;

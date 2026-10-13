@@ -46,9 +46,11 @@ button:disabled { cursor: wait; opacity: .65; }
 .read-link { display: inline-block; padding: .7rem 1rem; border: 2px solid currentColor; font-weight: 700; }
 #scene-status:empty { display: none; }
 #room-view { padding-block: 2rem; }
+.scene-shell { position: relative; }
 .scene-frame { width: 100%; aspect-ratio: 16 / 9; background: #d5d2c7; overflow: hidden; touch-action: none; }
 .scene-frame canvas { display: block; width: 100%; height: 100%; cursor: grab; }
 .scene-frame canvas:active { cursor: grabbing; }
+.date-transition-caption { position: absolute; bottom: 1rem; left: 1rem; max-width: calc(100% - 2rem); margin: 0; padding: .35rem .65rem; background: #f7f5ee; color: #244b50; font-weight: 700; pointer-events: none; }
 .room-note { color: #575c50; }
 [data-read-room-date] { margin-block: .5rem; }
 .look-controls { margin-block: 1rem; }

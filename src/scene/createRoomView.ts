@@ -8,7 +8,8 @@ export interface RoomView {
   look(direction: 'left' | 'right' | 'up' | 'down' | 'reset'): void;
   moveTo(place: PlaceId, animate: boolean, onArrive?: () => void): void;
   skipMovement(): void;
-  setDate(date: RoomDate): void;
+  setDate(date: RoomDate, animate?: boolean, onArrive?: () => void): void;
+  skipDateTransition(): void;
   dispose(): void;
 }
 
@@ -19,6 +20,7 @@ const viewpoints: Record<PlaceId, { position: [number, number, number]; yaw: num
   yard: { position: [0, 1.6, 4.4], yaw: 0, pitch: -0.12 },
 };
 const moveDuration = 800;
+const dateDuration = 800;
 
 interface Movement {
   points: THREE.Vector3[];
@@ -29,6 +31,11 @@ interface Movement {
   targetYaw: number;
   fromPitch: number;
   toPitch: number;
+  startedAt: number | null;
+  onArrive?: () => void;
+}
+
+interface DateTransition {
   startedAt: number | null;
   onArrive?: () => void;
 }
@@ -47,12 +54,25 @@ export async function createRoomView(
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.AgXToneMapping;
 
+  // Both dates are captured at one camera pose, then blended in screen space.
+  const outgoingTarget = new THREE.RenderTarget(1, 1, { depthBuffer: true });
+  const incomingTarget = new THREE.RenderTarget(1, 1, { depthBuffer: true });
+  const dateMix = THREE.TSL.uniform(0);
+  const dissolveMaterial = new THREE.MeshBasicNodeMaterial({ depthTest: false, depthWrite: false });
+  dissolveMaterial.colorNode = THREE.TSL.mix(
+    THREE.TSL.texture(outgoingTarget.texture),
+    THREE.TSL.texture(incomingTarget.texture),
+    dateMix,
+  );
+  const dissolveQuad = new THREE.QuadMesh(dissolveMaterial);
+
   const canvas = renderer.domElement;
   canvas.setAttribute('aria-hidden', 'true');
   canvas.dataset.backend = backend;
   canvas.dataset.date = '632';
   canvas.dataset.place = 'doorway';
   canvas.dataset.moving = 'false';
+  canvas.dataset.dateTransition = 'false';
   container.append(canvas);
   let disposed = false;
   let place: PlaceId = 'doorway';
@@ -61,12 +81,32 @@ export async function createRoomView(
   let frame = 0;
   let raf = 0;
   let movement: Movement | null = null;
+  let currentDate: RoomDate = '632';
+  let dateTransition: DateTransition | null = null;
   let pointer: { id: number; x: number; y: number } | null = null;
   renderer.onDeviceLost = () => { if (!disposed) onLost(); };
 
   function recordPose() {
     canvas.dataset.yaw = yaw.toFixed(3);
     canvas.dataset.position = camera.position.toArray().map(value => value.toFixed(3)).join(',');
+  }
+
+  function aimCamera() {
+    const direction = new THREE.Vector3(
+      Math.sin(yaw) * Math.cos(pitch),
+      Math.sin(pitch),
+      -Math.cos(yaw) * Math.cos(pitch),
+    );
+    camera.lookAt(camera.position.clone().add(direction));
+  }
+
+  function skipDateTransition() {
+    if (!dateTransition) return;
+    const active = dateTransition;
+    dateTransition = null;
+    canvas.dataset.dateTransition = 'false';
+    active.onArrive?.();
+    requestRender();
   }
 
   function requestRender() {
@@ -95,14 +135,24 @@ export async function createRoomView(
           active.onArrive?.();
         }
       }
-      const direction = new THREE.Vector3(
-        Math.sin(yaw) * Math.cos(pitch),
-        Math.sin(pitch),
-        -Math.cos(yaw) * Math.cos(pitch),
-      );
-      camera.lookAt(camera.position.clone().add(direction));
+      aimCamera();
       try {
-        renderer.render(world.scene, camera);
+        if (dateTransition) {
+          const active = dateTransition;
+          active.startedAt ??= now;
+          const progress = Math.min(1, (now - active.startedAt) / dateDuration);
+          if (progress === 1) {
+            dateTransition = null;
+            canvas.dataset.dateTransition = 'false';
+            renderer.render(world.scene, camera);
+            active.onArrive?.();
+          } else {
+            dateMix.value = progress;
+            dissolveQuad.render(renderer);
+          }
+        } else {
+          renderer.render(world.scene, camera);
+        }
       } catch {
         onLost();
         return;
@@ -110,7 +160,7 @@ export async function createRoomView(
       if (disposed) return;
       canvas.dataset.frames = String(++frame);
       recordPose();
-      if (movement) requestRender();
+      if (movement || dateTransition) requestRender();
     });
   }
 
@@ -129,6 +179,7 @@ export async function createRoomView(
 
   function moveTo(nextPlace: PlaceId, animate: boolean, onArrive?: () => void) {
     if (disposed) return;
+    skipDateTransition();
     const target = viewpoints[nextPlace];
     place = nextPlace;
     canvas.dataset.place = nextPlace;
@@ -177,13 +228,18 @@ export async function createRoomView(
     if (disposed) return;
     const { width, height } = container.getBoundingClientRect();
     if (!width || !height) return;
+    skipDateTransition();
     renderer.setSize(width, height, false);
+    const drawingSize = renderer.getDrawingBufferSize(new THREE.Vector2());
+    outgoingTarget.setSize(drawingSize.x, drawingSize.y);
+    incomingTarget.setSize(drawingSize.x, drawingSize.y);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     requestRender();
   }
 
   function look(direction: 'left' | 'right' | 'up' | 'down' | 'reset') {
+    skipDateTransition();
     finishMovement();
     const center = viewpoints[place].yaw;
     if (direction === 'reset') { yaw = center; pitch = viewpoints[place].pitch; }
@@ -191,6 +247,7 @@ export async function createRoomView(
     if (direction === 'right') yaw = Math.min(center + Math.PI, yaw + 0.22);
     if (direction === 'up') pitch = Math.min(0.5, pitch + 0.12);
     if (direction === 'down') pitch = Math.max(-0.5, pitch - 0.12);
+    recordPose();
     requestRender();
   }
 
@@ -203,12 +260,14 @@ export async function createRoomView(
 
   function pointerMove(event: PointerEvent) {
     if (!pointer || pointer.id !== event.pointerId) return;
+    skipDateTransition();
     finishMovement();
     const center = viewpoints[place].yaw;
     yaw = THREE.MathUtils.clamp(yaw + (event.clientX - pointer.x) * 0.004, center - Math.PI, center + Math.PI);
     pitch = THREE.MathUtils.clamp(pitch - (event.clientY - pointer.y) * 0.004, -0.5, 0.5);
     pointer.x = event.clientX;
     pointer.y = event.clientY;
+    recordPose();
     requestRender();
   }
 
@@ -223,7 +282,7 @@ export async function createRoomView(
     look(direction);
   }
   function visibility() {
-    if (document.hidden) finishMovement();
+    if (document.hidden) { finishMovement(); skipDateTransition(); }
     else requestRender();
   }
 
@@ -241,9 +300,29 @@ export async function createRoomView(
     look,
     moveTo,
     skipMovement: finishMovement,
-    setDate(date) {
+    skipDateTransition,
+    setDate(date, animate = false, onArrive) {
       if (disposed) return;
-      world.setDate(date);
+      const interrupted = dateTransition !== null;
+      dateTransition = null;
+      canvas.dataset.dateTransition = 'false';
+      if (animate && !interrupted && date !== currentDate && !document.hidden && canvas.width > 1 && canvas.height > 1) {
+        finishMovement();
+        aimCamera();
+        renderer.setRenderTarget(outgoingTarget);
+        try { renderer.render(world.scene, camera); }
+        finally { renderer.setRenderTarget(null); }
+        world.setDate(date);
+        renderer.setRenderTarget(incomingTarget);
+        try { renderer.render(world.scene, camera); }
+        finally { renderer.setRenderTarget(null); }
+        dateTransition = { startedAt: null, onArrive };
+        canvas.dataset.dateTransition = 'true';
+      } else {
+        world.setDate(date);
+        onArrive?.();
+      }
+      currentDate = date;
       canvas.dataset.date = date;
       requestRender();
     },
@@ -251,6 +330,7 @@ export async function createRoomView(
       if (disposed) return;
       disposed = true;
       movement = null;
+      dateTransition = null;
       cancelAnimationFrame(raf);
       observer.disconnect();
       document.removeEventListener('visibilitychange', visibility);
@@ -260,6 +340,9 @@ export async function createRoomView(
       canvas.removeEventListener('pointerup', pointerUp);
       canvas.removeEventListener('pointercancel', pointerUp);
       world.dispose();
+      outgoingTarget.dispose();
+      incomingTarget.dispose();
+      dissolveMaterial.dispose();
       try { renderer.dispose(); } finally { canvas.remove(); }
     },
   };

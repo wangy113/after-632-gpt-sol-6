@@ -218,6 +218,121 @@ test('680 keeps the viewpoint and explains its missing traces with sourced label
   await expect(page.getByText(experience.moments[2].passage, { exact: true })).toBeVisible();
 });
 
+test('a date change dissolves at the same viewpoint on one canvas', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  await room.locator('[data-room-place="pegs"]').click();
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  await room.getByRole('button', { name: 'Look right' }).click();
+  const position = await canvas.getAttribute('data-position');
+  const yaw = await canvas.getAttribute('data-yaw');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+
+  await room.locator('[data-room-date="661"]').click();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'true');
+  await expect(room.locator('#date-transition-caption')).toHaveText('29 years later.');
+  await expect(room.locator('#date-transition-caption')).toBeVisible();
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute('data-position', position!);
+  await expect(canvas).toHaveAttribute('data-yaw', yaw!);
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false', { timeout: 3_000 });
+  await expect(room.locator('#date-transition-caption')).toBeHidden();
+  await expect(canvas).toHaveAttribute('data-position', position!);
+  await expect(canvas).toHaveAttribute('data-yaw', yaw!);
+
+  const movingToYard = await page.evaluate(() => {
+    document.querySelector<HTMLButtonElement>('[data-room-place="yard"]')!.click();
+    document.querySelector<HTMLButtonElement>('[data-room-date="680"]')!.click();
+    const canvas = document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!;
+    return { moving: canvas.dataset.moving, dateTransition: canvas.dataset.dateTransition, position: canvas.dataset.position };
+  });
+  expect(movingToYard.moving).toBe('false');
+  expect(movingToYard.dateTransition).toBe('true');
+  expect(Number(movingToYard.position?.split(',')[2])).toBeGreaterThan(0);
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false', { timeout: 3_000 });
+  await expect(canvas).toHaveAttribute('data-position', movingToYard.position!);
+});
+
+test('reduced motion cuts date changes and stops a dissolve already in progress', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  await room.locator('[data-room-date="661"]').click();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await room.locator('[data-room-date="680"]').click();
+  await expect(canvas).toHaveAttribute('data-date-transition', 'true');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+  await expect(canvas).toHaveAttribute('data-date', '680');
+});
+
+test('Compare cancels a dissolve and always swaps dates instantly', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  const position = await canvas.getAttribute('data-position');
+  await room.locator('[data-room-date="661"]').click();
+  await expect(canvas).toHaveAttribute('data-date-transition', 'true');
+  await page.evaluate(() => document.querySelector<HTMLButtonElement>('#compare-toggle')!.click());
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+  await expect(room.locator('[data-room-date="661"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(canvas).toHaveAttribute('data-position', position!);
+
+  await page.evaluate(() => document.querySelector<HTMLButtonElement>('#compare-toggle')!.click());
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+  await page.evaluate(() => document.querySelector<HTMLButtonElement>('#compare-toggle')!.click());
+  await page.evaluate(() => document.querySelector<HTMLButtonElement>('[data-room-date="680"]')!.click());
+  await expect(canvas).toHaveAttribute('data-date', '680');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+  await expect(room.locator('#compare-toggle')).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('rapid date choices end on the newest date and leaving during a dissolve cleans up', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  await expect(canvas).toHaveCount(1);
+  const transition = await page.evaluate(() => {
+    document.querySelector<HTMLButtonElement>('[data-room-date="661"]')!.click();
+    document.querySelector<HTMLButtonElement>('[data-room-date="680"]')!.click();
+    return document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!.dataset.dateTransition;
+  });
+  expect(transition).toBe('false');
+  await expect(canvas).toHaveAttribute('data-date', '680');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false', { timeout: 3_000 });
+  await expect(room.locator('#room-title')).toHaveText('680 CE · Inside the imagined room');
+  await expect(canvas).toHaveCount(1);
+
+  const interrupted = await page.evaluate(() => {
+    document.querySelector<HTMLButtonElement>('[data-room-date="632"]')!.click();
+    const active = document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!.dataset.dateTransition;
+    document.querySelector<HTMLButtonElement>('#return-reading')!.click();
+    return active;
+  });
+  expect(interrupted).toBe('true');
+  await expect(canvas).toHaveCount(0);
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+});
+
 test('680 Compare previews 661 without changing the selected date or viewpoint', async ({ page }) => {
   await page.goto('/?gl=1');
   await page.getByRole('button', { name: 'Enter the room' }).click();

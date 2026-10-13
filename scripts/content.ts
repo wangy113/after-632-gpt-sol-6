@@ -250,7 +250,10 @@ export function renderPage(
       <div class="room-places" role="group" aria-label="Place to stand">
         ${roomPlaceButtons}
       </div>
-      <div id="scene-frame" class="scene-frame" role="group" tabindex="0" aria-label="Look around the imagined room" aria-describedby="room-description-632 room-help"></div>
+      <div class="scene-shell">
+        <div id="scene-frame" class="scene-frame" role="group" tabindex="0" aria-label="Look around the imagined room" aria-describedby="room-description-632 room-help"></div>
+        <p id="date-transition-caption" class="date-transition-caption" aria-hidden="true" hidden></p>
+      </div>
       <p id="room-help">${e(PLACE_ORIENTATIONS.doorway)} Drag to look around, or focus the view and use the arrow keys.</p>
       <div class="look-controls" role="group" aria-label="View controls">
         <button type="button" data-look="left">Look left</button>
