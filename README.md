@@ -20,6 +20,7 @@ npm run dev
 ```
 
 The six pinned Poly Haven JPGs are committed under `public/assets/polyhaven/`. Run `npm run fetch:assets` to re-fetch missing files or verify existing copies against the sizes and MD5 hashes in `assets.config.json`; this command requires `curl`.
+Run `npm run check:assets` to build and verify the committed and built textures against their pinned records, confirm the recorded CC0 source, and check the full built visit against the 15 MB budget. This check works offline and does not change the source assets.
 
 For the production build and checks:
 
