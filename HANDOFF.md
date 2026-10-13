@@ -2,22 +2,23 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` still contains the retired site.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Arrival still” is the current completed chunk; wait for approval before starting another.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Gray-box review packet” is the current completed chunk; wait for approval before starting another.
 
 ## Verified checkpoint · 2026-10-13
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; last feature commit `03ab8ff` (Arrival still) |
-| Public preview branch | `gh-pages`; published commit `f655a72` |
-| GitHub Pages | Build for `f655a72` reported `built`; the live WebP loaded before any canvas, then the 632 WebGL2 room opened with no page errors |
-| Checks at this checkpoint | `npm test`: 17 passed; `npm run build`: passed; `npm run e2e`: 20 passed; focused 3-test rerun passed after moving the entry controls |
+| Implementation branch | `codex/phase0-scaffold`; last chunk commit `04df9f1` (review packet) |
+| Public preview branch | `gh-pages`; still at `f655a72` (Arrival still) |
+| GitHub Pages | Build for `f655a72` reported `built`; no site files changed in this documentation chunk |
+| Checks at this checkpoint | Packet links resolve to existing files and `git diff --check` passed; last app checkpoint: 17 unit tests, build, 20 browser tests passed |
 | Working tree before this handoff update | Clean |
 
-The user's continue request authorized the Arrival still chunk, and it has been committed and published. This handoff commit follows `03ab8ff` on the implementation branch; the table names the last feature commit. `main` and `gh-pages` do not carry the source work. The public site serves only the built files, so this handoff is available on the source branch in GitHub, not on the site.
+The user's “Go ahead” authorized preparation of the review packet. No participant sessions or results have been recorded. This handoff commit follows `04df9f1` on the implementation branch. `main` and `gh-pages` do not carry the source work. The public site serves only the built files, so the packet and this handoff are available on the source branch in GitHub, not on the site.
 
 ## What works now
 
+- The [gray-box review packet](docs/phase0/GRAYBOX_REVIEW_PACKET.md) gives a neutral image-only sequence, a separate reading-context pass, and a response sheet for 3 to 5 participants. It uses the three same-view doorway captures and names details that cannot be judged from those captures. The study still needs real participants; the packet contains no findings.
 - The arrival page loads a 632 doorway WebP still before any 3D. Its alt text and caption identify the gray model as imagined. The Enter and Read controls stay above the image, and the image remains available without JavaScript. `npm run capture:arrival` regenerates `public/stills/632-arrival.webp` from the room in Chromium; the current image is 864 × 487 pixels and 3,964 bytes.
 - An opt-in WebGPU room with a WebGL2 fallback and a readable, source-linked page that works without JavaScript or 3D.
 - One stable room and yard across 632, 661, and 680 CE. Date changes keep the camera in its selected place. The three change sets have matching “In this room” and “In the record” labels; [build decisions](docs/DECISIONS.md) record historical limits and [gray-box captures](docs/phase0/) show each dated view.
@@ -29,9 +30,11 @@ The user's continue request authorized the Arrival still chunk, and it has been 
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent toggle. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: gray-box review packet
+## Next proposed chunk: first CC0 asset records
 
-Pending user approval, prepare a short neutral review packet for the plan's Phase 0 pedagogy check. Use the existing dated gray-box captures to ask 3 to 5 students or colleagues what changed at each date and what they think it means, without supplying the interpretation first. Include a response template in `docs/phase0/`; do not claim the participant test has been run. Keep this as one small documentation chunk, commit it to the source branch, and stop for the user to review or run the study.
+Pending user approval, verify and pin one wall and one floor texture candidate from the Poly Haven IDs in the plan, recording their source URLs, CC0 license, and chosen resolution in a small `assets.config.json`. Keep this as source and license groundwork while the user arranges the gray-box review. Do not change the rendered room or claim the pedagogy test is complete. Commit the one small chunk and stop for review.
+
+When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
 ## Where to work
 
@@ -67,7 +70,7 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
 npm run build
 ```
 
-The “Arrival still” checkpoint passed 17 unit tests and 20 browser tests. The new browser check confirms the image loads before Enter and without JavaScript; a focused rerun passed after moving the entry controls above the image. Desktop and phone layouts were inspected. Turned-view descriptions stay broad; detailed date-specific prose describes each place's starting direction and is labeled as such. A manual screen-reader check is still needed. Playwright serves the built page on `127.0.0.1:4173`; `/usr/bin/chromium` is the installed browser in this workspace. Elsewhere, install Chromium with `npx playwright install chromium` and adjust or omit the path override. The build output is `dist/` and is ignored by Git.
+This documentation chunk checked the packet's relative image and plan links and passed `git diff --check`; app tests were not rerun. The previous “Arrival still” checkpoint passed 17 unit tests and 20 browser tests. Its new browser check confirms the image loads before Enter and without JavaScript; a focused rerun passed after moving the entry controls above the image. Desktop and phone layouts were inspected. Turned-view descriptions stay broad; detailed date-specific prose describes each place's starting direction and is labeled as such. A manual screen-reader check is still needed. Playwright serves the built page on `127.0.0.1:4173`; `/usr/bin/chromium` is the installed browser in this workspace. Elsewhere, install Chromium with `npx playwright install chromium` and adjust or omit the path override. The build output is `dist/` and is ignored by Git.
 
 ## Publish the preview
 
