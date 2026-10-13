@@ -93,10 +93,30 @@ export function renderPage(data: Experience = experience, records: Source[] = so
       <h1>After 632</h1>
       <p class="opening">${e(data.opening)}</p>
       <p class="setting">${e(data.setting)}</p>
-      <a class="read-link" href="#reading">Read without 3D</a>
+      <div class="entry-actions">
+        <button type="button" id="enter-room" aria-controls="room-view" hidden>Enter the room</button>
+        <a class="read-link" id="read-link" href="#reading">Read without 3D</a>
+      </div>
+      <p id="scene-status" role="status" aria-live="polite"></p>
     </header>
+    <section id="room-view" aria-labelledby="room-title" hidden>
+      <h2 id="room-title" tabindex="-1">Inside the imagined room</h2>
+      <p class="setting">${e(data.setting)}</p>
+      <div id="scene-frame" class="scene-frame" role="group" tabindex="0" aria-label="Look around the imagined room" aria-describedby="room-description room-help"></div>
+      <p id="room-description" class="room-note">A bare room with roof beams opens through a wide doorway. Turn around to see a small yard with a low wall, well, and palm. This study view has no dated objects yet.</p>
+      <p id="room-help">Drag to look around, or focus the view and use the arrow keys.</p>
+      <div class="look-controls" role="group" aria-label="View controls">
+        <button type="button" data-look="left">Look left</button>
+        <button type="button" data-look="right">Look right</button>
+        <button type="button" data-look="up">Look up</button>
+        <button type="button" data-look="down">Look down</button>
+        <button type="button" data-look="reset">Reset view</button>
+        <button type="button" id="return-reading">Return to reading</button>
+      </div>
+      <p class="room-note">This room and yard are illustrative, not a reconstruction of a documented place.</p>
+    </section>
     <section id="reading" aria-labelledby="reading-title">
-      <h2 id="reading-title">Three moments in one history</h2>
+      <h2 id="reading-title" tabindex="-1">Three moments in one history</h2>
       <p>${e(data.shared.text)} <a href="#source-${e(data.shared.sourceId)}">Historical source</a></p>
       <nav class="date-nav" aria-label="Choose a date">${navigation}</nav>
       ${moments}

@@ -6,6 +6,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 body { margin: 0; }
 a { color: #244b50; }
@@ -20,7 +21,27 @@ h3 { font-size: 1.3rem; margin: .5rem 0 1rem; }
 p { max-width: 70ch; }
 .setting { font-weight: 700; }
 .intro { padding-bottom: 2rem; border-bottom: 1px solid #b7b4a8; }
+.entry-actions, .look-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.entry-actions { margin-top: 1.5rem; }
+.entry-actions button, .look-controls button {
+  border: 2px solid #244b50;
+  background: #244b50;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  padding: .65rem .9rem;
+  cursor: pointer;
+}
+.entry-actions button:hover, .look-controls button:hover { background: #102e32; }
+button:focus-visible, .scene-frame:focus-visible { outline: 3px solid #ad552f; outline-offset: 4px; }
+button:disabled { cursor: wait; opacity: .65; }
 .read-link { display: inline-block; padding: .7rem 1rem; border: 2px solid currentColor; font-weight: 700; }
+#scene-status:empty { display: none; }
+#room-view { padding-block: 2rem; }
+.scene-frame { width: 100%; aspect-ratio: 16 / 9; background: #d5d2c7; overflow: hidden; touch-action: none; }
+.scene-frame canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+.scene-frame canvas:active { cursor: grabbing; }
+.room-note { color: #575c50; }
 .date-nav { display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem 0; }
 .moment { padding: 1.5rem 0; border-top: 1px solid #b7b4a8; }
 .lens { color: #575c50; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }

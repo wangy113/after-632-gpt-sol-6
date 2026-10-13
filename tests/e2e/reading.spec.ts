@@ -7,7 +7,7 @@ test('all historical text is available without JavaScript or 3D', async ({ brows
   await page.goto('/');
 
   await expect(page.getByRole('heading', { name: 'After 632' })).toBeVisible();
-  await expect(page.getByText(experience.setting, { exact: true })).toBeVisible();
+  await expect(page.locator('.intro .setting')).toHaveText(experience.setting);
   await page.getByRole('link', { name: 'Read without 3D' }).click();
   await expect(page.getByText(experience.shared.text, { exact: false })).toBeVisible();
   for (const moment of experience.moments) {
