@@ -1,4 +1,6 @@
 import * as THREE from 'three/webgpu';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
+import assetConfig from '../../assets.config.json' with { type: 'json' };
 import { createRenderer } from '../render/renderer';
 import type { RoomDate } from '../schema/changeIds';
 import type { PlaceId } from '../state/places';
@@ -50,16 +52,31 @@ export async function createRoomView(
   forceWebGL: boolean,
   onLookChange?: () => void,
 ): Promise<RoomView> {
+  const skyId = new URLSearchParams(location.search).get('sky');
+  const skyRecord = skyId ? assetConfig.skies.find(record => record.id === skyId) : undefined;
+  if (skyId && !skyRecord) throw new Error(`Unknown sky candidate: ${skyId}`);
   const textures = await loadRoomTextures();
+  let sky: THREE.DataTexture | undefined;
+  try {
+    if (skyRecord) {
+      const filename = skyRecord.file.url.slice(skyRecord.file.url.lastIndexOf('/') + 1);
+      sky = await new HDRLoader().loadAsync(`${import.meta.env.BASE_URL}assets/polyhaven/sky/${filename}`);
+      sky.mapping = THREE.EquirectangularReflectionMapping;
+    }
+  } catch (error) {
+    textures.dispose();
+    throw error;
+  }
   let rendered;
   try {
     rendered = await createRenderer({ antialias: true, forceWebGL });
   } catch (error) {
     textures.dispose();
+    sky?.dispose();
     throw error;
   }
   const { renderer, backend } = rendered;
-  const world = createRoomWorld(textures);
+  const world = createRoomWorld(textures, sky);
   const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 100);
   camera.position.set(...viewpoints.doorway.position);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
@@ -81,6 +98,7 @@ export async function createRoomView(
   const canvas = renderer.domElement;
   canvas.setAttribute('aria-hidden', 'true');
   canvas.dataset.backend = backend;
+  canvas.dataset.sky = skyRecord?.id ?? 'prototype';
   canvas.dataset.date = '632';
   canvas.dataset.place = 'doorway';
   canvas.dataset.moving = 'false';
@@ -100,6 +118,7 @@ export async function createRoomView(
 
   function recordPose() {
     canvas.dataset.yaw = yaw.toFixed(3);
+    canvas.dataset.pitch = pitch.toFixed(3);
     canvas.dataset.position = camera.position.toArray().map(value => value.toFixed(3)).join(',');
   }
 

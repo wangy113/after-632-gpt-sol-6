@@ -64,3 +64,8 @@
 - The [Poly Haven clay_plaster](https://polyhaven.com/a/clay_plaster) and [clay_floor_001](https://polyhaven.com/a/clay_floor_001) candidates add 1k CC0 texture sets to the wall and floor surfaces. The room and yard keep the same geometry and lighting across all dates, so the dated traces remain the changes to inspect. The reading page credits the assets and links to [Poly Haven's CC0 terms](https://polyhaven.com/license).
 - These are stock artist textures used to judge legibility and atmosphere. Weathered plaster and a painted clay floor do not establish the materials of any seventh-century meeting room. The yard ground also uses the floor candidate for this preview; a separate yard surface remains future work. The roof, props, and sky retain prototype materials.
 - Visual and historical suitability still need review, including whether the new surfaces obscure the mats, footprints, and 680 clean patch. This preview does not settle the planned photoreal finish, real-device performance, or instructor and community review.
+
+## Clear-morning sky candidates · 2026-10-13
+
+- Two CC0 Qwantani pure-sky HDRIs are pinned as candidates. The [same-view A/B captures and provenance](phase0/SKY_COMPARISON.md) show each in the 632 yard at a fixed upward pose. Only the background changes; the room lights and materials stay fixed. Morning appears lighter than mid-morning in the sampled sky area.
+- No sky has been selected as the default. The current flat background remains in ordinary visits while the comparison is reviewed. The stock skies are visual references, not historical evidence, and this spike does not assess the planned doorway sun patch or real-device lighting performance.

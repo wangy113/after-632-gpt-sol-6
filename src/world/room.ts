@@ -6,9 +6,9 @@ import { addMissing680 } from './missing680';
 import type { RoomTextures } from './roomTextures';
 
 /** A stable imagined room and yard with all three dated details. */
-export function createRoomWorld(textures?: RoomTextures): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
+export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xd9dad8);
+  scene.background = sky ?? new THREE.Color(0xd9dad8);
 
   const geometries = new Set<THREE.BufferGeometry>();
   const materials = new Set<THREE.Material>();
@@ -167,6 +167,7 @@ export function createRoomWorld(textures?: RoomTextures): { scene: THREE.Scene; 
       for (const geometry of geometries) geometry.dispose();
       for (const material of materials) material.dispose();
       textures?.dispose();
+      sky?.dispose();
     },
   };
 }

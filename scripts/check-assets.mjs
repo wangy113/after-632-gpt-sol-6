@@ -33,8 +33,9 @@ async function verifyFile(path, map, label) {
 export async function checkAssets(root = repositoryRoot) {
   const config = JSON.parse(await readFile(join(root, 'assets.config.json'), 'utf8'));
   requireRecord(config && config.version === 1 && config.provider === 'Poly Haven'
-    && Array.isArray(config.textures) && config.textures.length > 0,
-    'assets.config.json needs a supported Poly Haven texture list');
+    && Array.isArray(config.textures) && config.textures.length > 0
+    && Array.isArray(config.skies) && config.skies.length > 0,
+    'assets.config.json needs supported Poly Haven texture and sky lists');
   requireRecord(config.license?.id === 'CC0-1.0' && config.license.url === 'https://polyhaven.com/license',
     'Poly Haven assets need the recorded CC0 license and source URL');
   requireRecord(/^\d{4}-\d{2}-\d{2}$/.test(config.verifiedOn)
@@ -47,7 +48,10 @@ export async function checkAssets(root = repositoryRoot) {
   const expectedPaths = new Set();
   const seenIds = new Set();
   const seenRoles = new Set();
+  const seenSkyIds = new Set();
   let textureBytes = 0;
+  let skyBytes = 0;
+  let mapCount = 0;
 
   for (const texture of config.textures) {
     requireRecord(texture && typeof texture.id === 'string' && /^[a-z0-9_]+$/.test(texture.id)
@@ -78,7 +82,33 @@ export async function checkAssets(root = repositoryRoot) {
       await verifyFile(join(sourceDirectory, path), map, `Committed ${texture.id}/${kind}`);
       await verifyFile(join(distDirectory, 'assets/polyhaven', path), map, `Built ${texture.id}/${kind}`);
       textureBytes += map.sizeBytes;
+      mapCount++;
     }
+  }
+
+  for (const sky of config.skies) {
+    requireRecord(sky && typeof sky.id === 'string' && /^[a-z0-9_]+$/.test(sky.id)
+      && !seenSkyIds.has(sky.id),
+    `Invalid or repeated sky id: ${sky?.id}`);
+    seenSkyIds.add(sky.id);
+    requireRecord(sky.status === 'candidate' || sky.status === 'approved',
+      `${sky.id}: sky status must be candidate or approved`);
+    requireRecord(sky.sourceUrl === `https://polyhaven.com/a/${sky.id}`
+      && sky.filesApiUrl === `https://api.polyhaven.com/files/${sky.id}`,
+    `${sky.id}: Poly Haven source records are missing or mismatched`);
+    requireRecord(sky.resolution === '1k' && sky.format === 'hdr',
+      `${sky.id}: unsupported sky resolution or format`);
+    const filename = `${sky.id}_1k.hdr`;
+    const file = sky.file;
+    requireRecord(file && file.url === `https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/${filename}`
+      && Number.isSafeInteger(file.sizeBytes) && file.sizeBytes > 0
+      && typeof file.md5 === 'string' && /^[a-f0-9]{32}$/.test(file.md5),
+    `${sky.id}: invalid pinned sky URL, size, or MD5`);
+    const path = join('sky', filename);
+    expectedPaths.add(path);
+    await verifyFile(join(sourceDirectory, path), file, `Committed sky/${sky.id}`);
+    await verifyFile(join(distDirectory, 'assets/polyhaven', path), file, `Built sky/${sky.id}`);
+    skyBytes += file.sizeBytes;
   }
 
   const actualPaths = new Set((await listFiles(sourceDirectory)).map(path => relative(sourceDirectory, path)));
@@ -92,11 +122,13 @@ export async function checkAssets(root = repositoryRoot) {
   for (const path of builtFiles) visitBytes += (await stat(path)).size;
   requireRecord(visitBytes <= visitBudgetBytes,
     `Built visit is ${visitBytes} bytes, above the ${visitBudgetBytes}-byte budget`);
-  return { textureCount: config.textures.length, mapCount: expectedPaths.size, textureBytes, visitBytes, visitBudgetBytes };
+  return { textureCount: config.textures.length, mapCount, textureBytes,
+    skyCount: config.skies.length, skyBytes, visitBytes, visitBudgetBytes };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const result = await checkAssets();
   console.log(`Verified ${result.mapCount} maps across ${result.textureCount} Poly Haven textures (${result.textureBytes} bytes).`);
+  console.log(`Verified ${result.skyCount} Poly Haven skies (${result.skyBytes} bytes).`);
   console.log(`Built visit: ${result.visitBytes} / ${result.visitBudgetBytes} bytes.`);
 }

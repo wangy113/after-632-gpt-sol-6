@@ -59,5 +59,33 @@
         }
       }
     }
+  ],
+  "skies": [
+    {
+      "id": "qwantani_morning_puresky",
+      "status": "candidate",
+      "sourceUrl": "https://polyhaven.com/a/qwantani_morning_puresky",
+      "filesApiUrl": "https://api.polyhaven.com/files/qwantani_morning_puresky",
+      "resolution": "1k",
+      "format": "hdr",
+      "file": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/qwantani_morning_puresky_1k.hdr",
+        "md5": "0458a3c3dcb2c4b6e19d469a16611335",
+        "sizeBytes": 1118343
+      }
+    },
+    {
+      "id": "qwantani_mid_morning_puresky",
+      "status": "candidate",
+      "sourceUrl": "https://polyhaven.com/a/qwantani_mid_morning_puresky",
+      "filesApiUrl": "https://api.polyhaven.com/files/qwantani_mid_morning_puresky",
+      "resolution": "1k",
+      "format": "hdr",
+      "file": {
+        "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/qwantani_mid_morning_puresky_1k.hdr",
+        "md5": "798068e149c607fa1639cbbcd5f6b66a",
+        "sizeBytes": 1121866
+      }
+    }
   ]
 }
