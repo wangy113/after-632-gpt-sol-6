@@ -2,25 +2,26 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` currently contains only the plan.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Small-screen room layout” is the current completed chunk. Wait for feedback or approval before starting another chunk.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Automated accessibility pass” is the current completed chunk. Wait for feedback or approval before starting another chunk.
 
 ## Verified checkpoint · 2026-10-13
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; last chunk commit `7152e64` (small-screen room layout) |
-| Public preview branch | `gh-pages`; published at `bb07ef3` (mobile room layout) |
-| GitHub Pages | Build for `bb07ef3` reported `built`; live 390 × 844 Chromium showed the full scene at 632 and 661 with no horizontal overflow |
-| Checks at this checkpoint | `npm run check:assets` passed at 5,016,236 / 15,000,000 bytes; 17 unit and 22 browser tests passed. The new browser test checks full scene visibility at 632 and 661 and no horizontal overflow. |
+| Implementation branch | `codex/phase0-scaffold`; last chunk commit `cbc8c35` (automated accessibility pass) |
+| Public preview branch | `gh-pages`; published at `968e5ff` (accessibility heading fix) |
+| GitHub Pages | Build for `968e5ff` reported `built`; the live HTML contains room `h3` and reading `h4` headings for the same 680 item |
+| Checks at this checkpoint | `npm run check:assets` passed at 5,016,244 / 15,000,000 bytes; 17 unit and 30 browser tests passed, including eight axe scans with zero violations after the fix. |
 | Working tree before this handoff update | Clean |
 
-The user's “continue” authorized the 390 × 844 layout audit and one concrete fix. No participant sessions or results have been recorded. This handoff commit follows `7152e64` on the implementation branch. `main` currently contains only the plan; `gh-pages` carries only built files. The config, review packet, asset checker, sky comparison, mobile audit, and this handoff are available on the source branch in GitHub, not on the public site.
+The user's “go” authorized the axe accessibility pass and one concrete fix if found. No participant sessions or results have been recorded. This handoff commit follows `cbc8c35` on the implementation branch. `main` currently contains only the plan; `gh-pages` carries only built files. The audit, config, review packet, asset checker, sky comparison, mobile audit, and this handoff are available on the source branch in GitHub, not on the public site.
 
 ## What works now
 
+- The [automated accessibility audit](docs/phase0/ACCESSIBILITY_AUDIT.md) runs axe-core 4.13.0 against the static reading state and rendered room at 1440, 390, and 320 pixels, plus expanded 680 notes at 320 pixels. The expanded room initially exposed a moderate heading-order violation: scene item `h4` headings skipped the room's `h2`. Room labels now use `h3`, while labels beneath reading passage `h3` headings remain `h4`. All eight scans now report zero violations. Axe does not assess WebGL pixels, keyboard operation, or screen-reader announcements; those need separate review.
 - The [small-screen layout audit](docs/phase0/MOBILE_LAYOUT_AUDIT.md) records before and after captures at 390 × 844. Before the change, the scene frame ended below the first screen after Enter. Compare and its help now follow the scene in document order, while date and place controls remain before it. The full canvas spans `y=528..730` at both 632 and 661 inside the 844-pixel viewport, and the page has no horizontal overflow. Emulated touch controls and disclosures worked. A real-phone and screen-reader pass remain open.
 - The [Phase 0 sky comparison](docs/phase0/SKY_COMPARISON.md) pins two 1k CC0 Qwantani clear-morning HDRIs and shows side-by-side 632 yard screenshots from the same upward camera pose. Qwantani morning is the provisional default because its lighter sky gives the roof and wall a clearer edge. `?sky=qwantani_mid_morning_puresky` still previews the darker candidate. The HDRI changes only the background; fixed prototype room lights remain. The reading page credits both skies. Visual and historical suitability still need human review.
-- `npm run check:assets` makes a fresh production build, then checks six source and built Poly Haven JPGs and two HDRIs against their pinned download URLs, byte sizes, and MD5 hashes. It verifies the recorded CC0 license and source links, rejects unlisted Poly Haven files, and sums **all** files in `dist/` against the 15,000,000-byte visit budget. The check is offline and does not change the source assets. Current totals are 1,806,383 texture bytes, 2,240,209 sky bytes, and 5,016,236 built bytes. It verifies recorded provenance, not the live Poly Haven license page.
+- `npm run check:assets` makes a fresh production build, then checks six source and built Poly Haven JPGs and two HDRIs against their pinned download URLs, byte sizes, and MD5 hashes. It verifies the recorded CC0 license and source links, rejects unlisted Poly Haven files, and sums **all** files in `dist/` against the 15,000,000-byte visit budget. The check is offline and does not change the source assets. Current totals are 1,806,383 texture bytes, 2,240,209 sky bytes, and 5,016,244 built bytes. It verifies recorded provenance, not the live Poly Haven license page.
 - [The asset config](assets.config.json) pins two Poly Haven CC0 texture candidates: `clay_plaster` for walls and `clay_floor_001` for the floor. Each records its source page, 1k JPG Diffuse/normal/ARM map URLs, API-listed MD5 hashes, and byte sizes. The six files total 1,806,383 verified bytes and are committed under `public/assets/polyhaven/`; `npm run fetch:assets` rechecks them or downloads missing copies. The room and yard now use their diffuse, normal, ambient-occlusion, and roughness maps, with world-scaled UVs. Their visual and historical suitability still need review.
 - The 632 doorway still and live room show the material preview. The doorway still was regenerated with the morning default and inspected, but it shows the room interior with no visible sky; the prior still was retained because the new render differed only by tiny capture noise. The reading page credits the assets and links to Poly Haven's CC0 terms. Roof, props, geometry, and lighting remain prototype work. The 680 clean floor patch remained distinct in Chromium; a user and instructor should still judge the scenes.
 - The [gray-box review packet](docs/phase0/GRAYBOX_REVIEW_PACKET.md) gives a neutral image-only sequence, a separate reading-context pass, and a response sheet for 3 to 5 participants. It uses the three same-view doorway captures and names details that cannot be judged from those captures. The study still needs real participants; the packet contains no findings.
@@ -35,9 +36,9 @@ The user's “continue” authorized the 390 × 844 layout audit and one concret
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent toggle. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: automated accessibility pass
+## Next proposed chunk: keyboard-only interaction audit
 
-First address any specific feedback the user gives on the published mobile room. Otherwise, pending approval, run an automated axe-core pass on the static reading page and opt-in room, fix one concrete issue if found, record the result, and stop for review. The plan's manual screen-reader check remains separate.
+First address any specific feedback the user gives on the published accessibility fix. Otherwise, pending approval, navigate the reading page and entered room using only the keyboard at a small viewport. Check date and place selection, Compare, descriptions, Skip movement, Return to reading, and renderer fallback focus. Fix one concrete issue if found, record what was actually checked, and stop for review. The plan's manual screen-reader pass remains separate.
 
 When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
@@ -49,6 +50,7 @@ When the user supplies completed response sheets, synthesize what participants n
 | Texture and sky records, fetch script, committed files | `assets.config.json`, `scripts/fetch-polyhaven.mjs`, `public/assets/polyhaven/` |
 | Sky comparison and capture | `docs/phase0/SKY_COMPARISON.md`, `scripts/capture-sky-comparison.mjs` |
 | Mobile audit and evidence | `docs/phase0/MOBILE_LAYOUT_AUDIT.md`, `docs/phase0/mobile-*.png` |
+| Automated accessibility audit | `docs/phase0/ACCESSIBILITY_AUDIT.md`, `tests/e2e/accessibility.spec.ts` |
 | Text, citations, and scene labels | `content/*.json`, `scripts/content.ts`, `src/schema/changeIds.ts` |
 | UI state and Compare inputs | `src/main.ts`, `src/state/*.ts` |
 | Camera, renderer, and dated geometry | `src/scene/createRoomView.ts`, `src/render/renderer.ts`, `src/world/*.ts` |
@@ -80,7 +82,9 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
 npm run build
 ```
 
-This small-screen chunk passed `npm run check:assets` (including typecheck and a fresh build), 17 unit tests, and 22 browser tests. The new browser check opens a 390 × 844 emulated mobile context and checks full scene visibility at 632 and 661 plus document width. `docs/phase0/MOBILE_LAYOUT_AUDIT.md` preserves before and after room captures and a reading capture. The production `dist/` remains 5,016,236 / 15,000,000 bytes. A camera-drag browser test needed `scrollIntoViewIfNeeded()` after the layout move; it passed, then the full suite passed. Pages reported `bb07ef3` built; live Chromium showed the frame ending at `y=730` in both dates with the document width at 390 pixels. Real-device behavior remains to be checked.
+This accessibility chunk passed `npm run check:assets` (including typecheck and a fresh build), 17 unit tests, and all 30 browser tests. The eight new axe checks cover three widths in two baseline states and two expanded-note states. The first expanded 680 room scan found one moderate `heading-order` violation; a context-specific heading level fixed it, and all eight scans passed on rerun. The production `dist/` is 5,016,244 / 15,000,000 bytes. See `docs/phase0/ACCESSIBILITY_AUDIT.md` for method and limits. The public `gh-pages` commit `968e5ff` reported `built`; the live HTML contains an `h3` for the 680 room item and an `h4` for the matching reading item. Manual keyboard and screen-reader reviews remain open.
+
+The preceding small-screen chunk passed `npm run check:assets` (including typecheck and a fresh build), 17 unit tests, and 22 browser tests. The new browser check opens a 390 × 844 emulated mobile context and checks full scene visibility at 632 and 661 plus document width. `docs/phase0/MOBILE_LAYOUT_AUDIT.md` preserves before and after room captures and a reading capture. The production `dist/` was 5,016,236 / 15,000,000 bytes. A camera-drag browser test needed `scrollIntoViewIfNeeded()` after the layout move; it passed, then the full suite passed. Pages reported `bb07ef3` built; live Chromium showed the frame ending at `y=730` in both dates with the document width at 390 pixels. Real-device behavior remains to be checked.
 
 The earlier default-sky chunk passed 17 unit and 21 browser tests. `npm run capture:arrival` confirmed the default sky ID; the downward doorway still has no visible sky, so it stayed in the repository. Pages reported `6fdba25` built; live Chromium opened the default and alternate rooms, both HDR files returned 200, and the default 632 yard view was inspected. The background choice remains provisional, not a historical claim.
 
