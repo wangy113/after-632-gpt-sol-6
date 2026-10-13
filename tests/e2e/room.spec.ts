@@ -74,9 +74,9 @@ test('the 632 room explains three imagined traces and links to the passage', asy
   const room = page.locator('#room-view');
   await expect(room).toBeVisible();
   await expect(room.locator('.lens')).toHaveText('Look for what is absent');
-  await expect(room.locator('#room-description')).toContainText(changes['632'].description);
+  await expect(room.locator('#room-description-632')).toContainText(changes['632'].description);
 
-  const thingsHere = room.locator('details.things-here');
+  const thingsHere = room.locator('[data-room-panel="632"] details.things-here');
   await expect(thingsHere.locator('summary')).toHaveText('Things here · 632 CE');
   await thingsHere.locator('summary').click();
   const labels = thingsHere.locator('li[data-change-id]');
@@ -97,4 +97,66 @@ test('the 632 room explains three imagined traces and links to the passage', asy
   await expect(page.locator('#moment-632 h3')).toBeFocused();
   await expect(page).toHaveURL(/#moment-632$/);
   await expect(page.getByText(experience.moments[0].passage, { exact: true })).toBeVisible();
+});
+
+test('switching to 661 changes the same room and keeps its source-backed reading path', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = page.locator('#scene-frame canvas');
+  const date632 = room.getByRole('button', { name: '632 CE · Absent' });
+  const date661 = room.getByRole('button', { name: '661 CE · Added' });
+  await expect(date632).toHaveAttribute('aria-pressed', 'true');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await page.getByRole('button', { name: 'Look right' }).click();
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+
+  await date661.click();
+  await expect(date661).toBeFocused();
+  await expect(date661).toHaveAttribute('aria-pressed', 'true');
+  await expect(date632).toHaveAttribute('aria-pressed', 'false');
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+  await expect(room.locator('#room-title')).toHaveText('661 CE · Inside the imagined room');
+  await expect(room.locator('#room-lens')).toHaveText('Look for what is added');
+  await expect(room.locator('#room-description-661')).toContainText(changes['661'].description);
+  await expect(room.locator('[data-room-panel="632"]')).toBeHidden();
+  await expect(page.locator('#scene-status')).toContainText('29 years later');
+
+  const thingsHere = room.locator('[data-room-panel="661"] details.things-here');
+  await thingsHere.locator('summary').click();
+  await expect(thingsHere.locator('li[data-change-id]')).toHaveCount(4);
+  for (const label of changes['661'].labels) {
+    const item = thingsHere.locator(`li[data-change-id="${label.id}"]`);
+    await expect(item).toContainText(label.inRoom);
+    await expect(item).toContainText(label.inRecord);
+    await expect(item.getByRole('link')).toHaveAttribute('href', `#source-${label.sourceId}`);
+    const source = sources.find(source => source.id === label.sourceId)!;
+    await expect(page.locator(`#source-${label.sourceId} a`)).toHaveAttribute('href', source.url);
+  }
+
+  await date632.click();
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(room.locator('#room-lens')).toHaveText('Look for what is absent');
+  await date661.focus();
+  await page.keyboard.press('Space');
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(date661).toBeFocused();
+
+  await room.getByRole('link', { name: 'Read the 661 passage' }).click();
+  await expect(room).toBeHidden();
+  await expect(canvas).toHaveCount(0);
+  await expect(page.locator('#moment-661 h3')).toBeFocused();
+  await expect(page).toHaveURL(/#moment-661$/);
+  await expect(page.getByText(experience.moments[1].passage, { exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(room.locator('#room-title')).toHaveText('661 CE · Inside the imagined room');
+  await page.locator('#scene-frame').focus();
+  await canvas.dispatchEvent('webglcontextlost');
+  await expect(room).toBeHidden();
+  await expect(page.locator('#reading-title')).toBeFocused();
 });

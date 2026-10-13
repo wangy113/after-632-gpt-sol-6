@@ -2,7 +2,7 @@ import experience from '../content/experience.json' with { type: 'json' };
 import sources from '../content/sources.json' with { type: 'json' };
 import changes from '../content/changes.json' with { type: 'json' };
 import objects from '../content/objects.json' with { type: 'json' };
-import { ABSENT_632_IDS } from '../src/schema/changeIds';
+import { ABSENT_632_IDS, ADDED_661_IDS } from '../src/schema/changeIds';
 
 export interface Moment {
   id: string;
@@ -94,7 +94,7 @@ export function validateContent(
   for (const object of objectRecords) {
     if (!object.id.trim() || objectById.has(object.id)) throw new Error('Object IDs must be unique');
     objectById.set(object.id, object);
-    if (object.kind !== 'interpretive-replica' || object.sceneStatus !== 'planned' || object.imageUse !== 'none') {
+    if (object.kind !== 'interpretive-replica' || object.sceneStatus !== 'displayed' || object.imageUse !== 'none') {
       throw new Error(object.id + ': unlicensed or unsupported object treatment');
     }
     if (!object.title.trim() || !object.note.trim() || !expectedLenses.has(object.sceneDate)) {
@@ -125,7 +125,7 @@ export function validateContent(
     if (!sourceIds.has(moment.sourceId)) throw new Error(moment.id + ': source is missing');
   }
 
-  if (!changeSets['632']) throw new Error('The 632 scene needs a change set');
+  if (!changeSets['632'] || !changeSets['661']) throw new Error('The 632 and 661 scenes need change sets');
   for (const [date, changeSet] of Object.entries(changeSets)) {
     if (!expectedLenses.has(date)) throw new Error(date + ': unsupported change-set date');
     if (!changeSet.description.trim() || !changeSet.labels.length) {
@@ -147,10 +147,10 @@ export function validateContent(
         }
       }
     }
-    if (date === '632') {
-      const sceneIds = Object.values(ABSENT_632_IDS);
+    if (date === '632' || date === '661') {
+      const sceneIds = date === '632' ? Object.values(ABSENT_632_IDS) : Object.values(ADDED_661_IDS);
       if (labelIds.size !== sceneIds.length || sceneIds.some(id => !labelIds.has(id))) {
-        throw new Error('632: labels must match every scene object');
+        throw new Error(date + ': labels must match every scene object');
       }
     }
   }
@@ -174,9 +174,9 @@ export function renderPage(
 ): string {
   validateContent(data, records, changeSets, objectRecords);
   const e = escapeHtml;
-  const absent632 = changeSets['632'];
+  const roomDates = ['632', '661'] as const;
   const sourceById = new Map(records.map(source => [source.id, source]));
-  const roomLabels = absent632.labels.map(label => {
+  const renderLabels = (date: typeof roomDates[number]) => changeSets[date].labels.map(label => {
     const source = sourceById.get(label.sourceId)!;
     return `<li data-change-id="${e(label.id)}">
       <h4>${e(label.title)}</h4>
@@ -184,14 +184,28 @@ export function renderPage(
       <p><strong>In the record:</strong> ${e(label.inRecord)} <a href="#source-${e(label.sourceId)}">Source: ${e(source.author)}, ${e(source.locator)}</a></p>
     </li>`;
   }).join('');
+  const roomContent = roomDates.map(date => `<div data-room-panel="${date}"${date === '632' ? '' : ' hidden'}>
+      <p id="room-description-${date}" class="room-note">${e(changeSets[date].description)} Turn around to see the yard, low wall, well, and palm.</p>
+      <a class="read-link" data-read-room-date="${date}" href="#moment-${date}">Read the ${date} passage</a>
+      <details class="things-here">
+        <summary>Things here · ${date} CE</summary>
+        <ol>${renderLabels(date)}</ol>
+      </details>
+    </div>`).join('');
+  const roomDateButtons = roomDates.map(date => {
+    const lens = data.moments.find(moment => moment.id === date)!.lens;
+    return `<button type="button" data-room-date="${date}" data-room-lens="${e(lens.toLowerCase())}" aria-pressed="${date === '632'}">${date} CE · ${e(lens)}</button>`;
+  }).join('');
+  const openingLens = data.moments.find(moment => moment.id === '632')!.lens.toLowerCase();
   const navigation = data.moments.map(moment =>
     `<a href="#moment-${e(moment.id)}">${e(moment.id)} CE · ${e(moment.title)}</a>`
   ).join('');
   const moments = data.moments.map(moment => {
-    const sceneNotes = moment.id === '632' ? `<details class="things-here">
-        <summary>632 scene notes and sources</summary>
-        <p class="room-note">${e(absent632.description)}</p>
-        <ol>${roomLabels}</ol>
+    const date = roomDates.find(date => date === moment.id);
+    const sceneNotes = date ? `<details class="things-here">
+        <summary>${date} scene notes and sources</summary>
+        <p class="room-note">${e(changeSets[date].description)}</p>
+        <ol>${renderLabels(date)}</ol>
       </details>` : '';
     return `<article class="moment" id="moment-${e(moment.id)}">
       <p class="lens">Look for what is ${e(moment.lens.toLowerCase())}</p>
@@ -211,7 +225,7 @@ export function renderPage(
       <p class="opening">${e(data.opening)}</p>
       <p class="setting">${e(data.setting)}</p>
       <div class="entry-actions">
-        <button type="button" id="enter-room" aria-controls="room-view" hidden>Enter the room</button>
+        <button type="button" id="enter-room" aria-controls="room-view" aria-expanded="false" hidden>Enter the room</button>
         <a class="read-link" id="read-link" href="#reading">Read without 3D</a>
       </div>
       <p id="scene-status" role="status" aria-live="polite"></p>
@@ -219,11 +233,12 @@ export function renderPage(
     <section id="room-view" aria-labelledby="room-title" hidden>
       <h2 id="room-title" tabindex="-1">632 CE · Inside the imagined room</h2>
       <p class="setting">${e(data.setting)}</p>
-      <p class="lens">Look for what is absent</p>
-      <div id="scene-frame" class="scene-frame" role="group" tabindex="0" aria-label="Look around the imagined room" aria-describedby="room-description room-help"></div>
-      <p id="room-description" class="room-note">${e(absent632.description)} Turn around to see the yard, low wall, well, and palm.</p>
+      <p id="room-lens" class="lens">Look for what is ${e(openingLens)}</p>
+      <div class="room-dates" role="group" aria-label="Room date">
+        ${roomDateButtons}
+      </div>
+      <div id="scene-frame" class="scene-frame" role="group" tabindex="0" aria-label="Look around the imagined room" aria-describedby="room-description-632 room-help"></div>
       <p id="room-help">Drag to look around, or focus the view and use the arrow keys.</p>
-      <a class="read-link" id="read-632" href="#moment-632">Read the 632 passage</a>
       <div class="look-controls" role="group" aria-label="View controls">
         <button type="button" data-look="left">Look left</button>
         <button type="button" data-look="right">Look right</button>
@@ -232,10 +247,7 @@ export function renderPage(
         <button type="button" data-look="reset">Reset view</button>
         <button type="button" id="return-reading">Return to reading</button>
       </div>
-      <details class="things-here">
-        <summary>Things here · 632 CE</summary>
-        <ol>${roomLabels}</ol>
-      </details>
+      ${roomContent}
       <p class="room-note">This room and yard are illustrative, not a reconstruction of a documented place.</p>
     </section>
     <section id="reading" aria-labelledby="reading-title">

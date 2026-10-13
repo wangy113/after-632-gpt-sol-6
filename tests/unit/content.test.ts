@@ -68,7 +68,7 @@ describe('the reading page', () => {
     expect(() => validateContent(experience, sources, mismatched)).toThrow('labels must match every scene object');
   });
 
-  it('keeps the planned 661 coin replica tied to an earlier museum record without an image', () => {
+  it('keeps the displayed 661 coin replica tied to an earlier museum record without an image', () => {
     expect(() => validateContent(experience, sources, changes, objects)).not.toThrow();
 
     const tooLate = structuredClone(objects);
@@ -82,5 +82,9 @@ describe('the reading page', () => {
     const unlinked = structuredClone(changes);
     unlinked['661'].labels[2].objectId = 'missing';
     expect(() => validateContent(experience, sources, unlinked, objects)).toThrow('label object is missing');
+
+    const mismatched = structuredClone(changes);
+    mismatched['661'].labels[0].id = 'not-a-scene-object';
+    expect(() => validateContent(experience, sources, mismatched, objects)).toThrow('661: labels must match every scene object');
   });
 });

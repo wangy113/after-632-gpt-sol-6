@@ -17,7 +17,7 @@ The plan follows the Quake Street earthquake lab (`wangy113/earthquake-lab-opus-
 - **No people:** no figures, voices, or crowds. Students read what people leave behind.
 - **Light carries no meaning:** one sky, one sun, the same hour at every date. Only the traces change.
 - **One lead lens per date:** 632 asks what is absent, 661 what is added, and 680 what is missing. "What stays" runs through all three. At the exit, students apply all the lenses to two news reports.
-- **Real objects, clearly labeled:** museum records support object labels. Photographs enter the room only after their date and rights are verified; the current 661 coin is planned as an interpretive replica.
+- **Real objects, clearly labeled:** museum records support object labels. Photographs enter the room only after their date and rights are verified; the current 661 coin is an interpretive replica.
 - **Fresh build:** the current app is retired. Only the verified source and news records and the historical guardrails carry over.
 
 ## Is it possible? Yes
@@ -160,7 +160,7 @@ per frame:   input -> state -> camera -> change set -> render (only while someth
 ### Real objects
 - **The 661 coin:**
   - The British Museum catalogs an Arab-Sasanian silver coin from 660 CE (1922,0424.3865). This is a historical reference, not a claim that the coin was in the room.
-  - No CC0 obverse and reverse pair has been verified for a coin securely dated by 661. The room coin is therefore planned as a clearly labeled interpretive replica, without a collection photograph.
+  - No CC0 obverse and reverse pair has been verified for a coin securely dated by 661. The room coin is therefore a clearly labeled interpretive replica, without a collection photograph.
   - A photographed museum coin can replace the replica only after its mint date, accession and both image rights are checked.
 - **Optional second object:** a photograph, in the 680 label, of Mu'awiya's dam inscription at Ta'if (677 to 678), which names him commander of the faithful. To verify.
 - **Inspection:** any photographed real object opens in a close-up viewer showing its museum, accession number, date, image license and link. The coin replica instead links to its separate museum reference.
@@ -287,6 +287,6 @@ Each phase ends with something runnable and a check. Demo checkpoints come at th
   - Ali's absence from the 632 choice
   - Husayn's refusal in Medina in 680
   - Sunni honor for Husayn, for the 680 note
-- **Coin availability:** securely dated examples exist by 661, but CC0 photographs of both sides have not been verified. The current scene plan uses a replica.
+- **Coin availability:** securely dated examples exist by 661, but CC0 photographs of both sides have not been verified. The current gray-box scene uses a replica.
 - **Instructor and community review** of the symbols and passages.
 

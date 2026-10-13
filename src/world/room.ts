@@ -1,8 +1,10 @@
 import * as THREE from 'three/webgpu';
+import type { RoomDate } from '../schema/changeIds';
 import { addAbsent632 } from './absent632';
+import { addAdded661 } from './added661';
 
 /** A stable imagined room and yard with the first dated gray-box details. */
-export function createRoomWorld(): { scene: THREE.Scene; dispose(): void } {
+export function createRoomWorld(): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xd9dad8);
 
@@ -86,13 +88,20 @@ export function createRoomWorld(): { scene: THREE.Scene; dispose(): void } {
   sun.target.position.set(0, 0, -2);
   scene.add(ambient, sun, sun.target);
 
-  // The first dated change set is built once and can be toggled by later date controls.
+  // Both dated change sets remain in the same room so switching preserves the viewpoint.
   const absent632 = addAbsent632(scene);
+  const added661 = addAdded661(scene);
+  added661.setVisible(false);
 
   return {
     scene,
+    setDate(date) {
+      absent632.setVisible(date === '632');
+      added661.setVisible(date === '661');
+    },
     dispose() {
       absent632.dispose();
+      added661.dispose();
       scene.clear();
       for (const geometry of geometries) geometry.dispose();
       for (const material of materials) material.dispose();

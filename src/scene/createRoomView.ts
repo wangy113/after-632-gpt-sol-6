@@ -1,9 +1,11 @@
 import * as THREE from 'three/webgpu';
 import { createRenderer } from '../render/renderer';
+import type { RoomDate } from '../schema/changeIds';
 import { createRoomWorld } from '../world/room';
 
 export interface RoomView {
   look(direction: 'left' | 'right' | 'up' | 'down' | 'reset'): void;
+  setDate(date: RoomDate): void;
   dispose(): void;
 }
 
@@ -24,6 +26,7 @@ export async function createRoomView(
   const canvas = renderer.domElement;
   canvas.setAttribute('aria-hidden', 'true');
   canvas.dataset.backend = backend;
+  canvas.dataset.date = '632';
   container.append(canvas);
   let disposed = false;
   let yaw = 0;
@@ -116,6 +119,12 @@ export async function createRoomView(
 
   return {
     look,
+    setDate(date) {
+      if (disposed) return;
+      world.setDate(date);
+      canvas.dataset.date = date;
+      requestRender();
+    },
     dispose() {
       if (disposed) return;
       disposed = true;

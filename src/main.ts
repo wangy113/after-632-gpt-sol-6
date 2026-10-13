@@ -1,17 +1,21 @@
 import type { RoomView } from './scene/createRoomView';
+import type { RoomDate } from './schema/changeIds';
+import { dateChangeCaption } from './state/dates';
 
 const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
 const readLink = document.querySelector<HTMLAnchorElement>('#read-link')!;
-const read632Link = document.querySelector<HTMLAnchorElement>('#read-632')!;
 const returnButton = document.querySelector<HTMLButtonElement>('#return-reading')!;
 const roomSection = document.querySelector<HTMLElement>('#room-view')!;
 const roomTitle = document.querySelector<HTMLElement>('#room-title')!;
+const roomLens = document.querySelector<HTMLElement>('#room-lens')!;
+const dateButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-room-date]'));
+const roomPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-room-panel]'));
 const readingTitle = document.querySelector<HTMLElement>('#reading-title')!;
-const passage632Title = document.querySelector<HTMLElement>('#moment-632 h3')!;
 const sceneFrame = document.querySelector<HTMLElement>('#scene-frame')!;
 const status = document.querySelector<HTMLElement>('#scene-status')!;
 
 let room: RoomView | null = null;
+let selectedDate: RoomDate = '632';
 let loading = false;
 let generation = 0;
 let deadline: ReturnType<typeof setTimeout> | undefined;
@@ -25,9 +29,24 @@ function closeRoom(message = '') {
   room = null;
   try { currentRoom?.dispose(); } catch { sceneFrame.replaceChildren(); }
   roomSection.hidden = true;
+  enterButton.setAttribute('aria-expanded', 'false');
   enterButton.disabled = false;
   enterButton.textContent = 'Enter the room';
   status.textContent = message;
+}
+
+function selectDate(date: RoomDate) {
+  if (date === selectedDate) return;
+  const previous = selectedDate;
+  try { room?.setDate(date); } catch { fail(); return; }
+  selectedDate = date;
+  roomTitle.textContent = `${date} CE · Inside the imagined room`;
+  const selectedButton = dateButtons.find(button => button.dataset.roomDate === date)!;
+  roomLens.textContent = `Look for what is ${selectedButton.dataset.roomLens}`;
+  for (const button of dateButtons) button.setAttribute('aria-pressed', String(button === selectedButton));
+  for (const panel of roomPanels) panel.hidden = panel.dataset.roomPanel !== date;
+  sceneFrame.setAttribute('aria-describedby', `room-description-${date} room-help`);
+  status.textContent = `${date} room view open. ${dateChangeCaption(previous, date)}. The viewpoint stayed the same.`;
 }
 
 function fail() {
@@ -61,14 +80,16 @@ async function enter() {
       new URLSearchParams(location.search).get('gl') === '1',
     );
     if (generation !== token) { created.dispose(); return; }
+    created.setDate(selectedDate);
     clearTimeout(deadline);
     deadline = undefined;
     room = created;
     roomSection.hidden = false;
+    enterButton.setAttribute('aria-expanded', 'true');
     loading = false;
     enterButton.disabled = false;
     enterButton.textContent = 'Enter the room';
-    status.textContent = '632 room view open. The full reading remains below.';
+    status.textContent = `${selectedDate} room view open. The full reading remains below.`;
     roomTitle.focus({ preventScroll: true });
     roomSection.scrollIntoView({ block: 'start' });
   } catch {
@@ -85,14 +106,21 @@ readLink.addEventListener('click', event => {
   readingTitle.focus({ preventScroll: true });
   readingTitle.scrollIntoView({ block: 'start' });
 });
-read632Link.addEventListener('click', event => {
-  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-  event.preventDefault();
-  closeRoom('Reading the 632 passage.');
-  history.pushState(null, '', '#moment-632');
-  passage632Title.focus({ preventScroll: true });
-  passage632Title.scrollIntoView({ block: 'start' });
+document.querySelectorAll<HTMLAnchorElement>('[data-read-room-date]').forEach(link => {
+  link.addEventListener('click', event => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const date = link.dataset.readRoomDate as RoomDate;
+    const passageTitle = document.querySelector<HTMLElement>(`#moment-${date} h3`)!;
+    closeRoom(`Reading the ${date} passage.`);
+    history.pushState(null, '', `#moment-${date}`);
+    passageTitle.focus({ preventScroll: true });
+    passageTitle.scrollIntoView({ block: 'start' });
+  });
 });
+for (const button of dateButtons) {
+  button.addEventListener('click', () => selectDate(button.dataset.roomDate as RoomDate));
+}
 returnButton.addEventListener('click', () => {
   closeRoom('Reading view. All three moments are available below.');
   readingTitle.focus({ preventScroll: true });
