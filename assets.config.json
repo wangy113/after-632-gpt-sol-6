@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "provider": "Poly Haven",
+  "verifiedOn": "2026-10-13",
+  "license": {
+    "id": "CC0-1.0",
+    "url": "https://polyhaven.com/license"
+  },
+  "textures": [
+    {
+      "role": "room-walls",
+      "status": "candidate",
+      "id": "clay_plaster",
+      "sourceUrl": "https://polyhaven.com/a/clay_plaster",
+      "filesApiUrl": "https://api.polyhaven.com/files/clay_plaster",
+      "resolution": "1k",
+      "format": "jpg",
+      "maps": {
+        "Diffuse": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_plaster/clay_plaster_diff_1k.jpg",
+          "md5": "aab6ac83dcf134a370279825de143c26",
+          "sizeBytes": 354209
+        },
+        "nor_gl": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_plaster/clay_plaster_nor_gl_1k.jpg",
+          "md5": "82e9cc526a00b3b8fddf7e43c40bdb38",
+          "sizeBytes": 784921
+        },
+        "arm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_plaster/clay_plaster_arm_1k.jpg",
+          "md5": "55fabcbfc3c70876b9101345b8e1f0ac",
+          "sizeBytes": 385592
+        }
+      }
+    },
+    {
+      "role": "room-floor",
+      "status": "candidate",
+      "id": "clay_floor_001",
+      "sourceUrl": "https://polyhaven.com/a/clay_floor_001",
+      "filesApiUrl": "https://api.polyhaven.com/files/clay_floor_001",
+      "resolution": "1k",
+      "format": "jpg",
+      "maps": {
+        "Diffuse": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_floor_001/clay_floor_001_diff_1k.jpg",
+          "md5": "9ab683e3728c2775b684a87b8023ad34",
+          "sizeBytes": 115628
+        },
+        "nor_gl": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_floor_001/clay_floor_001_nor_gl_1k.jpg",
+          "md5": "302793228d486ac5400875211fecd943",
+          "sizeBytes": 72654
+        },
+        "arm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_floor_001/clay_floor_001_arm_1k.jpg",
+          "md5": "f5f6784cb5bdd0a0dd05075e0313479b",
+          "sizeBytes": 93379
+        }
+      }
+    }
+  ]
+}
