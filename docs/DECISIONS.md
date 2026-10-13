@@ -68,4 +68,4 @@
 ## Clear-morning sky candidates · 2026-10-13
 
 - Two CC0 Qwantani pure-sky HDRIs are pinned as candidates. The [same-view A/B captures and provenance](phase0/SKY_COMPARISON.md) show each in the 632 yard at a fixed upward pose. Only the background changes; the room lights and materials stay fixed. Morning appears lighter than mid-morning in the sampled sky area.
-- No sky has been selected as the default. The current flat background remains in ordinary visits while the comparison is reviewed. The stock skies are visual references, not historical evidence, and this spike does not assess the planned doorway sun patch or real-device lighting performance.
+- Qwantani morning is the provisional default because its lighter sky may improve legibility while matching the plan's clear-morning direction. `?sky=qwantani_mid_morning_puresky` keeps the darker candidate available for comparison. The HDRI is a background only; ambient and directional room lights stay fixed. The stock skies are visual references, not historical evidence. Human review of legibility and restraint, the planned doorway sun patch, and real-device lighting performance remains open.

@@ -52,17 +52,15 @@ export async function createRoomView(
   forceWebGL: boolean,
   onLookChange?: () => void,
 ): Promise<RoomView> {
-  const skyId = new URLSearchParams(location.search).get('sky');
-  const skyRecord = skyId ? assetConfig.skies.find(record => record.id === skyId) : undefined;
-  if (skyId && !skyRecord) throw new Error(`Unknown sky candidate: ${skyId}`);
+  const skyId = new URLSearchParams(location.search).get('sky') ?? 'qwantani_morning_puresky';
+  const skyRecord = assetConfig.skies.find(record => record.id === skyId);
+  if (!skyRecord) throw new Error(`Unknown sky candidate: ${skyId}`);
   const textures = await loadRoomTextures();
   let sky: THREE.DataTexture | undefined;
   try {
-    if (skyRecord) {
-      const filename = skyRecord.file.url.slice(skyRecord.file.url.lastIndexOf('/') + 1);
-      sky = await new HDRLoader().loadAsync(`${import.meta.env.BASE_URL}assets/polyhaven/sky/${filename}`);
-      sky.mapping = THREE.EquirectangularReflectionMapping;
-    }
+    const filename = skyRecord.file.url.slice(skyRecord.file.url.lastIndexOf('/') + 1);
+    sky = await new HDRLoader().loadAsync(`${import.meta.env.BASE_URL}assets/polyhaven/sky/${filename}`);
+    sky.mapping = THREE.EquirectangularReflectionMapping;
   } catch (error) {
     textures.dispose();
     throw error;
@@ -98,7 +96,7 @@ export async function createRoomView(
   const canvas = renderer.domElement;
   canvas.setAttribute('aria-hidden', 'true');
   canvas.dataset.backend = backend;
-  canvas.dataset.sky = skyRecord?.id ?? 'prototype';
+  canvas.dataset.sky = skyRecord.id;
   canvas.dataset.date = '632';
   canvas.dataset.place = 'doorway';
   canvas.dataset.moving = 'false';

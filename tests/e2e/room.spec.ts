@@ -19,6 +19,7 @@ test('the room is opt-in and returning to reading releases the canvas', async ({
   await expect(room).toBeVisible();
   await expect(canvas).toHaveCount(1);
   await expect(canvas).toHaveAttribute('data-backend', 'WebGL2 fallback');
+  await expect(canvas).toHaveAttribute('data-sky', 'qwantani_morning_puresky');
   await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
 
   await page.getByRole('button', { name: 'Look right' }).click();
@@ -43,6 +44,15 @@ test('the room is opt-in and returning to reading releases the canvas', async ({
   await expect(room).toBeHidden();
   await expect(page.locator('#scene-status')).toContainText('room view is unavailable');
   await expect(page.locator('#reading-title')).toBeFocused();
+});
+
+test('the alternate sky query keeps the same room and renders mid-morning', async ({ page }) => {
+  await page.goto('/?gl=1&sky=qwantani_mid_morning_puresky');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  const canvas = page.locator('#scene-frame canvas');
+  await expect(canvas).toHaveAttribute('data-sky', 'qwantani_mid_morning_puresky');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
 });
 
 test('renderer failure returns the visitor to readable history', async ({ page }) => {

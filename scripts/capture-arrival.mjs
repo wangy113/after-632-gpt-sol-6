@@ -28,6 +28,7 @@ try {
   await page.waitForFunction(() => {
     const canvas = document.querySelector('#scene-frame canvas');
     return canvas?.dataset.backend === 'WebGL2 fallback'
+      && canvas.dataset.sky === 'qwantani_morning_puresky'
       && canvas.dataset.date === '632'
       && canvas.dataset.place === 'doorway'
       && canvas.width >= 864

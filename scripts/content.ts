@@ -332,7 +332,7 @@ export function renderPage(
     <ol>${sourceList}</ol>
     <h2>Material and sky credits</h2>
     <p>Room wall and floor textures: <a href="https://polyhaven.com/a/clay_plaster">clay_plaster</a> and <a href="https://polyhaven.com/a/clay_floor_001">clay_floor_001</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>.</p>
-    <p>Optional sky comparison candidates: <a href="https://polyhaven.com/a/qwantani_morning_puresky">Qwantani morning</a> and <a href="https://polyhaven.com/a/qwantani_mid_morning_puresky">Qwantani mid-morning</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>. The default room still uses its prototype background.</p>
+    <p>Sky preview: <a href="https://polyhaven.com/a/qwantani_morning_puresky">Qwantani morning</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>. <a href="https://polyhaven.com/a/qwantani_mid_morning_puresky">Qwantani mid-morning</a> is an alternate comparison candidate. The HDRI changes the background only; room lighting remains a prototype.</p>
     <p>This room is imagined. Its objects are interpretations, not evidence of these events.</p>
   </footer>`;
 }
