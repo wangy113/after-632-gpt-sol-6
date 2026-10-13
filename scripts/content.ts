@@ -209,10 +209,10 @@ export function renderPage(
     const source = sourceById.get(record.sourceId)!;
     return `<strong>In the record:</strong> ${e(record.inRecord)} <a href="#source-${e(record.sourceId)}">Source: ${e(source.author)}, ${e(source.locator)}</a>`;
   };
-  const renderLabels = (date: typeof roomDates[number]) => changeSets[date].labels.map(label => {
+  const renderLabels = (date: typeof roomDates[number], headingLevel: 3 | 4) => changeSets[date].labels.map(label => {
     const source = sourceById.get(label.sourceId)!;
     return `<li data-change-id="${e(label.id)}">
-      <h4>${e(label.title)}</h4>
+      <h${headingLevel}>${e(label.title)}</h${headingLevel}>
       <p><strong>In this room:</strong> ${e(label.inRoom)}</p>
       <p><strong>In the record:</strong> ${e(label.inRecord)} <a href="#source-${e(label.sourceId)}">Source: ${e(source.author)}, ${e(source.locator)}</a></p>
     </li>`;
@@ -222,7 +222,7 @@ export function renderPage(
       <a class="read-link" data-read-room-date="${date}" href="#moment-${date}">Read the ${date} passage</a>
       <details class="things-here">
         <summary>Things here · ${date} CE</summary>
-        <ol>${renderLabels(date)}</ol>
+        <ol>${renderLabels(date, 3)}</ol>
       </details>
     </div>`).join('');
   const roomDateButtons = roomDates.map(date => {
@@ -248,7 +248,7 @@ export function renderPage(
       <details class="things-here">
         <summary>${date} scene notes and sources</summary>
         <p class="room-note">${e(changeSets[date].description)}</p>
-        <ol>${renderLabels(date)}</ol>
+        <ol>${renderLabels(date, 4)}</ol>
       </details>` : '';
     return `<article class="moment" id="moment-${e(moment.id)}">
       <p class="lens">Look for what is ${e(moment.lens.toLowerCase())}</p>

@@ -70,7 +70,7 @@ button:disabled { cursor: wait; opacity: .65; }
 .things-here ol { margin-bottom: 0; padding-left: 1.5rem; }
 .things-here li { padding-block: .5rem; }
 .things-here li + li { border-top: 1px solid #b7b4a8; }
-.things-here h4 { margin: 0 0 .25rem; font-size: 1.1rem; }
+.things-here :is(h3, h4) { margin: 0 0 .25rem; font-size: 1.1rem; }
 .things-here p { margin: .25rem 0; }
 .date-nav { display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem 0; }
 .moment { padding: 1.5rem 0; border-top: 1px solid #b7b4a8; }

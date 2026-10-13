@@ -74,3 +74,9 @@
 
 - The [390 × 844 layout audit](phase0/MOBILE_LAYOUT_AUDIT.md) found that the scene was cut off on the first screen after entering the room. The Compare controls and help now follow the canvas in document order, leaving date and place selection before it. The full scene fits in the initial viewport at both 632 and 661, with no horizontal overflow in the emulated mobile browser.
 - This is a browser viewport check. Real-phone behavior and screen-reader navigation still need manual review.
+
+## Automated accessibility pass · 2026-10-13
+
+- [Eight axe-core scans](phase0/ACCESSIBILITY_AUDIT.md) now cover the static reading page and entered room at 1440, 390, and 320 pixels, plus expanded reading and room notes at 320 pixels. The scans use the built page in Chromium and pass with no reported violations.
+- The expanded 680 room notes exposed a heading-order issue: item headings jumped from the room's `h2` to `h4`. Room item headings are now `h3`; reading item headings remain `h4` below their date's `h3`.
+- The automated result does not validate the WebGL image or replace a manual keyboard and screen-reader review. Those checks remain open.
