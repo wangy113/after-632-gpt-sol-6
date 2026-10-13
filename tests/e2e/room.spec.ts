@@ -55,6 +55,32 @@ test('the alternate sky query keeps the same room and renders mid-morning', asyn
   await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
 });
 
+test('the room scene fits on the first small-screen view', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 }, deviceScaleFactor: 1,
+    isMobile: true, hasTouch: true, reducedMotion: 'reduce',
+  });
+  try {
+    const page = await context.newPage();
+    await page.goto('/?gl=1');
+    await page.getByRole('button', { name: 'Enter the room' }).click();
+    const canvas = page.locator('#scene-frame canvas');
+    await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
+
+    for (const date of ['632', '661'] as const) {
+      if (date === '661') await page.locator('[data-room-date="661"]').click();
+      await expect(canvas).toHaveAttribute('data-date', date);
+      const frame = await page.locator('#scene-frame').boundingBox();
+      expect(frame).not.toBeNull();
+      expect(frame!.y).toBeGreaterThanOrEqual(0);
+      expect(frame!.y + frame!.height).toBeLessThanOrEqual(844);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+    }
+  } finally {
+    await context.close();
+  }
+});
+
 test('renderer failure returns the visitor to readable history', async ({ page }) => {
   await page.addInitScript(() => {
     const getContext = HTMLCanvasElement.prototype.getContext;
@@ -660,7 +686,9 @@ test('Describe this view follows the visible date, place, Compare, and look dire
   await page.keyboard.press('ArrowLeft');
   await expect(room.locator('#view-imagined')).toHaveText(views.turned.pegs.left);
   await room.getByRole('button', { name: 'Reset view' }).click();
-  const bounds = await room.locator('#scene-frame canvas').boundingBox();
+  const dragCanvas = room.locator('#scene-frame canvas');
+  await dragCanvas.scrollIntoViewIfNeeded();
+  const bounds = await dragCanvas.boundingBox();
   expect(bounds).not.toBeNull();
   const x = bounds!.x + bounds!.width / 2;
   const y = bounds!.y + bounds!.height / 2;

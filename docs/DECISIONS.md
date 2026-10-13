@@ -69,3 +69,8 @@
 
 - Two CC0 Qwantani pure-sky HDRIs are pinned as candidates. The [same-view A/B captures and provenance](phase0/SKY_COMPARISON.md) show each in the 632 yard at a fixed upward pose. Only the background changes; the room lights and materials stay fixed. Morning appears lighter than mid-morning in the sampled sky area.
 - Qwantani morning is the provisional default because its lighter sky may improve legibility while matching the plan's clear-morning direction. `?sky=qwantani_mid_morning_puresky` keeps the darker candidate available for comparison. The HDRI is a background only; ambient and directional room lights stay fixed. The stock skies are visual references, not historical evidence. Human review of legibility and restraint, the planned doorway sun patch, and real-device lighting performance remains open.
+
+## Small-screen room entry · 2026-10-13
+
+- The [390 × 844 layout audit](phase0/MOBILE_LAYOUT_AUDIT.md) found that the scene was cut off on the first screen after entering the room. The Compare controls and help now follow the canvas in document order, leaving date and place selection before it. The full scene fits in the initial viewport at both 632 and 661, with no horizontal overflow in the emulated mobile browser.
+- This is a browser viewport check. Real-phone behavior and screen-reader navigation still need manual review.

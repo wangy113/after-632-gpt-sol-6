@@ -283,11 +283,6 @@ export function renderPage(
       <div class="room-dates" role="group" aria-label="Room date">
         ${roomDateButtons}
       </div>
-      <div class="compare-controls" role="group" aria-label="Compare room dates">
-        <button type="button" id="compare-hold" aria-pressed="false" aria-describedby="compare-help" disabled>Hold to compare</button>
-        <button type="button" id="compare-toggle" aria-pressed="false" aria-describedby="compare-help" disabled>Keep earlier date visible</button>
-      </div>
-      <p id="compare-help" class="room-note">Choose 661 or 680 CE to compare with the previous date from the same viewpoint.</p>
       <div class="room-places" role="group" aria-label="Place to stand">
         ${roomPlaceButtons}
       </div>
@@ -296,6 +291,11 @@ export function renderPage(
         <p id="date-transition-caption" class="date-transition-caption" aria-hidden="true" hidden></p>
       </div>
       <p id="room-help">${e(PLACE_ORIENTATIONS.doorway)} Drag to look around, or focus the view and use the arrow keys.</p>
+      <div class="compare-controls" role="group" aria-label="Compare room dates">
+        <button type="button" id="compare-hold" aria-pressed="false" aria-describedby="compare-help" disabled>Hold to compare</button>
+        <button type="button" id="compare-toggle" aria-pressed="false" aria-describedby="compare-help" disabled>Keep earlier date visible</button>
+      </div>
+      <p id="compare-help" class="room-note">Choose 661 or 680 CE to compare with the previous date from the same viewpoint.</p>
       <details id="describe-view" class="describe-view">
         <summary>Describe this view</summary>
         <div id="view-description" aria-live="polite" aria-atomic="true">
