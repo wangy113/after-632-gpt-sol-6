@@ -2,22 +2,23 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` still contains the retired site.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Pause motion” is the current completed chunk; wait for approval before starting another.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Arrival still” is the current completed chunk; wait for approval before starting another.
 
 ## Verified checkpoint · 2026-10-13
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; last feature commit `7a59aab` (Pause motion) |
-| Public preview branch | `gh-pages`; published commit `c31766e` |
-| GitHub Pages | Build for `c31766e` reported `built`; live WebGL2 smoke check confirmed Pause, instant date change, resumed dissolve, and no page errors |
-| Checks at this checkpoint | `npm test`: 17 passed; `npm run build`: passed; `npm run e2e`: 19 passed |
+| Implementation branch | `codex/phase0-scaffold`; last feature commit `03ab8ff` (Arrival still) |
+| Public preview branch | `gh-pages`; published commit `f655a72` |
+| GitHub Pages | Build for `f655a72` reported `built`; the live WebP loaded before any canvas, then the 632 WebGL2 room opened with no page errors |
+| Checks at this checkpoint | `npm test`: 17 passed; `npm run build`: passed; `npm run e2e`: 20 passed; focused 3-test rerun passed after moving the entry controls |
 | Working tree before this handoff update | Clean |
 
-The user approved the Pause motion chunk, and it has been committed and published. This handoff commit follows `7a59aab` on the implementation branch; the table names the last feature commit. `main` and `gh-pages` do not carry the source work. The public site serves only the built files, so this handoff is available on the source branch in GitHub, not on the site.
+The user's continue request authorized the Arrival still chunk, and it has been committed and published. This handoff commit follows `03ab8ff` on the implementation branch; the table names the last feature commit. `main` and `gh-pages` do not carry the source work. The public site serves only the built files, so this handoff is available on the source branch in GitHub, not on the site.
 
 ## What works now
 
+- The arrival page loads a 632 doorway WebP still before any 3D. Its alt text and caption identify the gray model as imagined. The Enter and Read controls stay above the image, and the image remains available without JavaScript. `npm run capture:arrival` regenerates `public/stills/632-arrival.webp` from the room in Chromium; the current image is 864 × 487 pixels and 3,964 bytes.
 - An opt-in WebGPU room with a WebGL2 fallback and a readable, source-linked page that works without JavaScript or 3D.
 - One stable room and yard across 632, 661, and 680 CE. Date changes keep the camera in its selected place. The three change sets have matching “In this room” and “In the record” labels; [build decisions](docs/DECISIONS.md) record historical limits and [gray-box captures](docs/phase0/) show each dated view.
 - Four places to stand: doorway, head of room, pegs/hooks, and yard looking back. Moves glide for 0.8 seconds through the doorway where needed, or cut under reduced motion. The chosen place survives a return to reading and re-entry.
@@ -28,9 +29,9 @@ The user approved the Pause motion chunk, and it has been committed and publishe
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent toggle. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: arrival still
+## Next proposed chunk: gray-box review packet
 
-Pending user approval, add a static 632 doorway still to the arrival section so visitors see the room before loading 3D. The plan calls for an engine-rendered still; a capture of the current gray-box room can serve as a temporary preview until the photoreal materials are ready. Give it useful alt text and keep the existing no-JavaScript reading path. Scope this to the still and its capture/build path, test the first load, publish the preview, and stop for review. Do not begin this chunk without the user's approval.
+Pending user approval, prepare a short neutral review packet for the plan's Phase 0 pedagogy check. Use the existing dated gray-box captures to ask 3 to 5 students or colleagues what changed at each date and what they think it means, without supplying the interpretation first. Include a response template in `docs/phase0/`; do not claim the participant test has been run. Keep this as one small documentation chunk, commit it to the source branch, and stop for the user to review or run the study.
 
 ## Where to work
 
@@ -44,9 +45,9 @@ Pending user approval, add a static 632 doorway still to the arrival section so 
 
 `scripts/content.ts` validates JSON and renders the full static reading page into `index.html` at build time. `src/main.ts` enhances that page after JavaScript loads, owns the reducer state, and lazy-loads one `RoomView`. `src/scene/createRoomView.ts` owns the camera, one canvas, movement and dissolve callbacks, and renderer disposal. Keep historical prose and scene descriptions in `content/*.json`, with source links, rather than adding historical claims to TypeScript. `src/state/` stays pure TypeScript without DOM or three.js dependencies.
 
-The 680 Medina-to-Mecca claim is supported by the Madelung source in `content/sources.json`; the travel objects are invented and are not Husayn's belongings. The 661 coin is an interpretive replica linked to a museum catalog record, with no museum image. Keep the plan's guardrails: no people, relics, battle scene, weapons, or symbolic lighting. The passages and room symbolism still need instructor and community review. Other later work includes the rendered arrival still, photoreal materials and lighting, reporting exit, device and screen-reader checks, and student testing.
+The 680 Medina-to-Mecca claim is supported by the Madelung source in `content/sources.json`; the travel objects are invented and are not Husayn's belongings. The 661 coin is an interpretive replica linked to a museum catalog record, with no museum image. Keep the plan's guardrails: no people, relics, battle scene, weapons, or symbolic lighting. The passages and room symbolism still need instructor and community review. Other later work includes photoreal materials and lighting, reporting exit, device and screen-reader checks, and student testing.
 
-The current room remains an untextured gray box. The plan also describes asset scripts, rendering features, exit content, tests, and a Pages workflow that have not all been implemented; treat those passages as future requirements, not descriptions of this checkout. Turned camera descriptions are deliberately broad, and the description changes to the destination date when a dissolve starts. WebGPU hardware, mobile devices, and a screen reader have not been manually checked. Do not infer historical evidence from the invented props.
+The current room and arrival still remain an untextured gray box. The plan also describes asset scripts, rendering features, exit content, tests, and a Pages workflow that have not all been implemented; treat those passages as future requirements, not descriptions of this checkout. Turned camera descriptions are deliberately broad, and the description changes to the destination date when a dissolve starts. WebGPU hardware, mobile devices, and a screen reader have not been manually checked. Do not infer historical evidence from the invented props.
 
 ## Run and verify
 
@@ -59,7 +60,14 @@ npm run build
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run e2e
 ```
 
-The “Pause motion” checkpoint passed 17 unit tests and 19 browser tests. The new browser check covers an active glide and dissolve, later instant date/place changes, Compare, and resumed motion. Turned-view descriptions stay broad; detailed date-specific prose describes each place's starting direction and is labeled as such. A manual screen-reader check is still needed. Playwright serves the built page on `127.0.0.1:4173`; `/usr/bin/chromium` is the installed browser in this workspace. Elsewhere, install Chromium with `npx playwright install chromium` and adjust or omit the path override. The build output is `dist/` and is ignored by Git.
+To regenerate the arrival still after changing the room, run:
+
+```sh
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
+npm run build
+```
+
+The “Arrival still” checkpoint passed 17 unit tests and 20 browser tests. The new browser check confirms the image loads before Enter and without JavaScript; a focused rerun passed after moving the entry controls above the image. Desktop and phone layouts were inspected. Turned-view descriptions stay broad; detailed date-specific prose describes each place's starting direction and is labeled as such. A manual screen-reader check is still needed. Playwright serves the built page on `127.0.0.1:4173`; `/usr/bin/chromium` is the installed browser in this workspace. Elsewhere, install Chromium with `npx playwright install chromium` and adjust or omit the path override. The build output is `dist/` and is ignored by Git.
 
 ## Publish the preview
 
