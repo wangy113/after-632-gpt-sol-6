@@ -1,6 +1,7 @@
 import type { RoomView } from './scene/createRoomView';
 import type { RoomDate } from './schema/changeIds';
 import { dateChangeCaption, previousDate } from './state/dates';
+import { PLACE_LABELS, PLACE_ORIENTATIONS, type PlaceId } from './state/places';
 import { compareAvailable, initialState, isComparing, reduce, visibleDate } from './state/store';
 
 const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
@@ -10,16 +11,19 @@ const roomSection = document.querySelector<HTMLElement>('#room-view')!;
 const roomTitle = document.querySelector<HTMLElement>('#room-title')!;
 const roomLens = document.querySelector<HTMLElement>('#room-lens')!;
 const dateButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-room-date]'));
+const placeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-room-place]'));
 const compareHold = document.querySelector<HTMLButtonElement>('#compare-hold')!;
 const compareToggle = document.querySelector<HTMLButtonElement>('#compare-toggle')!;
 const compareHelp = document.querySelector<HTMLElement>('#compare-help')!;
 const roomPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-room-panel]'));
 const readingTitle = document.querySelector<HTMLElement>('#reading-title')!;
 const sceneFrame = document.querySelector<HTMLElement>('#scene-frame')!;
+const roomHelp = document.querySelector<HTMLElement>('#room-help')!;
 const status = document.querySelector<HTMLElement>('#scene-status')!;
 
 let room: RoomView | null = null;
-let state = initialState;
+const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let state = reduce(initialState, { type: 'setReducedMotion', reduced: motionQuery.matches });
 let pointerHoldId: number | null = null;
 let cKeyHeld = false;
 let buttonKeyHeld = false;
@@ -41,6 +45,14 @@ function clearHeldInputs() {
 function resetCompare() {
   clearHeldInputs();
   if (state.compareToggled) state = reduce(state, { type: 'toggleCompare' });
+}
+
+function renderRoomPlace() {
+  for (const button of placeButtons) {
+    button.setAttribute('aria-pressed', String(button.dataset.roomPlace === state.place));
+  }
+  sceneFrame.setAttribute('aria-label', `Look around from ${PLACE_LABELS[state.place].toLowerCase()}`);
+  roomHelp.textContent = `${PLACE_ORIENTATIONS[state.place]} Drag to look around, or focus the view and use the arrow keys.`;
 }
 
 function renderRoomDate(message?: string): boolean {
@@ -80,6 +92,7 @@ function closeRoom(message = '') {
   const currentRoom = room;
   room = null;
   resetCompare();
+  state = reduce(state, { type: 'skipMovement' });
   try { currentRoom?.dispose(); } catch { sceneFrame.replaceChildren(); }
   roomSection.hidden = true;
   enterButton.setAttribute('aria-expanded', 'false');
@@ -97,6 +110,22 @@ function selectDate(date: RoomDate) {
     ? `${date} CE restored at the same viewpoint.`
     : `${date} room view open. ${dateChangeCaption(previous, date)}. The viewpoint stayed the same.`;
   renderRoomDate(message);
+}
+
+function selectPlace(place: PlaceId) {
+  if (!room) return;
+  const next = reduce(state, { type: 'selectPlace', place });
+  if (next === state) return;
+  state = next;
+  const token = state.placeTransition?.token;
+  try {
+    room.moveTo(place, token !== undefined, () => {
+      if (token !== undefined) state = reduce(state, { type: 'finishPlaceTransition', token });
+    });
+  } catch { fail(); return; }
+  renderRoomPlace();
+  const date = visibleDate(state);
+  status.textContent = `${PLACE_LABELS[place]} selected. Showing ${date} CE${isComparing(state) ? ` while ${state.date} CE remains selected` : ''}.`;
 }
 
 function syncHeld() {
@@ -147,6 +176,8 @@ async function enter() {
     clearTimeout(deadline);
     deadline = undefined;
     room = created;
+    room.moveTo(state.place, false);
+    renderRoomPlace();
     roomSection.hidden = false;
     enterButton.setAttribute('aria-expanded', 'true');
     loading = false;
@@ -184,6 +215,13 @@ document.querySelectorAll<HTMLAnchorElement>('[data-read-room-date]').forEach(li
 for (const button of dateButtons) {
   button.addEventListener('click', () => selectDate(button.dataset.roomDate as RoomDate));
 }
+for (const button of placeButtons) {
+  button.addEventListener('click', () => selectPlace(button.dataset.roomPlace as PlaceId));
+}
+motionQuery.addEventListener('change', () => {
+  state = reduce(state, { type: 'setReducedMotion', reduced: motionQuery.matches });
+  if (motionQuery.matches) room?.skipMovement();
+});
 compareHold.addEventListener('pointerdown', event => {
   if (!room || !compareAvailable(state) || !event.isPrimary || event.button !== 0 || pointerHoldId !== null) return;
   pointerHoldId = event.pointerId;

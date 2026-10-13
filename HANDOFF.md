@@ -1,19 +1,20 @@
 # After 632 implementation handoff
 
-This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`. The latest implementation commit before this handoff is `c1c6f61`; `main` still contains the retired site.
+This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` still contains the retired site.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), currently built from `gh-pages` commit `d805d70`. The next chunk proposed to the user is the additional viewpoints; approval for that chunk has not yet been given.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. The four viewpoints are the current completed chunk; wait for approval before starting another.
 
 ## What works now
 
 - An opt-in WebGPU room with a WebGL2 fallback and a readable, source-linked page that works without JavaScript or 3D.
-- One stable room and yard across 632, 661, and 680 CE. Date changes keep the doorway camera fixed. The three change sets have matching “In this room” and “In the record” labels; [build decisions](docs/DECISIONS.md) record historical limits and [gray-box captures](docs/phase0/) show each dated view.
+- One stable room and yard across 632, 661, and 680 CE. Date changes keep the camera in its selected place. The three change sets have matching “In this room” and “In the record” labels; [build decisions](docs/DECISIONS.md) record historical limits and [gray-box captures](docs/phase0/) show each dated view.
+- Four places to stand: doorway, head of room, pegs/hooks, and yard looking back. Moves glide for 0.8 seconds through the doorway where needed, or cut under reduced motion. The chosen place survives a return to reading and re-entry.
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent toggle. Returning to reading releases the renderer; renderer failure falls back to the reading page.
-- A pure state model already defines all three dates, four places, Compare, and motion policy. Only the date and Compare parts are wired to the live room.
+- The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: places to stand
+## Next proposed chunk: date cross-dissolve
 
-Pending user approval, connect the four places in [the plan](docs/PLAN.md#the-room-and-yard): doorway, head of room, pegs/hooks, and yard looking back. `src/state/places.ts` already defines their IDs and `src/state/store.ts` handles selection and transition state. `src/scene/createRoomView.ts` currently fixes the camera at the doorway and exposes only `look`, `setDate`, and `dispose`; `scripts/content.ts` generates no place controls. Wire the controls through `src/main.ts` and preserve the selected date and Compare state when moving. The plan calls for bounded look angles and a 0.8-second glide, with a cut under reduced motion. Check keyboard focus, the reading fallback, and that only one canvas remains.
+Pending user approval, implement the plan's 0.8-second date cross-dissolve at the selected camera, with an instant swap under reduced motion. Compare should still swap instantly, preserve the selected date, and stay at the same viewpoint. The current date change is immediate. `src/state/store.ts` already records date transition tokens; `src/scene/createRoomView.ts` does not yet render a date transition. Check rapid date selections and renderer cleanup without expanding into the later photoreal work.
 
 Work on this one chunk, test it, commit and publish its preview, then stop for the user's approval before another chunk.
 
@@ -40,7 +41,7 @@ npm run build
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run e2e
 ```
 
-The last implementation checkpoint passed 16 unit tests and 9 browser tests. Playwright serves the built page on `127.0.0.1:4173`; `/usr/bin/chromium` is the installed browser in this workspace. Elsewhere, install Chromium with `npx playwright install chromium` and adjust or omit the path override. The build output is `dist/` and is ignored by Git.
+The four-viewpoint checkpoint passed 16 unit tests and 12 browser tests. Playwright serves the built page on `127.0.0.1:4173`; `/usr/bin/chromium` is the installed browser in this workspace. Elsewhere, install Chromium with `npx playwright install chromium` and adjust or omit the path override. The build output is `dist/` and is ignored by Git.
 
 ## Publish the preview
 

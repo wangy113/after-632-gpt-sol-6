@@ -356,3 +356,132 @@ test('touch holds Compare only until release', async ({ page }) => {
   }
   await expect(canvas).toHaveAttribute('data-date', '661');
 });
+
+test('four places to stand move the same camera and keep the selected date', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  const doorway = room.locator('[data-room-place="doorway"]');
+  const head = room.locator('[data-room-place="head"]');
+  const pegs = room.locator('[data-room-place="pegs"]');
+  const yard = room.locator('[data-room-place="yard"]');
+
+  await expect(doorway).toHaveText('Doorway');
+  await expect(head).toHaveText('Head of room');
+  await expect(pegs).toHaveText('By the pegs');
+  await expect(yard).toHaveText('Yard looking back');
+  await expect(doorway).toHaveAttribute('aria-pressed', 'true');
+  await expect(canvas).toHaveAttribute('data-place', 'doorway');
+  await expect(canvas).toHaveAttribute('data-position', /^-?\d+\.\d{3},-?\d+\.\d{3},-?\d+\.\d{3}$/);
+  const positions = [await canvas.getAttribute('data-position')];
+
+  await room.getByRole('button', { name: '680 CE · Missing' }).click();
+  await head.focus();
+  await page.keyboard.press('Space');
+  await expect(head).toBeFocused();
+  await expect(head).toHaveAttribute('aria-pressed', 'true');
+  await expect(doorway).toHaveAttribute('aria-pressed', 'false');
+  await expect(canvas).toHaveAttribute('data-place', 'head');
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  positions.push(await canvas.getAttribute('data-position'));
+
+  await pegs.click();
+  await expect(canvas).toHaveAttribute('data-place', 'pegs');
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  positions.push(await canvas.getAttribute('data-position'));
+
+  await yard.click();
+  await expect(canvas).toHaveAttribute('data-place', 'yard');
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  const yardPosition = await canvas.getAttribute('data-position');
+  positions.push(yardPosition);
+  expect(new Set(positions).size).toBe(4);
+  expect(Number(yardPosition?.split(',')[2])).toBeGreaterThan(0);
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute('data-date', '680');
+
+  const hold = room.locator('#compare-hold');
+  await hold.hover();
+  await page.mouse.down();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-position', yardPosition!);
+  await expect(canvas).toHaveAttribute('data-place', 'yard');
+  await expect(yard).toHaveAttribute('aria-pressed', 'true');
+  await page.mouse.up();
+  await expect(canvas).toHaveAttribute('data-date', '680');
+  await expect(canvas).toHaveAttribute('data-position', yardPosition!);
+});
+
+test('a rapid change of place ends at the last destination', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  const doorway = room.locator('[data-room-place="doorway"]');
+  const head = room.locator('[data-room-place="head"]');
+  const pegs = room.locator('[data-room-place="pegs"]');
+  const yard = room.locator('[data-room-place="yard"]');
+
+  await yard.click();
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  const yardPosition = await canvas.getAttribute('data-position');
+  await doorway.click();
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+
+  await head.click();
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  await room.getByRole('button', { name: 'Look right' }).click();
+  await expect(canvas).toHaveAttribute('data-yaw', '3.362');
+  await doorway.click();
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  await expect(canvas).toHaveAttribute('data-yaw', '0.000');
+  await room.getByRole('button', { name: 'Look right' }).click();
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+
+  // Dispatch the selections together so an earlier glide cannot finish over the last one.
+  const movingAfterSwitch = await page.evaluate(() => {
+    for (const place of ['head', 'pegs', 'yard']) {
+      document.querySelector<HTMLButtonElement>(`[data-room-place="${place}"]`)!.click();
+    }
+    return document.querySelector<HTMLCanvasElement>('#scene-frame canvas')?.dataset.moving;
+  });
+  expect(movingAfterSwitch).toBe('true');
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  await expect(canvas).toHaveAttribute('data-place', 'yard');
+  await expect(canvas).toHaveAttribute('data-position', yardPosition!);
+  await expect(yard).toHaveAttribute('aria-pressed', 'true');
+  await expect(head).toHaveAttribute('aria-pressed', 'false');
+  await expect(pegs).toHaveAttribute('aria-pressed', 'false');
+  await expect(canvas).toHaveCount(1);
+});
+
+test('reduced motion cuts between places and reopening keeps the chosen place', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  const initialPosition = await canvas.getAttribute('data-position');
+  await room.locator('[data-room-place="pegs"]').click();
+  await expect(canvas).toHaveAttribute('data-place', 'pegs');
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  expect(await canvas.getAttribute('data-position')).not.toBe(initialPosition);
+
+  await room.locator('[data-room-place="yard"]').click();
+  await expect(canvas).toHaveAttribute('data-place', 'yard');
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  const yardPosition = await canvas.getAttribute('data-position');
+  await room.getByRole('button', { name: 'Return to reading' }).click();
+  await expect(canvas).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute('data-place', 'yard');
+  await expect(canvas).toHaveAttribute('data-position', yardPosition!);
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  await expect(room.locator('[data-room-place="yard"]')).toHaveAttribute('aria-pressed', 'true');
+});

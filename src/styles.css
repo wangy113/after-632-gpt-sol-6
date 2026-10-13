@@ -20,9 +20,9 @@ h3 { font-size: 1.3rem; margin: .5rem 0 1rem; }
 p { max-width: 70ch; }
 .setting { font-weight: 700; }
 .intro { padding-bottom: 2rem; border-bottom: 1px solid #b7b4a8; }
-.entry-actions, .look-controls, .room-dates, .compare-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.entry-actions, .look-controls, .room-dates, .compare-controls, .room-places { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
 .entry-actions { margin-top: 1.5rem; }
-.entry-actions button, .look-controls button, .room-dates button, .compare-controls button {
+.entry-actions button, .look-controls button, .room-dates button, .compare-controls button, .room-places button {
   border: 2px solid #244b50;
   background: #244b50;
   color: #fff;
@@ -31,14 +31,15 @@ p { max-width: 70ch; }
   padding: .65rem .9rem;
   cursor: pointer;
 }
-.entry-actions button:hover, .look-controls button:hover, .room-dates button:hover, .compare-controls button:hover:not(:disabled) { background: #102e32; }
+.entry-actions button:hover, .look-controls button:hover, .room-dates button:hover, .compare-controls button:hover:not(:disabled), .room-places button:hover { background: #102e32; }
 .room-dates { margin-bottom: 1rem; }
-.room-dates button[aria-pressed="true"] { background: #f7f5ee; color: #244b50; }
-.room-dates button[aria-pressed="true"]:hover { background: #e8e5d9; }
+.room-dates button[aria-pressed="true"], .room-places button[aria-pressed="true"] { background: #f7f5ee; color: #244b50; }
+.room-dates button[aria-pressed="true"]:hover, .room-places button[aria-pressed="true"]:hover { background: #e8e5d9; }
 .compare-controls button[aria-pressed="true"] { background: #f7f5ee; color: #244b50; }
 .compare-controls { margin-bottom: .25rem; }
 #compare-hold { touch-action: none; }
 #compare-help { margin-top: 0; }
+.room-places { margin: .5rem 0 1rem; }
 .compare-controls button:disabled { cursor: not-allowed; }
 button:focus-visible, .scene-frame:focus-visible { outline: 3px solid #ad552f; outline-offset: 4px; }
 button:disabled { cursor: wait; opacity: .65; }

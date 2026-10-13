@@ -3,6 +3,7 @@ import sources from '../content/sources.json' with { type: 'json' };
 import changes from '../content/changes.json' with { type: 'json' };
 import objects from '../content/objects.json' with { type: 'json' };
 import { ABSENT_632_IDS, ADDED_661_IDS, MISSING_680_IDS } from '../src/schema/changeIds';
+import { PLACE_IDS, PLACE_LABELS, PLACE_ORIENTATIONS } from '../src/state/places';
 
 export interface Moment {
   id: string;
@@ -186,7 +187,7 @@ export function renderPage(
     </li>`;
   }).join('');
   const roomContent = roomDates.map(date => `<div data-room-panel="${date}"${date === '632' ? '' : ' hidden'}>
-      <p id="room-description-${date}" class="room-note">${e(changeSets[date].description)} Turn around to see the yard, low wall, and well; look up to see the palm.</p>
+      <p id="room-description-${date}" class="room-note">${e(changeSets[date].description)}</p>
       <a class="read-link" data-read-room-date="${date}" href="#moment-${date}">Read the ${date} passage</a>
       <details class="things-here">
         <summary>Things here · ${date} CE</summary>
@@ -197,6 +198,9 @@ export function renderPage(
     const lens = data.moments.find(moment => moment.id === date)!.lens;
     return `<button type="button" data-room-date="${date}" data-room-lens="${e(lens.toLowerCase())}" aria-pressed="${date === '632'}">${date} CE · ${e(lens)}</button>`;
   }).join('');
+  const roomPlaceButtons = PLACE_IDS.map(place =>
+    `<button type="button" data-room-place="${place}" aria-pressed="${place === 'doorway'}">${e(PLACE_LABELS[place])}</button>`
+  ).join('');
   const openingLens = data.moments.find(moment => moment.id === '632')!.lens.toLowerCase();
   const navigation = data.moments.map(moment =>
     `<a href="#moment-${e(moment.id)}">${e(moment.id)} CE · ${e(moment.title)}</a>`
@@ -243,8 +247,11 @@ export function renderPage(
         <button type="button" id="compare-toggle" aria-pressed="false" aria-describedby="compare-help" disabled>Keep earlier date visible</button>
       </div>
       <p id="compare-help" class="room-note">Choose 661 or 680 CE to compare with the previous date from the same viewpoint.</p>
+      <div class="room-places" role="group" aria-label="Place to stand">
+        ${roomPlaceButtons}
+      </div>
       <div id="scene-frame" class="scene-frame" role="group" tabindex="0" aria-label="Look around the imagined room" aria-describedby="room-description-632 room-help"></div>
-      <p id="room-help">Drag to look around, or focus the view and use the arrow keys.</p>
+      <p id="room-help">${e(PLACE_ORIENTATIONS.doorway)} Drag to look around, or focus the view and use the arrow keys.</p>
       <div class="look-controls" role="group" aria-label="View controls">
         <button type="button" data-look="left">Look left</button>
         <button type="button" data-look="right">Look right</button>

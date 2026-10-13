@@ -34,3 +34,10 @@
 - Ordinary travel things are placed by the door in the imagined 661 room so visitors can compare their presence with their absence in 680. The 680 scene keeps the plain seat and room arrangement, and shows a clean floor patch and an empty hook where the things had been. The palm grows taller to mark elapsed time; the light stays fixed. The belongings and traces are invented, and none is a personal relic of Husayn.
 - The 680 room depicts no battle, injury, mourning gathering, or person. Its arrangement does not return to the 632 circle. The 680 labels and description keep the imagined scene separate from the cited historical account. Instructor and community review of the passage and symbolism remains open.
 - The updated [661 doorway capture](phase0/661-graybox.png) and [680 doorway capture](phase0/680-graybox.png) show the travel things and their floor trace from the same camera. The empty hook is visible when turning toward the door wall; the palm crown requires turning toward the yard and looking up.
+
+## Four places to stand · 2026-10-13
+
+- The doorway remains the entry view. The head of the room faces the doorway, the peg position faces the hooks, and the yard faces back into the room. These are standing points in the same imagined scene; selecting one does not change the historical date or Compare state.
+- Camera moves take 0.8 seconds and use the doorway opening as a waypoint between the room and yard. A new selection replaces an unfinished move. Reduced motion cuts to the chosen position, and closing the room cancels the move and releases the canvas.
+- Each place allows one bounded turn in either direction and limits vertical looking. Reset view faces that place's default direction. The selected place and orientation are described beside the view for keyboard and screen-reader use.
+- The [head](phase0/680-head-graybox.png), [pegs](phase0/680-pegs-graybox.png), and [yard](phase0/680-yard-graybox.png) gray-box captures record their 680 compositions. These do not settle the planned material, lighting, mobile, or screen-reader checks.
