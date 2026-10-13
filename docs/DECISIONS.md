@@ -80,3 +80,9 @@
 - [Eight axe-core scans](phase0/ACCESSIBILITY_AUDIT.md) now cover the static reading page and entered room at 1440, 390, and 320 pixels, plus expanded reading and room notes at 320 pixels. The scans use the built page in Chromium and pass with no reported violations.
 - The expanded 680 room notes exposed a heading-order issue: item headings jumped from the room's `h2` to `h4`. Room item headings are now `h3`; reading item headings remain `h4` below their date's `h3`.
 - The automated result does not validate the WebGL image or replace a manual keyboard and screen-reader review. Those checks remain open.
+
+## Small-screen keyboard path · 2026-10-13
+
+- The [390 × 844 keyboard audit](phase0/KEYBOARD_AUDIT.md) follows entry, date and place selection, movement skip, scene turning, Compare, a disclosure, and return to reading using keyboard input. It also checks initial renderer failure and recovery through the reading link.
+- Initial renderer failure previously left focus on the body because the focused Enter button was disabled during loading. On that failure, focus now returns to the enabled retry button if it was on Enter before loading and has not moved to another control. A context loss after the room opens still focuses the reading heading.
+- The automated path passed after the fix. A manual screen-reader review and real-device checks remain open.

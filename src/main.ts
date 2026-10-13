@@ -41,6 +41,7 @@ let pointerHoldId: number | null = null;
 let cKeyHeld = false;
 let buttonKeyHeld = false;
 let loading = false;
+let restoreEntryFocusOnFailure = false;
 let generation = 0;
 let deadline: ReturnType<typeof setTimeout> | undefined;
 let lastViewDescription = '';
@@ -138,6 +139,7 @@ function closeRoom(message = '') {
   clearTimeout(deadline);
   deadline = undefined;
   loading = false;
+  restoreEntryFocusOnFailure = false;
   const currentRoom = room;
   room = null;
   resetCompare();
@@ -201,9 +203,12 @@ function releasePointer(pointerId: number) {
 
 function fail() {
   const focusedInRoom = roomSection.contains(document.activeElement);
+  const restoreEntryFocus = loading && restoreEntryFocusOnFailure &&
+    (document.activeElement === document.body || document.activeElement === enterButton);
   closeRoom('The room view is unavailable. All three moments remain here to read. You can try the room again.');
   enterButton.textContent = 'Try the room again';
   if (focusedInRoom) readingTitle.focus({ preventScroll: true });
+  else if (restoreEntryFocus) enterButton.focus({ preventScroll: true });
 }
 
 async function enter() {
@@ -215,6 +220,7 @@ async function enter() {
   }
 
   const token = ++generation;
+  restoreEntryFocusOnFailure = document.activeElement === enterButton;
   loading = true;
   enterButton.disabled = true;
   enterButton.textContent = 'Opening the room…';
@@ -239,6 +245,7 @@ async function enter() {
     roomSection.hidden = false;
     enterButton.setAttribute('aria-expanded', 'true');
     loading = false;
+    restoreEntryFocusOnFailure = false;
     enterButton.disabled = false;
     enterButton.textContent = 'Enter the room';
     if (!renderRoomDate(`${state.date} room view open. The full reading remains below.`)) return;
