@@ -16,5 +16,23 @@
     "locator": "Introduction, p. 1",
     "url": "https://assets.cambridge.org/97810094/23045/excerpt/9781009423045_excerpt.pdf",
     "checkedOn": "2026-10-13"
+  },
+  {
+    "id": "HIST-03",
+    "title": "Muʿāwiyah I",
+    "author": "Donald P. Little",
+    "publisher": "Encyclopaedia Britannica",
+    "locator": "Caliphate section",
+    "url": "https://www.britannica.com/biography/Muawiyah-I",
+    "checkedOn": "2026-10-13"
+  },
+  {
+    "id": "OBJ-01",
+    "title": "Coin",
+    "author": "British Museum",
+    "publisher": "British Museum Collection Online",
+    "locator": "Arab-Sasanian silver coin, accession 1922,0424.3865",
+    "url": "https://www.britishmuseum.org/collection/object/C_1922-0424-3865",
+    "checkedOn": "2026-10-13"
   }
 ]

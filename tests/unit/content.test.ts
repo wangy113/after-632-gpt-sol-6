@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import experience from '../../content/experience.json' with { type: 'json' };
 import sources from '../../content/sources.json' with { type: 'json' };
 import changes from '../../content/changes.json' with { type: 'json' };
+import objects from '../../content/objects.json' with { type: 'json' };
 import { escapeHtml, renderPage, validateContent } from '../../scripts/content';
 
 describe('the reading page', () => {
@@ -65,5 +66,21 @@ describe('the reading page', () => {
     const mismatched = structuredClone(changes);
     mismatched['632'].labels[0].id = 'not-a-scene-object';
     expect(() => validateContent(experience, sources, mismatched)).toThrow('labels must match every scene object');
+  });
+
+  it('keeps the planned 661 coin replica tied to an earlier museum record without an image', () => {
+    expect(() => validateContent(experience, sources, changes, objects)).not.toThrow();
+
+    const tooLate = structuredClone(objects);
+    tooLate[0].museumReference.mintedCe = 679;
+    expect(() => validateContent(experience, sources, changes, tooLate)).toThrow('postdates its scene');
+
+    const unsupportedImage = structuredClone(objects);
+    unsupportedImage[0].imageUse = 'collection-photo';
+    expect(() => validateContent(experience, sources, changes, unsupportedImage)).toThrow('unlicensed or unsupported');
+
+    const unlinked = structuredClone(changes);
+    unlinked['661'].labels[2].objectId = 'missing';
+    expect(() => validateContent(experience, sources, unlinked, objects)).toThrow('label object is missing');
   });
 });

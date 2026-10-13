@@ -17,7 +17,7 @@ The plan follows the Quake Street earthquake lab (`wangy113/earthquake-lab-opus-
 - **No people:** no figures, voices, or crowds. Students read what people leave behind.
 - **Light carries no meaning:** one sky, one sun, the same hour at every date. Only the traces change.
 - **One lead lens per date:** 632 asks what is absent, 661 what is added, and 680 what is missing. "What stays" runs through all three. At the exit, students apply all the lenses to two news reports.
-- **One or two real objects, clearly labeled:** for example, "This coin is real. The room is not."
+- **Real objects, clearly labeled:** museum records support object labels. Photographs enter the room only after their date and rights are verified; the current 661 coin is planned as an interpretive replica.
 - **Fresh build:** the current app is retired. Only the verified source and news records and the historical guardrails carry over.
 
 ## Is it possible? Yes
@@ -37,7 +37,7 @@ Checked against the live Poly Haven API and the three 0.186.1 package on 2026-10
 - **Gaps to design around:**
   - **People:** there are none on Poly Haven, which suits the brief.
   - **Palms:** none exist. The trees on offer are other species, mostly 0.3M to 17M polygons. Palms are generated in code instead, porting the leaflet and rachis math from the old `scripts/render-courtyard.py` `palm()`.
-  - **Small objects:** there are no mats, cushions, letters, clay seals or coins. These are simple models: mats as sagging planes with hessian or reed textures, cups and jars from `LatheGeometry`, and the coin as a disc textured with photographs of a real coin.
+  - **Small objects:** there are no mats, cushions, letters, clay seals or coins. These are simple models: mats as sagging planes with hessian or reed textures, cups and jars from `LatheGeometry`, and the interpretive coin replica as a modeled disc.
   - **Traces:** dust rings, wear paths, footprints and pale outlines are decals. Their alpha textures are authored or generated.
 - **three r186 has what this needs:**
   - `WebGPURenderer` with TSL and the automatic WebGL2 fallback.
@@ -53,7 +53,7 @@ A plain meeting room opens through a wide doorway onto a small yard with a palm 
 
 1. **Arrival.** A still of the room loads first, before any 3D. It shows the title, the opening question ("When a community loses the person who united it, what gives someone else the authority to lead?") and the line "An imagined room. No one appears here. Look for what people leave behind." There are two buttons: **Enter** and **Read without 3D**.
 2. **632, Absent.** The student stands in the doorway. Mats lie in a loose, unfinished circle and the place at the head of the room is empty. Cups sit untouched. Footprints lead out the door. A lens chip reads "Look for what is absent." The 60-word passage is one tap away.
-3. **661, Added.** A short dissolve shows "29 years later" from the same spot. The circle is gone and the mats face one plain seat. A low table holds a sealed letter and **a real coin**. The pegs by the door are empty, each leaving a pale outline. The student can hold **Compare** to see 632 from the exact same spot.
+3. **661, Added.** A short dissolve shows "29 years later" from the same spot. The circle is gone and the mats face one plain seat. A low table holds a sealed letter and **a labeled interpretive coin replica**. The pegs by the door are empty, each leaving a pale outline. The student can hold **Compare** to see 632 from the exact same spot.
 4. **680, Missing.** "19 years later." The seat is still there. By the door, the travel bags and waterskin are gone, leaving a clean patch on the dusty floor and an empty hook. Nothing is added. The palm in the yard is taller.
 5. **Into the present.** The student leaves the room for a plain page with two dated Yemen reports, the Zaydi and Twelver context note, and the invitation: "What does this older history help you notice, and what would you still need to learn about this conflict?" An optional line offers the lenses for reading the reports: who is absent from a report, what is missing from its history, what it adds. Nothing about Yemen is shown in 3D.
 6. **Always available:**
@@ -68,14 +68,14 @@ There are no points, checklists, text boxes or graded answers.
 | Date | Lead lens | Students should be able to say | Changes in the room (about 3 per date) |
 |---|---|---|---|
 | 632 | Absent | The community had to decide who leads and on what grounds. Leading members chose Abu Bakr. Ali's supporters believed leadership belonged with Muhammad's family. | The head of the room is empty. The circle of mats is unresolved. Footprints lead out the door. |
-| 661 | Added | The disagreement became a contest for political power. Ali was killed, and Mu'awiya founded Umayyad rule from Damascus. | Mats face one plain seat. A sealed letter and a real coin sit on the table. Empty pegs leave pale outlines. |
+| 661 | Added | The disagreement became a contest for political power. Ali was killed, and Mu'awiya founded Umayyad rule from Damascus. | Mats face one plain seat. A sealed letter and an interpretive coin replica sit on the table. Empty pegs leave pale outlines. |
 | 680 | Missing | Husayn refused the new ruler and was killed at Karbala. His death became central to Shi'a memory of injustice and legitimate leadership. | The seat remains. The travel things are gone, leaving a clean patch and an empty hook. Nothing is added. |
 | All | Stays | Sunni and Shi'a Muslims share central beliefs and practices. These dates show where a disagreement began. | The walls, beams, well and jar stay the same. The palm grows taller. |
 
 **Every changed object has a two-part label.** The first part, *In this room*, describes what is invented. The second, *In the record*, gives the sourced fact and its link. Examples:
 - **632, footprints:** leading Muslims met elsewhere in Medina and chose Abu Bakr while Muhammad's family, including Ali, prepared his burial. Needs a source beyond the textbook.
-- **661, coin:** early governors struck silver coins on the Persian (Sasanian) model and added short Arabic phrases. The museum, accession number, license and link are on the label.
-- **661, letter:** Mu'awiya ruled from Damascus and appointed governors, including over Medina.
+- **661, coin:** the British Museum catalogs an Arab-Sasanian silver coin minted in 660 at Nihavand (1922,0424.3865). Its record is linked; the scene coin is a labeled interpretive replica, and no museum image is copied.
+- **661, letter:** Mu'awiya ruled from Damascus. Early Arabic sources credit his reign with a chancellery and postal service, without dating their creation to 661. The sealed message is invented.
 - **661, pegs:** the civil war of 656 to 661, including the battles of the Camel and Siffin (textbook §8.8).
 - **680, travel things:** in 680 Husayn left Medina rather than pledge allegiance to Yazid.
 
@@ -118,7 +118,7 @@ per frame:   input -> state -> camera -> change set -> render (only while someth
 
 1. **Content (`content/`, build time).**
    - Passages, change sets, two-part labels, "Describe this view" text, sources, news, and real-object records all live in JSON.
-   - The JSON is validated: 60-word passages, every change labeled and sourced, one lead lens per date, a license and link for every real object.
+   - The JSON is validated: 60-word passages, every change labeled and sourced, one lead lens per date, dated links for museum references, and a license for every displayed collection photograph.
    - The same JSON renders the static reading page used without JavaScript. No historical text lives in TypeScript.
 2. **State (`src/state/`, pure TS).**
    - Holds the date, place to stand, Compare held, inspected object, mode (3D or reading), motion policy (system reduced motion or user pause), and quality tier.
@@ -159,11 +159,11 @@ per frame:   input -> state -> camera -> change set -> render (only while someth
 
 ### Real objects
 - **The 661 coin:**
-  - An Arab-Sasanian silver drachm from the 660s or 670s.
-  - Photographed obverse and reverse, from an open-access CC0 museum collection such as The Met or Yale.
-  - Phase 0 verifies the date, issuer and license. If no suitable CC0 image exists, it becomes a clearly labeled replica.
+  - The British Museum catalogs an Arab-Sasanian silver coin from 660 CE (1922,0424.3865). This is a historical reference, not a claim that the coin was in the room.
+  - No CC0 obverse and reverse pair has been verified for a coin securely dated by 661. The room coin is therefore planned as a clearly labeled interpretive replica, without a collection photograph.
+  - A photographed museum coin can replace the replica only after its mint date, accession and both image rights are checked.
 - **Optional second object:** a photograph, in the 680 label, of Mu'awiya's dam inscription at Ta'if (677 to 678), which names him commander of the faithful. To verify.
-- **Inspection:** each real object opens in a close-up viewer that shows its record: museum, accession number, date, license and link.
+- **Inspection:** any photographed real object opens in a close-up viewer showing its museum, accession number, date, image license and link. The coin replica instead links to its separate museum reference.
 
 ### Repository layout
 
@@ -230,7 +230,7 @@ Each phase ends with something runnable and a check. Demo checkpoints come at th
 - Check: the brief's first milestone, one complete space and one historically checked date. Measure clarity and performance on real devices before adding dates.
 
 **Phase 2. Three dates and comparing**
-- The 661 and 680 change sets, trace decals, the real coin and its close-up viewer.
+- The 661 and 680 change sets, trace decals, the interpretive coin replica and its sourced label.
 - Compare and the dissolve. The palm's age. "Describe this view" and every two-part label.
 - Check:
   - Dates work in any order, and Compare is instant.
@@ -240,7 +240,7 @@ Each phase ends with something runnable and a check. Demo checkpoints come at th
 **Phase 3. The present and the sources**
 - The exit page: two re-verified reports, the Zaydi and Twelver note with the Brookings source, the lenses for reading reports, and the invitation.
 - The source shelf and credits (Poly Haven, museum, textbook under CC BY-SA 4.0).
-- Check: release content checks pass: two verified reports, every label sourced, every real object licensed.
+- Check: release content checks pass: two verified reports, every label sourced, and every displayed collection photograph licensed.
 
 **Phase 4. Accessibility, tiers and performance**
 - Keyboard and screen reader passes, reduced motion, focus handling on fallback and context loss.
@@ -261,13 +261,13 @@ Each phase ends with something runnable and a check. Demo checkpoints come at th
 
 ## Budgets
 - **First view:** 300 KB or less (HTML, CSS and the arrival still WebP), readable before any 3D loads.
-- **Whole visit:** 15 MB or less, including code, textures and the sky. Images for real objects load on demand.
+- **Whole visit:** 15 MB or less, including code, textures and the sky. Licensed collection images, if added, load on demand.
 - **Frame rate:** 60 fps on the demo laptop (Balanced) and 30 fps on a Chromebook or phone (Low). No frames are drawn once the view settles.
 - **Draw calls and triangles:** under about 150 draw calls and 800k triangles per frame on Balanced, counting the shadow pass.
 
 ## Verification
 - **`npm test`** (Vitest, Node):
-  - Content: passages of 60 words or fewer, every change has both label parts and a source, one lead lens per date, real objects carry a license and link.
+  - Content: passages of 60 words or fewer, every change has both label parts and a source, one lead lens per date, museum references carry a dated link, and displayed collection photographs carry a license.
   - State: dates in any order, Compare returns to the current date, reduced motion is instant, the newest date always wins.
   - World: each object's visibility per date, and trace decals appear only where something is missing.
   - The palm generator is deterministic and within its triangle budget.
@@ -276,7 +276,7 @@ Each phase ends with something runnable and a check. Demo checkpoints come at th
   - The reading page is complete with JavaScript off.
   - Each date and place opens instantly, with screenshots saved to `test-results/`.
   - Compare toggles the change set.
-  - The coin label links to its museum record.
+  - The coin label links to the museum record used as its historical reference.
   - Missing WebGL and a lost context both fall back to the reading page and keep focus.
   - axe scans pass at 1440, 390 and 320 px, with no console errors.
 - **Asset checks:** `npm run check:content` and `npm run check:assets` (size budgets, CC0 and license records).
@@ -285,10 +285,8 @@ Each phase ends with something runnable and a check. Demo checkpoints come at th
 ## Open items
 - **Sources beyond the textbook,** before students see these claims:
   - Ali's absence from the 632 choice
-  - the Umayyad governors of Medina
   - Husayn's refusal in Medina in 680
-  - early Arab-Sasanian coinage
   - Sunni honor for Husayn, for the 680 note
-- **Coin availability:** whether a coin from the period exists under CC0.
+- **Coin availability:** securely dated examples exist by 661, but CC0 photographs of both sides have not been verified. The current scene plan uses a replica.
 - **Instructor and community review** of the symbols and passages.
 

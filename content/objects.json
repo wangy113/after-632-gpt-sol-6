@@ -1,0 +1,20 @@
+[
+  {
+    "id": "coin-661",
+    "kind": "interpretive-replica",
+    "title": "Early Arab-Sasanian coin type",
+    "sceneDate": "661",
+    "sceneStatus": "planned",
+    "museumReference": {
+      "collection": "British Museum",
+      "accession": "1922,0424.3865",
+      "catalogUrl": "https://www.britishmuseum.org/collection/object/C_1922-0424-3865",
+      "sourceId": "OBJ-01",
+      "cataloguedDate": "660 CE (AH 40; YE 29)",
+      "mintedCe": 660,
+      "mint": "Nihavand"
+    },
+    "imageUse": "none",
+    "note": "The museum coin is a dated comparison, not an object from this imagined room. No collection photograph is included. The planned room coin is a modern interpretive replica because CC0 photographs of both sides of a coin securely dated by 661 have not been verified."
+  }
+]

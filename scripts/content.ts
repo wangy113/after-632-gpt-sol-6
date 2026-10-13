@@ -1,6 +1,7 @@
 import experience from '../content/experience.json' with { type: 'json' };
 import sources from '../content/sources.json' with { type: 'json' };
 import changes from '../content/changes.json' with { type: 'json' };
+import objects from '../content/objects.json' with { type: 'json' };
 import { ABSENT_632_IDS } from '../src/schema/changeIds';
 
 export interface Moment {
@@ -34,6 +35,7 @@ export interface ChangeLabel {
   inRoom: string;
   inRecord: string;
   sourceId: string;
+  objectId?: string;
 }
 
 export interface ChangeSet {
@@ -42,6 +44,25 @@ export interface ChangeSet {
 }
 
 export type Changes = Record<string, ChangeSet>;
+
+export interface ObjectRecord {
+  id: string;
+  kind: string;
+  title: string;
+  sceneDate: string;
+  sceneStatus: string;
+  museumReference: {
+    collection: string;
+    accession: string;
+    catalogUrl: string;
+    sourceId: string;
+    cataloguedDate: string;
+    mintedCe: number;
+    mint: string;
+  };
+  imageUse: string;
+  note: string;
+}
 
 const expectedLenses = new Map([
   ['632', 'Absent'],
@@ -53,11 +74,13 @@ export function validateContent(
   data: Experience = experience,
   records: Source[] = sources,
   changeSets: Changes = changes,
+  objectRecords: ObjectRecord[] = objects,
 ): void {
   if (!data.opening.trim() || !data.setting.trim()) throw new Error('Opening and setting are required');
   if (data.moments.length !== expectedLenses.size) throw new Error('Exactly three moments are required');
 
   const sourceIds = new Set(records.map(source => source.id));
+  const sourceById = new Map(records.map(source => [source.id, source]));
   if (sourceIds.size !== records.length) throw new Error('Source IDs must be unique');
   if (!data.shared.text.trim() || !sourceIds.has(data.shared.sourceId)) {
     throw new Error('Shared foundations need text and a source');
@@ -65,6 +88,28 @@ export function validateContent(
   for (const source of records) {
     if (!source.title.trim() || !source.author.trim() || !source.locator.trim()) throw new Error('Source details are required');
     if (new URL(source.url).protocol !== 'https:') throw new Error('Sources must use HTTPS');
+  }
+
+  const objectById = new Map<string, ObjectRecord>();
+  for (const object of objectRecords) {
+    if (!object.id.trim() || objectById.has(object.id)) throw new Error('Object IDs must be unique');
+    objectById.set(object.id, object);
+    if (object.kind !== 'interpretive-replica' || object.sceneStatus !== 'planned' || object.imageUse !== 'none') {
+      throw new Error(object.id + ': unlicensed or unsupported object treatment');
+    }
+    if (!object.title.trim() || !object.note.trim() || !expectedLenses.has(object.sceneDate)) {
+      throw new Error(object.id + ': object details or scene date are missing');
+    }
+    const reference = object.museumReference;
+    if (!reference.collection.trim() || !reference.accession.trim() || !reference.cataloguedDate.trim() || !reference.mint.trim()) {
+      throw new Error(object.id + ': museum reference details are missing');
+    }
+    if (new URL(reference.catalogUrl).protocol !== 'https:' || sourceById.get(reference.sourceId)?.url !== reference.catalogUrl) {
+      throw new Error(object.id + ': museum reference needs a matching HTTPS source');
+    }
+    if (!Number.isInteger(reference.mintedCe) || reference.mintedCe > Number(object.sceneDate)) {
+      throw new Error(object.id + ': reference coin postdates its scene');
+    }
   }
 
   const seen = new Set<string>();
@@ -94,6 +139,13 @@ export function validateContent(
       if (labelIds.has(label.id)) throw new Error(date + ': label IDs must be unique');
       labelIds.add(label.id);
       if (!sourceIds.has(label.sourceId)) throw new Error(date + ': label source is missing');
+      if (label.objectId) {
+        const object = objectById.get(label.objectId);
+        if (!object || object.sceneDate !== date) throw new Error(date + ': label object is missing or belongs to another date');
+        if (object.museumReference.sourceId !== label.sourceId) {
+          throw new Error(date + ': object label needs its museum source');
+        }
+      }
     }
     if (date === '632') {
       const sceneIds = Object.values(ABSENT_632_IDS);
@@ -118,8 +170,9 @@ export function renderPage(
   data: Experience = experience,
   records: Source[] = sources,
   changeSets: Changes = changes,
+  objectRecords: ObjectRecord[] = objects,
 ): string {
-  validateContent(data, records, changeSets);
+  validateContent(data, records, changeSets, objectRecords);
   const e = escapeHtml;
   const absent632 = changeSets['632'];
   const sourceById = new Map(records.map(source => [source.id, source]));

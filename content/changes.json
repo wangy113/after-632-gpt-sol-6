@@ -24,5 +24,39 @@
         "sourceId": "HIST-02"
       }
     ]
+  },
+  "661": {
+    "description": "In the planned 661 version of the imagined room, mats face one plain seat. A sealed letter and an interpretive coin replica sit on a low table. Empty pegs leave pale outlines by the door. This arrangement is invented, not a record of a particular room.",
+    "labels": [
+      {
+        "id": "facing-seat",
+        "title": "Mats facing one seat",
+        "inRoom": "The rearranged mats and plain seat are invented. This is not a documented seat of power or a throne.",
+        "inRecord": "After Ali's death in 661, Mu'awiya became caliph and based his rule in Damascus.",
+        "sourceId": "HIST-03"
+      },
+      {
+        "id": "sealed-letter",
+        "title": "A sealed letter",
+        "inRoom": "The sealed letter is invented. It is not a surviving message or evidence that an official visited this room.",
+        "inRecord": "Early Arabic sources credit Mu'awiya with a chancellery and postal service during his reign, intended to improve communication. The source does not date their creation to 661.",
+        "sourceId": "HIST-03"
+      },
+      {
+        "id": "coin-661",
+        "title": "An interpretive coin replica",
+        "inRoom": "The coin is a modern interpretive replica, not a find from this imagined room or a photograph of the museum coin.",
+        "inRecord": "The British Museum catalogs an Arab-Sasanian silver coin minted at Nihavand in 660 CE. Its accession number is 1922,0424.3865.",
+        "sourceId": "OBJ-01",
+        "objectId": "coin-661"
+      },
+      {
+        "id": "empty-pegs",
+        "title": "Empty pegs by the door",
+        "inRoom": "The pale outlines and empty pegs are invented. No belongings or departure from this room are documented.",
+        "inRecord": "Ali's rule from 656 to 661 was contested, and civil war followed before Mu'awiya became caliph.",
+        "sourceId": "HIST-01"
+      }
+    ]
   }
 }
