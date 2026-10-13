@@ -1,0 +1,31 @@
+{
+  "opening": "When a community loses the person who united it, what gives someone else the authority to lead?",
+  "setting": "An imagined room. No one appears here. Look for what people leave behind.",
+  "shared": {
+    "text": "Sunni and Shi'a Muslims belong to Islam and share central beliefs and practices, including belief in one God, the Qur'an, and prayer. Their traditions developed over time.",
+    "sourceId": "HIST-01"
+  },
+  "moments": [
+    {
+      "id": "632",
+      "title": "Succession",
+      "lens": "Absent",
+      "passage": "Muhammad died in 632. Leading members of the community chose his companion Abu Bakr as caliph, or leader. For them, the community could select its leader. Supporters of Ali, Muhammad's cousin and son-in-law, believed leadership belonged with the Prophet's family, and some held that Muhammad had named Ali. Each view answered: what makes authority rightful?",
+      "sourceId": "HIST-01"
+    },
+    {
+      "id": "661",
+      "title": "Political struggle",
+      "lens": "Added",
+      "passage": "Ali became caliph in 656, but his rule was contested and civil war followed. In 661 a Khariji, from a group that had broken with Ali, killed him. Mu'awiya, Syria's governor, became caliph and ruled from Damascus. His Umayyad family kept power and ended selection by consensus. The disagreement over leadership had become a contest for political power.",
+      "sourceId": "HIST-01"
+    },
+    {
+      "id": "680",
+      "title": "Karbala and remembrance",
+      "lens": "Missing",
+      "passage": "In 680 Mu'awiya's son Yazid became caliph. Husayn, Ali's son and Muhammad's grandson, refused to accept him. At Karbala, in Iraq, Yazid's forces killed Husayn and a small group of his family and followers. Shi'a Muslims came to remember his death as a turning point: a stand for rightful leadership against injustice. They commemorate it each year on Ashura.",
+      "sourceId": "HIST-01"
+    }
+  ]
+}
