@@ -26,7 +26,7 @@
     ]
   },
   "661": {
-    "description": "In the 661 version of the imagined room, mats face one plain seat. A sealed letter and an interpretive coin replica sit on a low table. Empty pegs leave pale outlines by the door. This arrangement is invented, not a record of a particular room.",
+    "description": "In the 661 version of the imagined room, mats face one plain seat. A sealed letter and an interpretive coin replica sit on a low table. Empty pegs leave pale outlines, and ordinary travel bags and a waterskin rest by the door. This arrangement is invented, not a record of a particular room.",
     "labels": [
       {
         "id": "facing-seat",
@@ -55,6 +55,39 @@
         "title": "Empty pegs by the door",
         "inRoom": "The pale outlines and empty pegs are invented. No belongings or departure from this room are documented.",
         "inRecord": "Ali's rule from 656 to 661 was contested, and civil war followed before Mu'awiya became caliph.",
+        "sourceId": "HIST-01"
+      },
+      {
+        "id": "travel-things",
+        "title": "Ordinary travel things",
+        "inRoom": "The bags and waterskin are invented ordinary props by the door. No person is associated with them, and no such room is documented.",
+        "inRecord": "Mu'awiya became caliph in 661 and ruled from Damascus. This source does not describe belongings in the imagined room.",
+        "sourceId": "HIST-03"
+      }
+    ]
+  },
+  "680": {
+    "description": "The plain seat and room arrangement remain from 661. By the door, the imagined travel bags and waterskin are missing, leaving a clean patch on the floor and an empty hook. The yard palm is taller, while the light stays the same. No object here belonged to Husayn; this is not a documented room.",
+    "labels": [
+      {
+        "id": "clean-patch",
+        "title": "A clean patch on the floor",
+        "inRoom": "The lighter patch marks where the imagined travel bags stood. Neither the bags nor their removal is documented, and they did not belong to Husayn.",
+        "inRecord": "In 680, Yazid demanded Husayn's allegiance. Husayn left Medina for Mecca rather than pledge to him.",
+        "sourceId": "HIST-04"
+      },
+      {
+        "id": "empty-hook",
+        "title": "An empty hook",
+        "inRoom": "An imagined waterskin is gone from this hook. No record places it in this room or connects it to Husayn.",
+        "inRecord": "Husayn refused to recognize Yazid as caliph. Their conflict culminated in his death at Karbala in 680.",
+        "sourceId": "HIST-01"
+      },
+      {
+        "id": "taller-palm",
+        "title": "The palm has grown",
+        "inRoom": "The same imagined yard palm is taller, marking elapsed years. No particular palm is documented, and the room's light carries no historical meaning.",
+        "inRecord": "Nineteen years separate Mu'awiya's accession in 661 from Yazid's accession and Husayn's death at Karbala in 680.",
         "sourceId": "HIST-01"
       }
     ]

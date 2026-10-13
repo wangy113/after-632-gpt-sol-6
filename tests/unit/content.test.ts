@@ -87,4 +87,24 @@ describe('the reading page', () => {
     mismatched['661'].labels[0].id = 'not-a-scene-object';
     expect(() => validateContent(experience, sources, mismatched, objects)).toThrow('661: labels must match every scene object');
   });
+
+  it('requires a sourced label for every 680 trace in the room and static reading', () => {
+    const page = renderPage();
+    const sourceIds = new Set(sources.map(source => source.id));
+    expect(changes['680'].labels).toHaveLength(3);
+    for (const label of changes['680'].labels) {
+      expect(sourceIds.has(label.sourceId)).toBe(true);
+      expect(page).toContain(escapeHtml(label.inRoom));
+      expect(page).toContain(escapeHtml(label.inRecord));
+      expect(page).toContain(`href="#source-${label.sourceId}"`);
+    }
+
+    const missing = structuredClone(changes);
+    delete (missing as Record<string, unknown>)['680'];
+    expect(() => validateContent(experience, sources, missing, objects)).toThrow('need change sets');
+
+    const mismatched = structuredClone(changes);
+    mismatched['680'].labels[0].id = 'not-a-scene-object';
+    expect(() => validateContent(experience, sources, mismatched, objects)).toThrow('680: labels must match every scene object');
+  });
 });

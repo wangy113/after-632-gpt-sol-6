@@ -16,7 +16,7 @@ test('all historical text is available without JavaScript or 3D', async ({ brows
   }
   await expect(page.getByRole('button', { name: 'Enter the room' })).toBeHidden();
 
-  for (const date of ['632', '661'] as const) {
+  for (const date of ['632', '661', '680'] as const) {
     const sceneNotes = page.locator(`#moment-${date} details.things-here`);
     await sceneNotes.locator('summary').click();
     await expect(sceneNotes).toContainText(changes[date].description);

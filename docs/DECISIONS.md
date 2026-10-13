@@ -17,8 +17,8 @@
 
 ## 661 gray-box view · 2026-10-13
 
-- The 632 and 661 groups are built once inside the same room and toggled by the two date buttons. Switching is immediate and keeps the camera fixed. The 680 scene and Compare controls remain later work.
-- All four 661 object groups match the sourced labels. The plain coin disc carries no museum image or invented ancient writing. The letter is unmarked, and the seat has no ornament or personal association.
+- At this checkpoint, the 632 and 661 groups were built once inside the same room and toggled by two date buttons. Switching was immediate and kept the camera fixed. The 680 scene and Compare controls were still later work.
+- The first four 661 object groups matched the sourced labels. The plain coin disc carried no museum image or invented ancient writing. The letter was unmarked, and the seat had no ornament or personal association.
 - The 661 labels also appear under the static passage when JavaScript is off. The room date buttons expose their pressed state, and the current passage link follows the selected date.
 - The [Chromium WebGL2 gray-box capture](phase0/661-graybox.png) records the 661 doorway composition. The screenshot and automated browser checks do not replace instructor or community review of the symbols.
 
@@ -26,4 +26,11 @@
 
 - Compare in the 661 room shows the earlier 632 change set immediately from the same camera. It does not change the selected date or rebuild the room. The 661 date button remains selected while the visible notes, lens, and view description follow the 632 scene; releasing Compare restores the 661 view and notes.
 - A hold button supports mouse, touch, and keyboard press-and-hold. Holding C while the room is active is an alternate shortcut. A separate native toggle button supports persistent comparison and exposes its pressed state. The hold ends on release or cancellation, and leaving the room clears Compare.
-- Compare is unavailable in 632 because it has no preceding scene. The 680 passage remains in the reading page; a 680 room view awaits its own change set.
+- Compare is unavailable in 632 because it has no preceding scene. At this checkpoint, the 680 passage was in the reading page, but its room view awaited a change set.
+
+## 680 historical record and gray-box view · 2026-10-13
+
+- Wilferd Madelung's [Encyclopaedia Iranica article on Husayn](https://www.iranicaonline.org/articles/hosayn-b-ali-i/), in the paragraph beginning “After Moʿāwia’s death,” says that in 680 Yazid ordered the governor of Medina to compel Husayn's allegiance and Husayn left for Mecca to seek asylum. This supports the specific journey claim in the 680 label. Parkinson's textbook, section 8.9, supports the broader account of Husayn's refusal, death at Karbala, and later Shi'a commemoration. Neither source places a bag, waterskin, hook, or meeting room in Husayn's life.
+- Ordinary travel things are placed by the door in the imagined 661 room so visitors can compare their presence with their absence in 680. The 680 scene keeps the plain seat and room arrangement, and shows a clean floor patch and an empty hook where the things had been. The palm grows taller to mark elapsed time; the light stays fixed. The belongings and traces are invented, and none is a personal relic of Husayn.
+- The 680 room depicts no battle, injury, mourning gathering, or person. Its arrangement does not return to the 632 circle. The 680 labels and description keep the imagined scene separate from the cited historical account. Instructor and community review of the passage and symbolism remains open.
+- The updated [661 doorway capture](phase0/661-graybox.png) and [680 doorway capture](phase0/680-graybox.png) show the travel things and their floor trace from the same camera. The empty hook is visible when turning toward the door wall; the palm crown requires turning toward the yard and looking up.

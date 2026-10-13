@@ -1,6 +1,6 @@
 import type { RoomView } from './scene/createRoomView';
 import type { RoomDate } from './schema/changeIds';
-import { dateChangeCaption } from './state/dates';
+import { dateChangeCaption, previousDate } from './state/dates';
 import { compareAvailable, initialState, isComparing, reduce, visibleDate } from './state/store';
 
 const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
@@ -12,6 +12,7 @@ const roomLens = document.querySelector<HTMLElement>('#room-lens')!;
 const dateButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-room-date]'));
 const compareHold = document.querySelector<HTMLButtonElement>('#compare-hold')!;
 const compareToggle = document.querySelector<HTMLButtonElement>('#compare-toggle')!;
+const compareHelp = document.querySelector<HTMLElement>('#compare-help')!;
 const roomPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-room-panel]'));
 const readingTitle = document.querySelector<HTMLElement>('#reading-title')!;
 const sceneFrame = document.querySelector<HTMLElement>('#scene-frame')!;
@@ -43,8 +44,7 @@ function resetCompare() {
 }
 
 function renderRoomDate(message?: string): boolean {
-  // Only 632 and 661 have room scenes in this chunk.
-  const date = visibleDate(state) as RoomDate;
+  const date = visibleDate(state);
   try { room?.setDate(date); } catch { fail(); return false; }
   const comparing = isComparing(state);
   roomTitle.textContent = comparing
@@ -55,9 +55,15 @@ function renderRoomDate(message?: string): boolean {
   for (const button of dateButtons) button.setAttribute('aria-pressed', String(button.dataset.roomDate === state.date));
   for (const panel of roomPanels) panel.hidden = panel.dataset.roomPanel !== date;
   sceneFrame.setAttribute('aria-describedby', `room-description-${date} room-help`);
-  const canCompare = compareAvailable(state);
+  const earlierDate = previousDate(state.date);
+  const canCompare = earlierDate !== null;
   compareHold.disabled = !canCompare;
   compareToggle.disabled = !canCompare;
+  compareHold.textContent = earlierDate ? `Hold to see ${earlierDate} CE` : 'Hold to compare';
+  compareToggle.textContent = earlierDate ? `Keep ${earlierDate} CE visible` : 'Keep earlier date visible';
+  compareHelp.textContent = earlierDate
+    ? `In ${state.date} CE, hold the first button or the C key to see ${earlierDate} CE from the same viewpoint. Release to return. Press the second button to keep ${earlierDate} CE visible; press again to return.`
+    : 'Choose 661 or 680 CE to compare with the previous date from the same viewpoint.';
   compareHold.setAttribute('aria-pressed', String(state.compareHeld));
   compareToggle.setAttribute('aria-pressed', String(state.compareToggled));
   status.textContent = message ?? (comparing

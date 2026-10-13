@@ -8,12 +8,14 @@ export interface Added661ChangeSet {
     sealedLetter: THREE.Group;
     coin661: THREE.Group;
     emptyPegs: THREE.Group;
+    travelThings: THREE.Group;
   };
   setVisible(visible: boolean): void;
+  setTravelVisible(visible: boolean): void;
   dispose(): void;
 }
 
-/** Four invented traces of 661, built as plain geometry without museum imagery. */
+/** Invented traces of 661, built as plain geometry without museum imagery. */
 export function addAdded661(scene: THREE.Scene): Added661ChangeSet {
   const root = new THREE.Group();
   root.name = '661-added';
@@ -25,7 +27,9 @@ export function addAdded661(scene: THREE.Scene): Added661ChangeSet {
   coin661.name = ADDED_661_IDS.coin661;
   const emptyPegs = new THREE.Group();
   emptyPegs.name = ADDED_661_IDS.emptyPegs;
-  root.add(facingSeat, sealedLetter, coin661, emptyPegs);
+  const travelThings = new THREE.Group();
+  travelThings.name = ADDED_661_IDS.travelThings;
+  root.add(facingSeat, sealedLetter, coin661, emptyPegs, travelThings);
 
   const geometries = new Set<THREE.BufferGeometry>();
   const materials = new Set<THREE.Material>();
@@ -47,6 +51,8 @@ export function addAdded661(scene: THREE.Scene): Added661ChangeSet {
   const seal = material(0x999c98);
   const coin = material(0x9b9e9a);
   const trace = material(0xd1d1cd, 0.55);
+  const bagCloth = material(0x999b95);
+  const waterskinSurface = material(0x777973);
 
   function mesh(group: THREE.Group, name: string, geometry: THREE.BufferGeometry, surface: THREE.Material): THREE.Mesh {
     geometries.add(geometry);
@@ -99,12 +105,35 @@ export function addAdded661(scene: THREE.Scene): Added661ChangeSet {
     peg.position.set(3.89, 1.53, z);
   }
 
+  // Ordinary, unowned travel things near the door. The three pegs above stay
+  // empty; the waterskin has its own hook farther along the same wall.
+  for (const [index, x, z, width] of [
+    [1, 1.70, -2.10, 0.29],
+    [2, 2.15, -2.52, 0.23],
+  ] as const) {
+    const bag = mesh(travelThings, `661-travel-bag-${index}`, new THREE.SphereGeometry(1, 12, 8), bagCloth);
+    bag.position.set(x, 0.19, z);
+    bag.scale.set(width, 0.18, 0.22);
+    bag.rotation.y = index === 1 ? -0.23 : 0.17;
+    const knot = mesh(travelThings, `661-travel-bag-knot-${index}`, new THREE.SphereGeometry(0.065, 8, 6), bagCloth);
+    knot.position.set(x, 0.36, z);
+  }
+  const travelHook = mesh(travelThings, '661-travel-hook', new THREE.CylinderGeometry(0.027, 0.03, 0.22, 8), wood);
+  travelHook.rotation.z = Math.PI / 2;
+  travelHook.position.set(3.89, 1.55, -2.10);
+  const waterskin = mesh(travelThings, '661-waterskin', new THREE.SphereGeometry(1, 12, 8), waterskinSurface);
+  waterskin.position.set(3.76, 1.20, -2.10);
+  waterskin.scale.set(0.17, 0.30, 0.15);
+  const neck = mesh(travelThings, '661-waterskin-neck', new THREE.CylinderGeometry(0.05, 0.07, 0.17, 8), waterskinSurface);
+  neck.position.set(3.76, 1.48, -2.10);
+
   scene.add(root);
   let disposed = false;
   return {
     root,
-    objects: { facingSeat, sealedLetter, coin661, emptyPegs },
+    objects: { facingSeat, sealedLetter, coin661, emptyPegs, travelThings },
     setVisible(visible) { root.visible = visible; },
+    setTravelVisible(visible) { travelThings.visible = visible; },
     dispose() {
       if (disposed) return;
       disposed = true;

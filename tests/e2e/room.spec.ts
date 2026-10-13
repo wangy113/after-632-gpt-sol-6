@@ -127,7 +127,7 @@ test('switching to 661 changes the same room and keeps its source-backed reading
 
   const thingsHere = room.locator('[data-room-panel="661"] details.things-here');
   await thingsHere.locator('summary').click();
-  await expect(thingsHere.locator('li[data-change-id]')).toHaveCount(4);
+  await expect(thingsHere.locator('li[data-change-id]')).toHaveCount(5);
   for (const label of changes['661'].labels) {
     const item = thingsHere.locator(`li[data-change-id="${label.id}"]`);
     await expect(item).toContainText(label.inRoom);
@@ -159,6 +159,106 @@ test('switching to 661 changes the same room and keeps its source-backed reading
   await canvas.dispatchEvent('webglcontextlost');
   await expect(room).toBeHidden();
   await expect(page.locator('#reading-title')).toBeFocused();
+});
+
+test('680 keeps the viewpoint and explains its missing traces with sourced labels', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = page.locator('#scene-frame canvas');
+  const date632 = room.getByRole('button', { name: '632 CE · Absent' });
+  const date661 = room.getByRole('button', { name: '661 CE · Added' });
+  const date680 = room.getByRole('button', { name: '680 CE · Missing' });
+  await room.getByRole('button', { name: 'Look right' }).click();
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+
+  await date680.click();
+  await expect(date680).toBeFocused();
+  await expect(date680).toHaveAttribute('aria-pressed', 'true');
+  await expect(date632).toHaveAttribute('aria-pressed', 'false');
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute('data-date', '680');
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+  await expect(room.locator('#room-title')).toHaveText('680 CE · Inside the imagined room');
+  await expect(room.locator('#room-lens')).toHaveText('Look for what is missing');
+  await expect(room.locator('#room-description-680')).toContainText(changes['680'].description);
+  await expect(room.locator('#scene-frame')).toHaveAttribute('aria-describedby', 'room-description-680 room-help');
+  await expect(room.locator('[data-room-panel="680"]')).toBeVisible();
+  await expect(room.locator('[data-room-panel="661"]')).toBeHidden();
+  await expect(page.locator('#scene-status')).toContainText('48 years later');
+
+  const thingsHere = room.locator('[data-room-panel="680"] details.things-here');
+  await thingsHere.locator('summary').click();
+  await expect(thingsHere.locator('li[data-change-id]')).toHaveCount(3);
+  for (const id of ['clean-patch', 'empty-hook', 'taller-palm']) {
+    await expect(thingsHere.locator(`li[data-change-id="${id}"]`)).toHaveCount(1);
+  }
+  for (const label of changes['680'].labels) {
+    const item = thingsHere.locator(`li[data-change-id="${label.id}"]`);
+    await expect(item).toContainText(`In this room: ${label.inRoom}`);
+    await expect(item).toContainText(`In the record: ${label.inRecord}`);
+    await expect(item.getByRole('link')).toHaveAttribute('href', `#source-${label.sourceId}`);
+    const source = sources.find(source => source.id === label.sourceId)!;
+    await expect(page.locator(`#source-${label.sourceId} a`)).toHaveAttribute('href', source.url);
+  }
+
+  await date661.click();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await date680.click();
+  await expect(canvas).toHaveAttribute('data-date', '680');
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+  await expect(page.locator('#scene-status')).toContainText('19 years later');
+
+  await room.getByRole('link', { name: 'Read the 680 passage' }).click();
+  await expect(room).toBeHidden();
+  await expect(canvas).toHaveCount(0);
+  await expect(page.locator('#moment-680 h3')).toBeFocused();
+  await expect(page).toHaveURL(/#moment-680$/);
+  await expect(page.getByText(experience.moments[2].passage, { exact: true })).toBeVisible();
+});
+
+test('680 Compare previews 661 without changing the selected date or viewpoint', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = page.locator('#scene-frame canvas');
+  const date661 = room.getByRole('button', { name: '661 CE · Added' });
+  const date680 = room.getByRole('button', { name: '680 CE · Missing' });
+  const hold = room.locator('#compare-hold');
+  const toggle = room.locator('#compare-toggle');
+  await date680.click();
+  await room.getByRole('button', { name: 'Look right' }).click();
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+  await expect(hold).toHaveText('Hold to see 661 CE');
+  await expect(toggle).toHaveText('Keep 661 CE visible');
+
+  await hold.hover();
+  await page.mouse.down();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+  await expect(date680).toHaveAttribute('aria-pressed', 'true');
+  await expect(room.locator('#room-title')).toHaveText('661 CE · Comparing with 680 CE');
+  await expect(room.locator('#room-lens')).toHaveText('Look for what is added');
+  await expect(room.locator('[data-room-panel="661"]')).toBeVisible();
+  await expect(room.locator('[data-room-panel="680"]')).toBeHidden();
+  await expect(room.locator('#scene-frame')).toHaveAttribute('aria-describedby', 'room-description-661 room-help');
+  await page.mouse.up();
+  await expect(canvas).toHaveAttribute('data-date', '680');
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await date661.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(hold).toHaveText('Hold to see 632 CE');
+  await date680.click();
+  await expect(canvas).toHaveAttribute('data-date', '680');
+  await expect(hold).toHaveText('Hold to see 661 CE');
 });
 
 test('Compare previews 632 at the same viewpoint and clears on release, blur, and date change', async ({ page }) => {

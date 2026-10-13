@@ -2,7 +2,7 @@ import experience from '../content/experience.json' with { type: 'json' };
 import sources from '../content/sources.json' with { type: 'json' };
 import changes from '../content/changes.json' with { type: 'json' };
 import objects from '../content/objects.json' with { type: 'json' };
-import { ABSENT_632_IDS, ADDED_661_IDS } from '../src/schema/changeIds';
+import { ABSENT_632_IDS, ADDED_661_IDS, MISSING_680_IDS } from '../src/schema/changeIds';
 
 export interface Moment {
   id: string;
@@ -125,7 +125,9 @@ export function validateContent(
     if (!sourceIds.has(moment.sourceId)) throw new Error(moment.id + ': source is missing');
   }
 
-  if (!changeSets['632'] || !changeSets['661']) throw new Error('The 632 and 661 scenes need change sets');
+  if (!changeSets['632'] || !changeSets['661'] || !changeSets['680']) {
+    throw new Error('The 632, 661 and 680 scenes need change sets');
+  }
   for (const [date, changeSet] of Object.entries(changeSets)) {
     if (!expectedLenses.has(date)) throw new Error(date + ': unsupported change-set date');
     if (!changeSet.description.trim() || !changeSet.labels.length) {
@@ -147,11 +149,10 @@ export function validateContent(
         }
       }
     }
-    if (date === '632' || date === '661') {
-      const sceneIds = date === '632' ? Object.values(ABSENT_632_IDS) : Object.values(ADDED_661_IDS);
-      if (labelIds.size !== sceneIds.length || sceneIds.some(id => !labelIds.has(id))) {
-        throw new Error(date + ': labels must match every scene object');
-      }
+    const sceneIds = date === '632' ? Object.values(ABSENT_632_IDS)
+      : date === '661' ? Object.values(ADDED_661_IDS) : Object.values(MISSING_680_IDS);
+    if (labelIds.size !== sceneIds.length || sceneIds.some(id => !labelIds.has(id))) {
+      throw new Error(date + ': labels must match every scene object');
     }
   }
 }
@@ -174,7 +175,7 @@ export function renderPage(
 ): string {
   validateContent(data, records, changeSets, objectRecords);
   const e = escapeHtml;
-  const roomDates = ['632', '661'] as const;
+  const roomDates = ['632', '661', '680'] as const;
   const sourceById = new Map(records.map(source => [source.id, source]));
   const renderLabels = (date: typeof roomDates[number]) => changeSets[date].labels.map(label => {
     const source = sourceById.get(label.sourceId)!;
@@ -185,7 +186,7 @@ export function renderPage(
     </li>`;
   }).join('');
   const roomContent = roomDates.map(date => `<div data-room-panel="${date}"${date === '632' ? '' : ' hidden'}>
-      <p id="room-description-${date}" class="room-note">${e(changeSets[date].description)} Turn around to see the yard, low wall, well, and palm.</p>
+      <p id="room-description-${date}" class="room-note">${e(changeSets[date].description)} Turn around to see the yard, low wall, and well; look up to see the palm.</p>
       <a class="read-link" data-read-room-date="${date}" href="#moment-${date}">Read the ${date} passage</a>
       <details class="things-here">
         <summary>Things here · ${date} CE</summary>
@@ -238,10 +239,10 @@ export function renderPage(
         ${roomDateButtons}
       </div>
       <div class="compare-controls" role="group" aria-label="Compare room dates">
-        <button type="button" id="compare-hold" aria-pressed="false" aria-describedby="compare-help" disabled>Hold to see 632 CE</button>
-        <button type="button" id="compare-toggle" aria-pressed="false" aria-describedby="compare-help" disabled>Keep 632 CE visible</button>
+        <button type="button" id="compare-hold" aria-pressed="false" aria-describedby="compare-help" disabled>Hold to compare</button>
+        <button type="button" id="compare-toggle" aria-pressed="false" aria-describedby="compare-help" disabled>Keep earlier date visible</button>
       </div>
-      <p id="compare-help" class="room-note">In 661 CE, hold the first button or the C key to see 632 CE from the same viewpoint. Release to return. Press the second button again to turn off a lasting comparison.</p>
+      <p id="compare-help" class="room-note">Choose 661 or 680 CE to compare with the previous date from the same viewpoint.</p>
       <div id="scene-frame" class="scene-frame" role="group" tabindex="0" aria-label="Look around the imagined room" aria-describedby="room-description-632 room-help"></div>
       <p id="room-help">Drag to look around, or focus the view and use the arrow keys.</p>
       <div class="look-controls" role="group" aria-label="View controls">

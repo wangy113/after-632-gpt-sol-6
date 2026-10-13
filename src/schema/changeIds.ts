@@ -10,6 +10,13 @@ export const ADDED_661_IDS = {
   sealedLetter: 'sealed-letter',
   coin661: 'coin-661',
   emptyPegs: 'empty-pegs',
+  travelThings: 'travel-things',
 } as const;
 
-export type RoomDate = '632' | '661';
+export const MISSING_680_IDS = {
+  cleanPatch: 'clean-patch',
+  emptyHook: 'empty-hook',
+  tallerPalm: 'taller-palm',
+} as const;
+
+export type RoomDate = '632' | '661' | '680';
