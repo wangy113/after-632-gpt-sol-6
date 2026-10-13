@@ -36,6 +36,7 @@ p { max-width: 70ch; }
 .room-dates button[aria-pressed="true"], .room-places button[aria-pressed="true"] { background: #f7f5ee; color: #244b50; }
 .room-dates button[aria-pressed="true"]:hover, .room-places button[aria-pressed="true"]:hover { background: #e8e5d9; }
 .compare-controls button[aria-pressed="true"] { background: #f7f5ee; color: #244b50; }
+.look-controls button[aria-pressed="true"] { background: #f7f5ee; color: #244b50; }
 .compare-controls { margin-bottom: .25rem; }
 #compare-hold { touch-action: none; }
 #compare-help { margin-top: 0; }

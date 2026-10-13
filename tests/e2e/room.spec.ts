@@ -706,3 +706,74 @@ test('Skip movement finishes the current camera glide or date dissolve', async (
   await expect(room.locator('[data-room-date="661"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(canvas).toHaveCount(1);
 });
+
+test('Pause motion finishes active movement and cuts later changes until resumed', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  const pause = room.locator('#pause-motion');
+  await expect(canvas).toHaveCount(1);
+  await expect(pause).toHaveAttribute('aria-pressed', 'false');
+
+  const glide = await page.evaluate(() => {
+    document.querySelector<HTMLButtonElement>('[data-room-place="yard"]')!.click();
+    const canvas = document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!;
+    const active = canvas.dataset.moving;
+    document.querySelector<HTMLButtonElement>('#pause-motion')!.click();
+    return { active, stopped: canvas.dataset.moving, place: canvas.dataset.place, date: canvas.dataset.date };
+  });
+  expect(glide).toEqual({ active: 'true', stopped: 'false', place: 'yard', date: '632' });
+  await expect(pause).toHaveAttribute('aria-pressed', 'true');
+  await expect(room.locator('[data-room-place="yard"]')).toHaveAttribute('aria-pressed', 'true');
+
+  const cuts = await page.evaluate(() => {
+    const canvas = document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!;
+    document.querySelector<HTMLButtonElement>('[data-room-place="pegs"]')!.click();
+    const moving = canvas.dataset.moving;
+    document.querySelector<HTMLButtonElement>('[data-room-date="661"]')!.click();
+    return { moving, dateTransition: canvas.dataset.dateTransition, place: canvas.dataset.place, date: canvas.dataset.date };
+  });
+  expect(cuts).toEqual({ moving: 'false', dateTransition: 'false', place: 'pegs', date: '661' });
+  await expect(room.locator('[data-room-place="pegs"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(room.locator('[data-room-date="661"]')).toHaveAttribute('aria-pressed', 'true');
+
+  await room.locator('#compare-toggle').click();
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+  await expect(room.locator('[data-room-date="661"]')).toHaveAttribute('aria-pressed', 'true');
+  await room.locator('#compare-toggle').click();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+
+  const dissolve = await page.evaluate(() => {
+    const pause = document.querySelector<HTMLButtonElement>('#pause-motion')!;
+    const canvas = document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!;
+    pause.click();
+    document.querySelector<HTMLButtonElement>('[data-room-date="680"]')!.click();
+    const active = canvas.dataset.dateTransition;
+    pause.click();
+    return { active, stopped: canvas.dataset.dateTransition, place: canvas.dataset.place, date: canvas.dataset.date };
+  });
+  expect(dissolve).toEqual({ active: 'true', stopped: 'false', place: 'pegs', date: '680' });
+  await expect(pause).toHaveAttribute('aria-pressed', 'true');
+  await expect(room.locator('#date-transition-caption')).toBeHidden();
+  await expect(room.locator('[data-room-date="680"]')).toHaveAttribute('aria-pressed', 'true');
+
+  const resumed = await page.evaluate(() => {
+    document.querySelector<HTMLButtonElement>('#pause-motion')!.click();
+    const canvas = document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!;
+    document.querySelector<HTMLButtonElement>('[data-room-date="661"]')!.click();
+    const dateTransition = canvas.dataset.dateTransition;
+    document.querySelector<HTMLButtonElement>('#skip-movement')!.click();
+    document.querySelector<HTMLButtonElement>('[data-room-place="head"]')!.click();
+    const moving = canvas.dataset.moving;
+    document.querySelector<HTMLButtonElement>('#skip-movement')!.click();
+    return { dateTransition, moving, place: canvas.dataset.place, date: canvas.dataset.date };
+  });
+  expect(resumed).toEqual({ dateTransition: 'true', moving: 'true', place: 'head', date: '661' });
+  await expect(pause).toHaveAttribute('aria-pressed', 'false');
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+});

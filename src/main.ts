@@ -12,6 +12,7 @@ const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
 const readLink = document.querySelector<HTMLAnchorElement>('#read-link')!;
 const returnButton = document.querySelector<HTMLButtonElement>('#return-reading')!;
 const skipMovementButton = document.querySelector<HTMLButtonElement>('#skip-movement')!;
+const pauseMotionButton = document.querySelector<HTMLButtonElement>('#pause-motion')!;
 const roomSection = document.querySelector<HTMLElement>('#room-view')!;
 const roomTitle = document.querySelector<HTMLElement>('#room-title')!;
 const roomLens = document.querySelector<HTMLElement>('#room-lens')!;
@@ -348,6 +349,25 @@ function skipCurrentMovement() {
   status.textContent = `Movement skipped. Showing ${visibleDate(state)} CE from ${PLACE_LABELS[state.place].toLowerCase()}.`;
 }
 skipMovementButton.addEventListener('click', skipCurrentMovement);
+pauseMotionButton.addEventListener('click', () => {
+  if (!room) return;
+  const paused = !state.paused;
+  if (paused) {
+    try {
+      room.skipMovement();
+      room.skipDateTransition();
+    } catch { fail(); return; }
+  }
+  state = reduce(state, { type: 'setPaused', paused });
+  pauseMotionButton.setAttribute('aria-pressed', String(paused));
+  dateCaption.hidden = true;
+  renderViewDescription();
+  status.textContent = paused
+    ? 'Motion paused. Date and place changes will appear immediately.'
+    : motionQuery.matches
+      ? 'Motion resumed here. Your system setting still reduces motion.'
+      : 'Motion resumed. Date and place changes can animate again.';
+});
 window.addEventListener('keydown', event => {
   if (event.key !== 'Escape' || !room || !roomSection.contains(document.activeElement)) return;
   if (!state.placeTransition && !state.dateTransition) return;
