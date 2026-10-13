@@ -307,8 +307,10 @@ export function renderPage(
         <button type="button" data-look="up">Look up</button>
         <button type="button" data-look="down">Look down</button>
         <button type="button" data-look="reset">Reset view</button>
+        <button type="button" id="skip-movement" aria-describedby="skip-movement-help">Skip movement</button>
         <button type="button" id="return-reading">Return to reading</button>
       </div>
+      <p id="skip-movement-help" class="room-note">Finish a camera move or date change immediately. Press Escape while using the room, or choose Skip movement. If none is underway, the view stays as it is.</p>
       ${roomContent}
       <p class="room-note">This room and yard are illustrative, not a reconstruction of a documented place.</p>
     </section>

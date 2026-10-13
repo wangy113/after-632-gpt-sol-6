@@ -665,3 +665,44 @@ test('Describe this view follows the visible date, place, Compare, and look dire
   await expect(details).toHaveAttribute('open', '');
   await expect(room.locator('#view-location')).toHaveText('680 CE · By the pegs · starting view.');
 });
+
+test('Skip movement finishes the current camera glide or date dissolve', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  await expect(canvas).toHaveCount(1);
+  const skip = room.getByRole('button', { name: 'Skip movement' });
+  await skip.focus();
+  await page.keyboard.press('Space');
+  await expect(page.locator('#scene-status')).toHaveText('No movement is in progress.');
+
+  const glide = await page.evaluate(() => {
+    document.querySelector<HTMLButtonElement>('[data-room-place="yard"]')!.click();
+    const canvas = document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!;
+    const active = canvas.dataset.moving;
+    document.querySelector<HTMLButtonElement>('#skip-movement')!.click();
+    return { active, stopped: canvas.dataset.moving, position: canvas.dataset.position };
+  });
+  expect(glide.active).toBe('true');
+  expect(glide.stopped).toBe('false');
+  expect(Number(glide.position?.split(',')[2])).toBeGreaterThan(4);
+  await expect(room.locator('[data-room-place="yard"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#scene-status')).toContainText('Movement skipped');
+
+  const dissolve = await page.evaluate(() => {
+    const date = document.querySelector<HTMLButtonElement>('[data-room-date="661"]')!;
+    date.focus();
+    date.click();
+    const canvas = document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!;
+    const active = canvas.dataset.dateTransition;
+    date.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    return { active, stopped: canvas.dataset.dateTransition, date: canvas.dataset.date };
+  });
+  expect(dissolve.active).toBe('true');
+  expect(dissolve.stopped).toBe('false');
+  expect(dissolve.date).toBe('661');
+  await expect(room.locator('#date-transition-caption')).toBeHidden();
+  await expect(room.locator('[data-room-date="661"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(canvas).toHaveCount(1);
+});

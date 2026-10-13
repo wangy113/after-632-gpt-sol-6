@@ -53,3 +53,8 @@
 - `content/views.json` holds a scene description for the starting camera direction at each of the 12 date and place combinations. Each date selects a validated label from `content/changes.json` for a separate “In the record” sentence and source link. The new text does not treat the invented room as historical evidence.
 - The room uses a native disclosure. While it is open, date, place, Compare, and camera turns update its text. A turned camera gets a broad description of its current direction; the dated starting-view detail is labeled separately with Reset view instructions. A moving camera gets a temporary movement description until it arrives.
 - The 12 starting-view descriptions and their record links also appear under the passages without JavaScript. Keyboard behavior and the resulting document structure were checked in Chromium; a manual screen-reader review remains open.
+
+## Skip movement · 2026-10-13
+
+- The room's existing methods snap an active camera glide to its chosen standing place and end an active date dissolve on its chosen date. The Skip movement button invokes both and clears transition state; Escape does the same while focus is in the room.
+- The control applies only to the current transition. It leaves the system reduced-motion preference and future transitions alone. If no transition is active, it reports that there is no movement to skip.

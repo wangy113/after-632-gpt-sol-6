@@ -11,6 +11,7 @@ import { compareAvailable, initialState, isComparing, reduce, visibleDate } from
 const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
 const readLink = document.querySelector<HTMLAnchorElement>('#read-link')!;
 const returnButton = document.querySelector<HTMLButtonElement>('#return-reading')!;
+const skipMovementButton = document.querySelector<HTMLButtonElement>('#skip-movement')!;
 const roomSection = document.querySelector<HTMLElement>('#room-view')!;
 const roomTitle = document.querySelector<HTMLElement>('#room-title')!;
 const roomLens = document.querySelector<HTMLElement>('#room-lens')!;
@@ -330,6 +331,28 @@ returnButton.addEventListener('click', () => {
   closeRoom('Reading view. All three moments are available below.');
   readingTitle.focus({ preventScroll: true });
   readingTitle.scrollIntoView({ block: 'start' });
+});
+function skipCurrentMovement() {
+  if (!room) return;
+  if (!state.placeTransition && !state.dateTransition) {
+    status.textContent = 'No movement is in progress.';
+    return;
+  }
+  try {
+    room.skipMovement();
+    room.skipDateTransition();
+  } catch { fail(); return; }
+  state = reduce(state, { type: 'skipMovement' });
+  dateCaption.hidden = true;
+  renderViewDescription();
+  status.textContent = `Movement skipped. Showing ${visibleDate(state)} CE from ${PLACE_LABELS[state.place].toLowerCase()}.`;
+}
+skipMovementButton.addEventListener('click', skipCurrentMovement);
+window.addEventListener('keydown', event => {
+  if (event.key !== 'Escape' || !room || !roomSection.contains(document.activeElement)) return;
+  if (!state.placeTransition && !state.dateTransition) return;
+  event.preventDefault();
+  skipCurrentMovement();
 });
 document.querySelectorAll<HTMLButtonElement>('[data-look]').forEach(button => {
   button.addEventListener('click', () => room?.look(button.dataset.look as Parameters<RoomView['look']>[0]));
