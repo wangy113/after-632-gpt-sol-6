@@ -1,5 +1,7 @@
 import experience from '../content/experience.json' with { type: 'json' };
 import sources from '../content/sources.json' with { type: 'json' };
+import changes from '../content/changes.json' with { type: 'json' };
+import { ABSENT_632_IDS } from '../src/schema/changeIds';
 
 export interface Moment {
   id: string;
@@ -26,13 +28,32 @@ export interface Source {
   checkedOn: string;
 }
 
+export interface ChangeLabel {
+  id: string;
+  title: string;
+  inRoom: string;
+  inRecord: string;
+  sourceId: string;
+}
+
+export interface ChangeSet {
+  description: string;
+  labels: ChangeLabel[];
+}
+
+export type Changes = Record<string, ChangeSet>;
+
 const expectedLenses = new Map([
   ['632', 'Absent'],
   ['661', 'Added'],
   ['680', 'Missing'],
 ]);
 
-export function validateContent(data: Experience = experience, records: Source[] = sources): void {
+export function validateContent(
+  data: Experience = experience,
+  records: Source[] = sources,
+  changeSets: Changes = changes,
+): void {
   if (!data.opening.trim() || !data.setting.trim()) throw new Error('Opening and setting are required');
   if (data.moments.length !== expectedLenses.size) throw new Error('Exactly three moments are required');
 
@@ -58,6 +79,29 @@ export function validateContent(data: Experience = experience, records: Source[]
     }
     if (!sourceIds.has(moment.sourceId)) throw new Error(moment.id + ': source is missing');
   }
+
+  if (!changeSets['632']) throw new Error('The 632 scene needs a change set');
+  for (const [date, changeSet] of Object.entries(changeSets)) {
+    if (!expectedLenses.has(date)) throw new Error(date + ': unsupported change-set date');
+    if (!changeSet.description.trim() || !changeSet.labels.length) {
+      throw new Error(date + ': change set needs a description and labels');
+    }
+    const labelIds = new Set<string>();
+    for (const label of changeSet.labels) {
+      if (!label.id.trim() || !label.title.trim() || !label.inRoom.trim() || !label.inRecord.trim()) {
+        throw new Error(date + ': every label needs an id, title, and both explanations');
+      }
+      if (labelIds.has(label.id)) throw new Error(date + ': label IDs must be unique');
+      labelIds.add(label.id);
+      if (!sourceIds.has(label.sourceId)) throw new Error(date + ': label source is missing');
+    }
+    if (date === '632') {
+      const sceneIds = Object.values(ABSENT_632_IDS);
+      if (labelIds.size !== sceneIds.length || sceneIds.some(id => !labelIds.has(id))) {
+        throw new Error('632: labels must match every scene object');
+      }
+    }
+  }
 }
 
 export function escapeHtml(value: string): string {
@@ -70,20 +114,40 @@ export function escapeHtml(value: string): string {
   })[character]!);
 }
 
-export function renderPage(data: Experience = experience, records: Source[] = sources): string {
-  validateContent(data, records);
+export function renderPage(
+  data: Experience = experience,
+  records: Source[] = sources,
+  changeSets: Changes = changes,
+): string {
+  validateContent(data, records, changeSets);
   const e = escapeHtml;
+  const absent632 = changeSets['632'];
+  const sourceById = new Map(records.map(source => [source.id, source]));
+  const roomLabels = absent632.labels.map(label => {
+    const source = sourceById.get(label.sourceId)!;
+    return `<li data-change-id="${e(label.id)}">
+      <h4>${e(label.title)}</h4>
+      <p><strong>In this room:</strong> ${e(label.inRoom)}</p>
+      <p><strong>In the record:</strong> ${e(label.inRecord)} <a href="#source-${e(label.sourceId)}">Source: ${e(source.author)}, ${e(source.locator)}</a></p>
+    </li>`;
+  }).join('');
   const navigation = data.moments.map(moment =>
     `<a href="#moment-${e(moment.id)}">${e(moment.id)} CE · ${e(moment.title)}</a>`
   ).join('');
-  const moments = data.moments.map(moment =>
-    `<article class="moment" id="moment-${e(moment.id)}">
+  const moments = data.moments.map(moment => {
+    const sceneNotes = moment.id === '632' ? `<details class="things-here">
+        <summary>632 scene notes and sources</summary>
+        <p class="room-note">${e(absent632.description)}</p>
+        <ol>${roomLabels}</ol>
+      </details>` : '';
+    return `<article class="moment" id="moment-${e(moment.id)}">
       <p class="lens">Look for what is ${e(moment.lens.toLowerCase())}</p>
-      <h3>${e(moment.id)} CE — ${e(moment.title)}</h3>
+      <h3 tabindex="-1">${e(moment.id)} CE — ${e(moment.title)}</h3>
       <p>${e(moment.passage)}</p>
       <a href="#source-${e(moment.sourceId)}">Historical source</a>
-    </article>`
-  ).join('');
+      ${sceneNotes}
+    </article>`;
+  }).join('');
   const sourceList = records.map(source =>
     `<li id="source-${e(source.id)}"><a href="${e(source.url)}">${e(source.author)}, ${e(source.title)}</a>. ${e(source.publisher)}, ${e(source.locator)}.</li>`
   ).join('');
@@ -100,11 +164,13 @@ export function renderPage(data: Experience = experience, records: Source[] = so
       <p id="scene-status" role="status" aria-live="polite"></p>
     </header>
     <section id="room-view" aria-labelledby="room-title" hidden>
-      <h2 id="room-title" tabindex="-1">Inside the imagined room</h2>
+      <h2 id="room-title" tabindex="-1">632 CE · Inside the imagined room</h2>
       <p class="setting">${e(data.setting)}</p>
+      <p class="lens">Look for what is absent</p>
       <div id="scene-frame" class="scene-frame" role="group" tabindex="0" aria-label="Look around the imagined room" aria-describedby="room-description room-help"></div>
-      <p id="room-description" class="room-note">A bare room with roof beams opens through a wide doorway. Turn around to see a small yard with a low wall, well, and palm. This study view has no dated objects yet.</p>
+      <p id="room-description" class="room-note">${e(absent632.description)} Turn around to see the yard, low wall, well, and palm.</p>
       <p id="room-help">Drag to look around, or focus the view and use the arrow keys.</p>
+      <a class="read-link" id="read-632" href="#moment-632">Read the 632 passage</a>
       <div class="look-controls" role="group" aria-label="View controls">
         <button type="button" data-look="left">Look left</button>
         <button type="button" data-look="right">Look right</button>
@@ -113,6 +179,10 @@ export function renderPage(data: Experience = experience, records: Source[] = so
         <button type="button" data-look="reset">Reset view</button>
         <button type="button" id="return-reading">Return to reading</button>
       </div>
+      <details class="things-here">
+        <summary>Things here · 632 CE</summary>
+        <ol>${roomLabels}</ol>
+      </details>
       <p class="room-note">This room and yard are illustrative, not a reconstruction of a documented place.</p>
     </section>
     <section id="reading" aria-labelledby="reading-title">
@@ -125,6 +195,6 @@ export function renderPage(data: Experience = experience, records: Source[] = so
   <footer>
     <h2>Sources</h2>
     <ol>${sourceList}</ol>
-    <p>This room is imagined. Its objects will be interpretations, not evidence of these events.</p>
+    <p>This room is imagined. Its objects are interpretations, not evidence of these events.</p>
   </footer>`;
 }

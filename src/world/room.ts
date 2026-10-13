@@ -1,6 +1,7 @@
 import * as THREE from 'three/webgpu';
+import { addAbsent632 } from './absent632';
 
-/** A neutral, undated study model. The room is imagined, not a reconstruction. */
+/** A stable imagined room and yard with the first dated gray-box details. */
 export function createRoomWorld(): { scene: THREE.Scene; dispose(): void } {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xd9dad8);
@@ -85,9 +86,13 @@ export function createRoomWorld(): { scene: THREE.Scene; dispose(): void } {
   sun.target.position.set(0, 0, -2);
   scene.add(ambient, sun, sun.target);
 
+  // The first dated change set is built once and can be toggled by later date controls.
+  const absent632 = addAbsent632(scene);
+
   return {
     scene,
     dispose() {
+      absent632.dispose();
       scene.clear();
       for (const geometry of geometries) geometry.dispose();
       for (const material of materials) material.dispose();

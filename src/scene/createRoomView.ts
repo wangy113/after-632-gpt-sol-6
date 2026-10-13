@@ -27,7 +27,8 @@ export async function createRoomView(
   container.append(canvas);
   let disposed = false;
   let yaw = 0;
-  let pitch = 0;
+  const defaultPitch = -0.3;
+  let pitch = defaultPitch;
   let frame = 0;
   let raf = 0;
   let pointer: { id: number; x: number; y: number } | null = null;
@@ -67,7 +68,7 @@ export async function createRoomView(
   }
 
   function look(direction: 'left' | 'right' | 'up' | 'down' | 'reset') {
-    if (direction === 'reset') { yaw = 0; pitch = 0; }
+    if (direction === 'reset') { yaw = 0; pitch = defaultPitch; }
     if (direction === 'left') yaw = Math.max(-Math.PI, yaw - 0.22);
     if (direction === 'right') yaw = Math.min(Math.PI, yaw + 0.22);
     if (direction === 'up') pitch = Math.min(0.5, pitch + 0.12);

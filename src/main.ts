@@ -2,10 +2,12 @@ import type { RoomView } from './scene/createRoomView';
 
 const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
 const readLink = document.querySelector<HTMLAnchorElement>('#read-link')!;
+const read632Link = document.querySelector<HTMLAnchorElement>('#read-632')!;
 const returnButton = document.querySelector<HTMLButtonElement>('#return-reading')!;
 const roomSection = document.querySelector<HTMLElement>('#room-view')!;
 const roomTitle = document.querySelector<HTMLElement>('#room-title')!;
 const readingTitle = document.querySelector<HTMLElement>('#reading-title')!;
+const passage632Title = document.querySelector<HTMLElement>('#moment-632 h3')!;
 const sceneFrame = document.querySelector<HTMLElement>('#scene-frame')!;
 const status = document.querySelector<HTMLElement>('#scene-status')!;
 
@@ -66,7 +68,7 @@ async function enter() {
     loading = false;
     enterButton.disabled = false;
     enterButton.textContent = 'Enter the room';
-    status.textContent = 'Room view open. The full reading remains below.';
+    status.textContent = '632 room view open. The full reading remains below.';
     roomTitle.focus({ preventScroll: true });
     roomSection.scrollIntoView({ block: 'start' });
   } catch {
@@ -75,9 +77,21 @@ async function enter() {
 }
 
 enterButton.addEventListener('click', () => { void enter(); });
-readLink.addEventListener('click', () => {
+readLink.addEventListener('click', event => {
+  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
   if (loading || room) closeRoom();
+  history.pushState(null, '', '#reading');
   readingTitle.focus({ preventScroll: true });
+  readingTitle.scrollIntoView({ block: 'start' });
+});
+read632Link.addEventListener('click', event => {
+  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  closeRoom('Reading the 632 passage.');
+  history.pushState(null, '', '#moment-632');
+  passage632Title.focus({ preventScroll: true });
+  passage632Title.scrollIntoView({ block: 'start' });
 });
 returnButton.addEventListener('click', () => {
   closeRoom('Reading view. All three moments are available below.');

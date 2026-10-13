@@ -1,0 +1,28 @@
+{
+  "632": {
+    "description": "Plain mats make a loose, unfinished circle around untouched cups. The place at the head is empty, and faint footprints lead out through the doorway. These traces are imagined, not evidence of a gathering here.",
+    "labels": [
+      {
+        "id": "mats-and-cups",
+        "title": "An unfinished circle",
+        "inRoom": "The mats do not form a settled arrangement, and the cups are untouched. This gathering is imagined.",
+        "inRecord": "After Muhammad died in 632, members of the community held different views about who should lead it.",
+        "sourceId": "HIST-01"
+      },
+      {
+        "id": "empty-head",
+        "title": "A place left empty",
+        "inRoom": "There is no person or seat at the head of this imagined circle. No such empty place is documented.",
+        "inRecord": "Abu Bakr became the first caliph. Supporters of Ali understood rightful leadership through Muhammad's family.",
+        "sourceId": "HIST-01"
+      },
+      {
+        "id": "footprints",
+        "title": "Footprints toward the doorway",
+        "inRoom": "Faint footprints suggest departure from this invented room. They do not trace a documented journey.",
+        "inRecord": "Before Muhammad's burial, some companions met at Saqifa to choose a successor. Abu Bakr was selected as caliph.",
+        "sourceId": "HIST-02"
+      }
+    ]
+  }
+}
