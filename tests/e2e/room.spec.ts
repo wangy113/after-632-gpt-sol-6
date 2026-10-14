@@ -46,6 +46,42 @@ test('the room is opt-in and returning to reading releases the canvas', async ({
   await expect(page.locator('#reading-title')).toBeFocused();
 });
 
+test('the room stops drawing after entry, looking, and moving settle', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  await expect(canvas).toHaveAttribute('data-backend', 'WebGL2 fallback');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
+
+  const frameCount = async () => Number(await canvas.getAttribute('data-frames'));
+  const expectIdle = async () => {
+    // Let a final render or ResizeObserver callback finish before the quiet interval.
+    await page.evaluate(() => new Promise<void>(resolve => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    }));
+    const before = await frameCount();
+    await page.waitForTimeout(300);
+    expect(await frameCount()).toBe(before);
+    return before;
+  };
+
+  const afterEntry = await expectIdle();
+  await room.getByRole('button', { name: 'Look right' }).click();
+  await expect(canvas).toHaveAttribute('data-yaw', '0.220');
+  await expect.poll(frameCount).toBeGreaterThan(afterEntry);
+  const afterLook = await expectIdle();
+
+  await room.getByRole('button', { name: 'Head of room' }).click();
+  await expect(canvas).toHaveAttribute('data-moving', 'true');
+  await expect(canvas).toHaveAttribute('data-moving', 'false');
+  await expect(canvas).toHaveAttribute('data-place', 'head');
+  await expect.poll(frameCount).toBeGreaterThan(afterLook);
+  await expectIdle();
+});
+
 test('the alternate sky query keeps the same room and renders mid-morning', async ({ page }) => {
   await page.goto('/?gl=1&sky=qwantani_mid_morning_puresky');
   await page.getByRole('button', { name: 'Enter the room' }).click();

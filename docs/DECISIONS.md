@@ -97,3 +97,8 @@
 
 - `npm run check:assets` now reads the built HTML's stylesheet links and `#arrival-still` source, and sums those files with `dist/index.html`. The current first view is **44,297 / 300,000 bytes**: 27,392 HTML, 3,725 CSS, and 13,180 WebP. The full built visit remains **5,016,889 / 15,000,000 bytes**.
 - The check follows the built references rather than fixed filenames, and fails for missing, external, or out-of-build references. It also stops if the arrival image gains `srcset` or a `<picture>` source, or linked CSS gains `@import` or `url()`, until those resources are budgeted. Isolated fixtures confirmed changed references change the total and that missing, oversized, or uncounted resources fail. The plan defines this first-view budget as HTML, CSS, and arrival still; it does not include the initial JavaScript module. The current stylesheet has no imported assets.
+
+## Idle room rendering · 2026-10-14
+
+- The [idle rendering check](phase0/IDLE_RENDER_CHECK.md) samples the canvas `data-frames` counter after the 632 doorway settles, after looking right, and after moving to the head of the room. Each action increases the counter, then it stays unchanged during a 300 ms quiet interval. The scheduler already stops requesting frames at those settled points, so no application change was needed.
+- The counter measures scheduled render callbacks in Chromium's WebGL2 fallback with SwiftShader. GPU work and frame rates on the demo laptop, Chromebook, and phone remain unmeasured.
