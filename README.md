@@ -8,7 +8,7 @@ The optional 3D view shows the same imagined room in 632, 661, and 680 CE. Its w
 
 The [Phase 0 sky comparison](docs/phase0/SKY_COMPARISON.md) shows two pinned CC0 Qwantani HDRIs from the same yard camera pose. The lighter Qwantani morning sky is the provisional default; `?sky=qwantani_mid_morning_puresky` keeps the darker candidate available for comparison. The sky changes the background only, with the room lights fixed. Its visual and historical suitability still need human review.
 
-In the 661 or 680 room, hold Compare to see the preceding date immediately from the same viewpoint. The selected date stays selected while the view and its “Things here” notes show the earlier date; releasing Compare restores the selection. The hold button works with a mouse, touch, or keyboard. Holding C while the room is active also compares, and a separate toggle button keeps the comparison visible without holding. Compare is unavailable in 632 because the room has no earlier scene.
+In the 661 or 680 room, hold Compare to see the preceding date immediately from the same viewpoint. The selected date stays selected while the view and its “Things here” notes show the earlier date; releasing Compare restores the selection. The hold button works with a mouse, touch, or keyboard. A click-only activation of that button switches the comparison on or off for assistive technology that cannot hold it. Holding C while the room is active also compares, and a separate toggle button keeps the comparison visible without holding. Compare is unavailable in 632 because the room has no earlier scene.
 
 The pure state model defines all three dates, four viewpoints, Compare, and movement policy. The three date views, four viewpoints, and Compare are connected to the scene. A doorway still appears before the 3D room opens. The reporting exit remains later work.
 
@@ -22,7 +22,7 @@ npm run dev
 ```
 
 The six pinned Poly Haven JPGs and two HDR sky candidates are committed under `public/assets/polyhaven/`. Run `npm run fetch:assets` to re-fetch missing files or verify existing copies against the sizes and MD5 hashes in `assets.config.json`; this command requires `curl`.
-Run `npm run check:assets` to build and verify the committed and built assets against their pinned records, confirm the recorded CC0 source, and check the full built visit against the 15 MB budget. This check works offline and does not change the source assets. Run `npm run capture:sky` with Chromium installed to reproduce the comparison images.
+Run `npm run check:assets` to build and verify the committed and built assets against their pinned records, confirm the recorded CC0 source, check the built HTML, linked CSS, and arrival still against the 300 KB first-view budget, and check the full built visit against the 15 MB budget. This check works offline and does not change the source assets. Run `npm run capture:sky` with Chromium installed to reproduce the comparison images.
 
 For the production build and checks:
 

@@ -1,9 +1,10 @@
 import { createHash } from 'node:crypto';
 import { readFile, readdir, stat } from 'node:fs/promises';
-import { join, relative, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
+const firstViewBudgetBytes = 300_000;
 const visitBudgetBytes = 15_000_000;
 const mapSuffixes = { Diffuse: 'diff', nor_gl: 'nor_gl', arm: 'arm' };
 
@@ -27,6 +28,68 @@ async function verifyFile(path, map, label) {
   const md5 = createHash('md5').update(bytes).digest('hex');
   requireRecord(bytes.length === map.sizeBytes && md5 === map.md5,
     `${label}: expected ${map.sizeBytes} bytes / ${map.md5}, got ${bytes.length} bytes / ${md5}`);
+}
+
+function tagAttribute(tag, name) {
+  const match = tag.match(new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i'));
+  return match?.[1] ?? match?.[2] ?? match?.[3];
+}
+
+function builtReferencePath(indexPath, reference, distDirectory) {
+  const url = new URL(reference, pathToFileURL(indexPath));
+  requireRecord(url.protocol === 'file:' && !url.host, `First-view reference must be local: ${reference}`);
+  const path = fileURLToPath(url);
+  const fromDist = relative(distDirectory, path);
+  requireRecord(fromDist && fromDist !== '..' && !fromDist.startsWith(`..${sep}`) && !isAbsolute(fromDist),
+    `First-view reference must stay inside dist: ${reference}`);
+  return path;
+}
+
+/** Measure the built HTML, its referenced stylesheets, and its arrival still. */
+export async function checkFirstView(distDirectory) {
+  const indexPath = join(distDirectory, 'index.html');
+  const html = await readFile(indexPath, 'utf8');
+  const stylesheetRefs = [];
+  for (const [tag] of html.matchAll(/<link\b[^>]*>/gi)) {
+    if (!tagAttribute(tag, 'rel')?.toLowerCase().split(/\s+/).includes('stylesheet')) continue;
+    const href = tagAttribute(tag, 'href');
+    requireRecord(href, 'Built stylesheet link needs an href');
+    stylesheetRefs.push(href);
+  }
+  requireRecord(stylesheetRefs.length > 0, 'Built first view needs a stylesheet link');
+  const arrivalImages = [...html.matchAll(/<img\b[^>]*>/gi)]
+    .filter(([tag]) => tagAttribute(tag, 'id') === 'arrival-still');
+  requireRecord(arrivalImages.length === 1, 'Built first view needs exactly one arrival still');
+  const [arrivalTag] = arrivalImages[0];
+  requireRecord(!tagAttribute(arrivalTag, 'srcset'), 'Arrival srcset needs first-view budget handling');
+  const beforeArrival = html.slice(0, arrivalImages[0].index).toLowerCase();
+  requireRecord(beforeArrival.lastIndexOf('<picture') <= beforeArrival.lastIndexOf('</picture'),
+    'Arrival picture sources need first-view budget handling');
+  const stillRef = tagAttribute(arrivalTag, 'src');
+  requireRecord(stillRef, 'Built arrival still needs a src');
+
+  const files = new Set([indexPath]);
+  for (const reference of stylesheetRefs) {
+    const path = builtReferencePath(indexPath, reference, distDirectory);
+    requireRecord(extname(path) === '.css', `Built stylesheet must be CSS: ${reference}`);
+    const css = await readFile(path, 'utf8');
+    requireRecord(!/@import\b|url\s*\(/i.test(css),
+      `Linked stylesheet has further asset references to budget: ${reference}`);
+    files.add(path);
+  }
+  const stillPath = builtReferencePath(indexPath, stillRef, distDirectory);
+  requireRecord(extname(stillPath) === '.webp', `Built arrival still must be WebP: ${stillRef}`);
+  files.add(stillPath);
+
+  let firstViewBytes = 0;
+  for (const path of files) {
+    const file = await stat(path);
+    requireRecord(file.isFile(), `First-view reference is not a file: ${path}`);
+    firstViewBytes += file.size;
+  }
+  requireRecord(firstViewBytes <= firstViewBudgetBytes,
+    `Built first view is ${firstViewBytes} bytes, above the ${firstViewBudgetBytes}-byte budget`);
+  return { firstViewBytes, firstViewBudgetBytes };
 }
 
 /** Offline check of pinned provenance, committed textures, and the full built visit. */
@@ -118,11 +181,12 @@ export async function checkAssets(root = repositoryRoot) {
   const builtFiles = await listFiles(distDirectory);
   requireRecord(builtFiles.some(path => relative(distDirectory, path) === 'index.html'),
     'The built visit needs dist/index.html; run npm run build first');
+  const firstView = await checkFirstView(distDirectory);
   let visitBytes = 0;
   for (const path of builtFiles) visitBytes += (await stat(path)).size;
   requireRecord(visitBytes <= visitBudgetBytes,
     `Built visit is ${visitBytes} bytes, above the ${visitBudgetBytes}-byte budget`);
-  return { textureCount: config.textures.length, mapCount, textureBytes,
+  return { textureCount: config.textures.length, mapCount, textureBytes, ...firstView,
     skyCount: config.skies.length, skyBytes, visitBytes, visitBudgetBytes };
 }
 
@@ -130,5 +194,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const result = await checkAssets();
   console.log(`Verified ${result.mapCount} maps across ${result.textureCount} Poly Haven textures (${result.textureBytes} bytes).`);
   console.log(`Verified ${result.skyCount} Poly Haven skies (${result.skyBytes} bytes).`);
+  console.log(`Built first view (HTML, CSS, arrival still): ${result.firstViewBytes} / ${result.firstViewBudgetBytes} bytes.`);
   console.log(`Built visit: ${result.visitBytes} / ${result.visitBudgetBytes} bytes.`);
 }
