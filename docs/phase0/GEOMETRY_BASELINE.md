@@ -271,3 +271,23 @@ From a fresh production build, open the VSM diagnostic URL above in Chromium 154
 The older loose-circle mats, three separate cups, and pale marks near the back wall remain in the same places and clear in VSM. The 632 mats are already plain gray in PCF, so they do not lose the fine striping seen on the later dates' mats. The faint dotted line at the rear floor/wall boundary persists. Filter differences are subtle around the central diagonal sun/shadow boundary, some mat edges, the right yard floor and vessel, and the far-right wall edge. Pixel comparison finds 9,835 changed pixels, within `x=398..863, y=2..437`; the focal mat and cup interiors remain visually unchanged. There is no new clipping, broad light leak, or central object artifact; some outer mats extend beyond the frame in both filters.
 
 Together with the [later VSM pair](#matched-661680-travel-corner-vsm-review--2026-10-14), this completes a three-date filter comparison at one head camera pose: older mats and cups in 632, two bags beside a low table in 661, and a bright oval trace in their place in 680. The changing layout and yard shadows mean date-to-date image differences are broader than the bags alone. These invented scenes are not historical evidence, and these software-rendered captures do not establish student legibility, frame time, or real-device performance. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for this capture.
+
+## 680 doorway directional-sun intensity probe · 2026-10-14
+
+At the [matched 680 PCF doorway pose](#matched-680-doorway-filter-review--2026-10-14), a fresh production build captured the prototype directional sun at its normal intensity `2.0`. The fresh PNG was byte-identical to the committed PCF image below. For one temporary probe, only `new THREE.DirectionalLight(0xffffff, 2.0)` in `src/world/room.ts` changed to intensity `1.0`; a new production build captured the same PCF view. Both pages used Chromium 154's SwiftShader WebGL2 fallback, Qwantani morning sky, a 1440 × 900 viewport, DPR 1, reduced motion, and camera `(0, 1.6, 0.5)` at yaw `0`, pitch `-0.3`. Both canvas buffers were 864 × 486, PNGs were 864 × 487, and settled frames made 3 renderer calls. Neither page had script or request failures. Intensity `2.0` was restored and rebuilt after the probe.
+
+| Baseline sun `2.0`, PCF | Temporary sun `1.0`, PCF |
+| --- | --- |
+| [Full-size image](680-doorway-shadow-pcf.png) | [Full-size image](680-doorway-shadow-sun10-probe.png) |
+| ![680 doorway with baseline sunlight and PCF shadows](680-doorway-shadow-pcf.png) | ![Same 680 doorway with the directional sun temporarily halved](680-doorway-shadow-sun10-probe.png) |
+
+The angular sunlit floor area is less bright under the weaker sun, while the central back wall and sampled shadowed left floor stay unchanged. The pale curved oval remains distinct and almost the same brightness; its material is translucent and unlit, although the floor visible through it can respond to sunlight. The nearby mat row remains visible but darkens too. Fixed-region means from the captured PNGs, converted to 8-bit grayscale, make the tradeoff concrete; they are screen-image values, not physical light measurements:
+
+| Fixed image region, `x1,y1..x2,y2` | Sun `2.0` | Sun `1.0` |
+| --- | ---: | ---: |
+| Angular lit floor, `715,395..825,475` | 99.4 | 85.5 |
+| Oval center, `640,310..710,355` | 162.7 | 162.3 |
+| Near mat, `392,405..495,475` | 118.3 | 108.5 |
+| Shadowed left floor, `70,300..170,350` | 65.0 | 65.0 |
+
+Reducing the global sun therefore softens the broad floor patch but increases the oval's brightness difference from that floor and darkens the mats. This one pose does not justify a production lighting change. Normal visits remain shadow-free, PCF remains the diagnostic default, and real-device performance and student legibility remain untested.
