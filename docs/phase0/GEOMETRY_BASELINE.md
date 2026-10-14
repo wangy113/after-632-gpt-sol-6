@@ -92,3 +92,19 @@ The following crop shows image pixels `x=105..189, y=20..264` enlarged 4× with 
 The flush-junction capture passed the same pose checks and measured 2 renderer calls with shadows off and 3 with them on. The bright line becomes a faint dotted trace, but it does not disappear. At pixel `(155, 185)`, RGB changes from `(82, 60, 36)` to `(79, 58, 33)`; the nearby wall pixel `(150, 185)` remains `(77, 57, 33)`. Differences in the full images are confined to `x=0..166, y=0..304`; sampled central back-wall and floor regions are unchanged. The full image shows no broad new light wedge.
 
 This establishes that the junction geometry influences the line at this pose. It does not establish a finished correction: the rear cap of the shortened left wall is coplanar with a strip of the back wall's front face, and the remaining dotted line may reflect contact depth or shadow filtering. The temporary geometry was restored, leaving normal visits and the opt-in diagnostic unchanged. A later geometry trial should use a joined corner without overlapping or coplanar faces before considering a permanent shadow change.
+
+## Cap-free flush junction probe · 2026-10-14
+
+The flush probe above left the left wall's hidden rear cap coplanar with part of the back wall. To test that cap, temporarily use the same diagnostic-only flush dimensions (`depth=5.1`, center `z=-2.45`) and omit the left BoxGeometry's final six indices, which form its two rear (`-z`) triangles. Keep the other five faces and their shadow casting. The shadow-off room remains unchanged. Run `capture:shadow-pair` at the fixed 632 doorway pose, then restore the source and baseline PNGs.
+
+| Baseline | Flush with cap | Flush without rear cap |
+| --- | --- | --- |
+| [Full image](632-doorway-shadow-on.png) | [Full image](632-doorway-shadow-flush-left-wall.png) | [Full image](632-doorway-shadow-flush-no-rear-cap.png) |
+
+This crop uses the same `x=105..189, y=20..264` pixels enlarged 4× with nearest-neighbor scaling:
+
+![Baseline, flush, and cap-free flush corner crops](632-doorway-shadow-corner-cap-compare.png)
+
+The cap-free capture passed the same pose checks and measured 2 renderer calls with shadows off and 3 with them on. Removing the cap brings back a continuous bright line, stronger at some pixels than baseline. At `(154, 185)`, RGB is `(84, 62, 38)` at baseline, `(79, 58, 34)` with the flush cap, and `(93, 71, 46)` without it; the nearby wall pixel `(150, 185)` stays `(77, 57, 33)`. The cap-free and capped flush captures differ only within `x=124..166, y=43..236`, around the line. The full image shows no broad new wedge.
+
+The coplanar rear cap is therefore **not the sole source** of the bright line. In this pose its presence partly suppresses the line, likely through its shadow contribution; removing it is not a visual fix. The original geometry and captures were restored, so normal visits and the baseline diagnostic remain unchanged. Further work should test the shadow sampling/filtering at this receiver edge or design a joined corner, rather than adopt either temporary wall shape.

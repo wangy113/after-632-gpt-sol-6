@@ -122,3 +122,8 @@
 
 - [The matched flush-junction capture](phase0/GEOMETRY_BASELINE.md#flush-leftback-wall-junction-probe--2026-10-14) shortens the diagnostic left wall by 10 cm at its rear edge, removing its depth overlap with the back wall while keeping its front edge fixed. The bright corner line becomes a faint dotted trace rather than disappearing, and no broad light wedge appears at the sampled doorway pose. This shows the junction dimensions affect the shadow boundary.
 - The flush test leaves coplanar wall faces at the contact strip, so it does not isolate geometry from depth precision or filtering and is not a permanent fix. Restore the original wall dimensions; normal visits and the baseline shadow diagnostic remain unchanged.
+
+## Cap-free flush junction probe · 2026-10-14
+
+- [Removing the diagnostic flush wall's hidden rear cap](phase0/GEOMETRY_BASELINE.md#cap-free-flush-junction-probe--2026-10-14) restores a continuous bright line along the back-wall corner. The cap-free image differs from the capped flush image only around that line; it does not create a broad light wedge. The cap cannot be the sole source of the line and appears to suppress part of it through shadowing at this pose.
+- Neither temporary geometry is a suitable permanent fix. Restore the original wall and shadow settings; a later focused shadow-filter or joined-corner test should precede any wider use of the diagnostic shadows.
