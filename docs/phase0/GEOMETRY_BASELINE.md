@@ -291,3 +291,23 @@ The angular sunlit floor area is less bright under the weaker sun, while the cen
 | Shadowed left floor, `70,300..170,350` | 65.0 | 65.0 |
 
 Reducing the global sun therefore softens the broad floor patch but increases the oval's brightness difference from that floor and darkens the mats. This one pose does not justify a production lighting change. Normal visits remain shadow-free, PCF remains the diagnostic default, and real-device performance and student legibility remain untested.
+
+## 680 doorway midpoint sun-intensity probe · 2026-10-14
+
+To check the tradeoff between the `2.0` baseline and temporary `1.0` probe above, capture one more temporary PCF doorway frame with the directional sun at `1.5`. A fresh `2.0` production capture was byte-identical to the committed baseline PNG before the change. The `1.5` build used the same Chromium 154 SwiftShader WebGL2 setup, Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and 680 doorway camera `(0, 1.6, 0.5)`, yaw `0`, pitch `-0.3`. Its canvas buffer was 864 × 486, the PNG was 864 × 487, and the settled frame made 3 renderer calls with no page or request errors. The source light intensity was restored to `2.0` and the production build passed again after the capture.
+
+| Baseline sun `2.0` | Temporary sun `1.5` | Temporary sun `1.0` |
+| --- | --- | --- |
+| [Full-size image](680-doorway-shadow-pcf.png) | [Full-size image](680-doorway-shadow-sun15-probe.png) | [Full-size image](680-doorway-shadow-sun10-probe.png) |
+| ![680 doorway with baseline sun and PCF shadows](680-doorway-shadow-pcf.png) | ![Same 680 doorway with midpoint directional sun intensity](680-doorway-shadow-sun15-probe.png) | ![Same 680 doorway with lower directional sun intensity](680-doorway-shadow-sun10-probe.png) |
+
+The same fixed PNG regions as above, converted to 8-bit grayscale, give these screen-image means:
+
+| Fixed image region, `x1,y1..x2,y2` | Sun `2.0` | Sun `1.5` | Sun `1.0` |
+| --- | ---: | ---: | ---: |
+| Angular lit floor, `715,395..825,475` | 99.4 | 92.9 | 85.5 |
+| Oval center, `640,310..710,355` | 162.7 | 162.6 | 162.3 |
+| Near mat, `392,405..495,475` | 118.3 | 113.7 | 108.5 |
+| Shadowed left floor, `70,300..170,350` | 65.0 | 65.0 | 65.0 |
+
+At `1.5`, the angular floor area is dimmer than baseline without darkening the near mat as much as `1.0`. Its hard outline remains, and the nearly unchanged pale oval stands out more against the darker surrounding floor. The midpoint therefore adjusts brightness but does not resolve the shape or balance of the two bright areas. Keep the production sun at `2.0`; this one software-rendered pose does not support a wider lighting change or establish real-device performance.
