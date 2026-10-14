@@ -220,3 +220,15 @@ From a fresh production build, open the PCF diagnostic URL above in Chromium 154
 The 632 frame shows several broad mats from the older loose-circle arrangement, three plain cups, and small pale floor marks near the back wall. The 661 low table, two floor bags, waterskin, and three wall pegs are absent, as is the 680 bright oval floor trace. The former bag area contains exposed floor and edges of two mats, not an empty version of the later scene. Some outer mats extend beyond the frame; the central objects are distinct. A faint dotted bright line is visible at the rear floor/wall junction in all three captures, away from the bag area, with no new artifact apparent around the 632 floor there. Across the three matched images the room shell and camera stay fixed, while props, mat layout, and some sun/shadow shapes change. This comparison supports the implemented three-date visual sequence, not a claim that the bags or floor trace were historical belongings.
 
 This is one software-rendered PCF view. It does not establish student legibility, real-device performance, or VSM behavior at this camera. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for this capture.
+
+## Matched 632 pegs-wall follow-up · 2026-10-14
+
+From a fresh production build, open the PCF diagnostic URL above in Chromium 154, select 632 and the pegs place, then look right and left to settle the canvas. This matches the [661 pegs](#matched-661-pegs-filter-and-date-review--2026-10-14) and [680 pegs](#matched-680-pegs-filter-review--2026-10-14) PCF captures at camera `(2, 1.6, -1.35)`, yaw `1.571`, pitch `-0.100`. The capture uses the Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and SwiftShader WebGL2. Its canvas buffer is 864 × 486 and the PNG is 864 × 487. It measured 46 draws / 3,481 submitted triangles / 3 renderer calls, completed without script or request failures, and differs from both later-date images.
+
+[Full-size 632 PCF image](632-pegs-shadow-pcf.png)
+
+![Bare 632 wall at the later pegs and travel-hook position](632-pegs-shadow-pcf.png)
+
+The focal wall is bare in 632: it has no waterskin, travel hook, wall outline, or small peg-and-trace pairs. In 661, a gray waterskin and three separate bare pegs over pale rectangular traces appear. In 680, the three smaller pairs remain while the waterskin area shows a bare hook over a tall pale outline. Pixel differences across the three PCF images stay in that prop area (`x=235..578, y=202..352` overall); the faint vertical seam near the far-right edge and the surrounding wall texture do not change. No prop is clipped, and no new shadow artifact is apparent in this matched view.
+
+The floor bags, clean floor patch, mats, and yard palm are outside this close wall frame. This comparison records the implemented invented visual sequence, not historical evidence, student legibility, VSM behavior at 632, or real-device performance. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for this capture.
