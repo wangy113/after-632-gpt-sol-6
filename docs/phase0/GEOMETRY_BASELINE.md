@@ -124,3 +124,16 @@ The corner crop uses the same `x=105..189, y=20..264` pixels enlarged 4× with n
 The capture passed the matched 632 doorway pose checks and measured **2 / 5 renderer calls**. The narrow corner line is no longer visible in the VSM crop. At `(154, 185)`, PCF RGB is `(84, 62, 38)` while VSM is `(78, 57, 33)`, close to the neighboring wall pixel `(150, 185)` at `(77, 57, 33)`. The bright near-floor patch remains prominent, though its boundary and some prop-shadow edges look slightly softer. The mat circle, three cups, and right-side footprints remain visible; no prop moves or disappears in the matched images.
 
 This is a promising visual result at one software-rendered pose, **not an adopted setting**. VSM adds two renderer calls and changes the shadow pipeline's caster handling as well as filtering, so the image does not isolate filtering as the sole cause of the missing line. GPU time, real-device behavior, other views, and the planned Balanced tier remain unmeasured. The baseline PCF diagnostic and normal shadow-off visits were restored.
+
+## VSM doorway submission counts · 2026-10-14
+
+Run the existing `measure:geometry -- --shadow-doorway` command at the 632 doorway first with baseline PCF, then with `renderer.shadowMap.type = THREE.VSMShadowMap` temporarily set only for `?shadows=1`. The script builds a production bundle for each run, uses Chromium 154's SwiftShader WebGL2 fallback at 1440 × 900, DPR 1, reduced motion, and an 864 × 486 canvas buffer. It returns the camera to yaw `0`, pitch `-0.3` before reading a settled frame. Restore PCF and rebuild after the VSM measurement.
+
+| 632 doorway mode | Draw calls | Submitted triangles | Renderer calls |
+| --- | ---: | ---: | ---: |
+| Normal visit, shadows off (previous baseline) | 61 | 3,077 | 2 |
+| Diagnostic PCF, fresh run | 90 | 4,393 | 3 |
+| Temporary diagnostic VSM, fresh run | 99 | 4,479 | 5 |
+| VSM increase over PCF | **9** | **86** | **2** |
+
+The additional submissions match the renderer's VSM path: two fullscreen blur draws (one triangle each) plus seven receiving mats that VSM also includes in the shadow-caster pass (seven 12-triangle boxes). PCF includes only meshes marked to cast. The two blur passes explain the extra renderer calls. The VSM row remains under the plan's numerical limits of 150 draw calls and 800,000 submitted triangles **at this one gray-box pose**. These counters do not measure shaded pixels, blur shader samples, render-target bandwidth, frame time, GPU time, or a real device, so they cannot establish the planned Balanced-tier performance. The baseline PCF diagnostic and normal shadow-off visit remain unchanged.

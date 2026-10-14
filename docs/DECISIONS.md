@@ -132,3 +132,8 @@
 
 - [The matched VSM image](phase0/GEOMETRY_BASELINE.md#vsm-shadow-comparison--2026-10-14) has no visible left/back wall line at the 632 doorway pose. The bright floor patch remains prominent with a slightly softer edge, while the mat circle, three cups, and footprints remain visible. This is a visual candidate, not a lighting decision across dates or devices.
 - VSM took 5 renderer calls versus PCF's 3 in the same shadow-on capture because of its blur passes. Its caster behavior also differs, so the image alone does not prove filtering caused the improvement. Restore PCF for the opt-in diagnostic and keep normal visits shadow-free until cost and wider visual checks support a choice.
+
+## VSM doorway submission cost · 2026-10-14
+
+- [Fresh matched 632 doorway measurements](phase0/GEOMETRY_BASELINE.md#vsm-doorway-submission-counts--2026-10-14) give PCF 90 draws / 4,393 submitted triangles / 3 renderer calls and temporary VSM 99 / 4,479 / 5. The increase matches two fullscreen blur draws plus seven mat boxes joining VSM's shadow pass. Both fit the plan's numerical draw and triangle limits at this gray-box pose.
+- These counters omit pixel work, render-target bandwidth, GPU and frame time, and real-device performance. Restore baseline PCF and leave normal visits shadow-free; a separately opt-in VSM preview would let reviewers see the candidate without changing the existing diagnostic default.
