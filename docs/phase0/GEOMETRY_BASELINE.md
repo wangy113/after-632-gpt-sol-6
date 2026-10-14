@@ -108,3 +108,19 @@ This crop uses the same `x=105..189, y=20..264` pixels enlarged 4× with nearest
 The cap-free capture passed the same pose checks and measured 2 renderer calls with shadows off and 3 with them on. Removing the cap brings back a continuous bright line, stronger at some pixels than baseline. At `(154, 185)`, RGB is `(84, 62, 38)` at baseline, `(79, 58, 34)` with the flush cap, and `(93, 71, 46)` without it; the nearby wall pixel `(150, 185)` stays `(77, 57, 33)`. The cap-free and capped flush captures differ only within `x=124..166, y=43..236`, around the line. The full image shows no broad new wedge.
 
 The coplanar rear cap is therefore **not the sole source** of the bright line. In this pose its presence partly suppresses the line, likely through its shadow contribution; removing it is not a visual fix. The original geometry and captures were restored, so normal visits and the baseline diagnostic remain unchanged. Further work should test the shadow sampling/filtering at this receiver edge or design a joined corner, rather than adopt either temporary wall shape.
+
+## VSM shadow comparison · 2026-10-14
+
+For one temporary `?shadows=1` comparison, set the renderer's shadow-map type to three.js r186 `VSMShadowMap` instead of its default `PCFShadowMap`. Leave the room geometry, light, shadow-map size, and camera pose unchanged. VSM adds two blur renders, so the temporary capture assertion expected 2 renderer calls with shadows off and 5 with them on instead of the baseline 2 / 3. Run `capture:shadow-pair`, save the VSM image, then restore the renderer, capture assertion, and baseline PNGs.
+
+| PCF baseline | VSM diagnostic |
+| --- | --- |
+| [Full image](632-doorway-shadow-on.png) | [Full image](632-doorway-shadow-vsm.png) |
+
+The corner crop uses the same `x=105..189, y=20..264` pixels enlarged 4× with nearest-neighbor scaling:
+
+![PCF and VSM corner crops](632-doorway-shadow-corner-vsm-compare.png)
+
+The capture passed the matched 632 doorway pose checks and measured **2 / 5 renderer calls**. The narrow corner line is no longer visible in the VSM crop. At `(154, 185)`, PCF RGB is `(84, 62, 38)` while VSM is `(78, 57, 33)`, close to the neighboring wall pixel `(150, 185)` at `(77, 57, 33)`. The bright near-floor patch remains prominent, though its boundary and some prop-shadow edges look slightly softer. The mat circle, three cups, and right-side footprints remain visible; no prop moves or disappears in the matched images.
+
+This is a promising visual result at one software-rendered pose, **not an adopted setting**. VSM adds two renderer calls and changes the shadow pipeline's caster handling as well as filtering, so the image does not isolate filtering as the sole cause of the missing line. GPU time, real-device behavior, other views, and the planned Balanced tier remain unmeasured. The baseline PCF diagnostic and normal shadow-off visits were restored.

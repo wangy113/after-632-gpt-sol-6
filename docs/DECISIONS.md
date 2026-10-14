@@ -127,3 +127,8 @@
 
 - [Removing the diagnostic flush wall's hidden rear cap](phase0/GEOMETRY_BASELINE.md#cap-free-flush-junction-probe--2026-10-14) restores a continuous bright line along the back-wall corner. The cap-free image differs from the capped flush image only around that line; it does not create a broad light wedge. The cap cannot be the sole source of the line and appears to suppress part of it through shadowing at this pose.
 - Neither temporary geometry is a suitable permanent fix. Restore the original wall and shadow settings; a later focused shadow-filter or joined-corner test should precede any wider use of the diagnostic shadows.
+
+## VSM shadow comparison · 2026-10-14
+
+- [The matched VSM image](phase0/GEOMETRY_BASELINE.md#vsm-shadow-comparison--2026-10-14) has no visible left/back wall line at the 632 doorway pose. The bright floor patch remains prominent with a slightly softer edge, while the mat circle, three cups, and footprints remain visible. This is a visual candidate, not a lighting decision across dates or devices.
+- VSM took 5 renderer calls versus PCF's 3 in the same shadow-on capture because of its blur passes. Its caster behavior also differs, so the image alone does not prove filtering caused the improvement. Restore PCF for the opt-in diagnostic and keep normal visits shadow-free until cost and wider visual checks support a choice.
