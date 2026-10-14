@@ -231,4 +231,17 @@ From a fresh production build, open the PCF diagnostic URL above in Chromium 154
 
 The focal wall is bare in 632: it has no waterskin, travel hook, wall outline, or small peg-and-trace pairs. In 661, a gray waterskin and three separate bare pegs over pale rectangular traces appear. In 680, the three smaller pairs remain while the waterskin area shows a bare hook over a tall pale outline. Pixel differences across the three PCF images stay in that prop area (`x=235..578, y=202..352` overall); the faint vertical seam near the far-right edge and the surrounding wall texture do not change. No prop is clipped, and no new shadow artifact is apparent in this matched view.
 
-The floor bags, clean floor patch, mats, and yard palm are outside this close wall frame. This comparison records the implemented invented visual sequence, not historical evidence, student legibility, VSM behavior at 632, or real-device performance. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for this capture.
+The floor bags, clean floor patch, mats, and yard palm are outside this close wall frame. This PCF comparison records the implemented invented visual sequence, not historical evidence, student legibility, or real-device performance. The matched 632 VSM result follows below. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for this capture.
+
+## Matched 632 pegs PCF/VSM completion · 2026-10-14
+
+From a fresh production build, open the VSM diagnostic URL above in Chromium 154, select 632 and the pegs place, then look right and left to settle the canvas. This matches the 632 PCF capture immediately above: camera `(2, 1.6, -1.35)`, yaw `1.571`, pitch `-0.100`, Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and SwiftShader WebGL2. Both canvas buffers are 864 × 486 and PNGs are 864 × 487. VSM measured 55 draws / 3,567 submitted triangles / 5 renderer calls versus PCF's 46 / 3,481 / 3. The VSM page completed without script or request failures, and the images differ.
+
+| 632 pegs, PCF | 632 pegs, VSM |
+| --- | --- |
+| [Full-size image](632-pegs-shadow-pcf.png) | [Full-size image](632-pegs-shadow-vsm.png) |
+| ![Bare 632 wall under PCF shadows](632-pegs-shadow-pcf.png) | ![Same bare 632 wall under VSM shadows](632-pegs-shadow-vsm.png) |
+
+The focal wall remains bare in both filters, with no new clipping or broad shadow artifact. A pixel comparison finds 1,676 changed pixels, all in the narrow far-right vertical seam (`x=668..704, y=0..485`); every pixel around the future hook and pegs is identical. The complete PCF-versus-VSM difference image is also pixel-identical for the 632, 661, and 680 pegs pairs. Thus the filter choice changes only that seam in these three matched views, while the dated wall props and traces retain the same appearance. VSM adds 9 draws, 86 submitted triangles, and 2 renderer calls at this 632 pose without a visible gain around the focal wall.
+
+This is a software-rendered comparison of one pose, not a frame-time, real-device, or student legibility result. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for this capture.
