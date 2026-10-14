@@ -107,3 +107,8 @@
 ## Diagnostic shadow pair · 2026-10-14
 
 - The [matched 632 doorway captures](phase0/GEOMETRY_BASELINE.md#matched-doorway-shadow-images--2026-10-14) show a hard-edged bright floor patch, darker wall and floor surfaces, and lower mat and cup contrast with `?shadows=1`. The three imagined traces remain visible, but a narrow bright left-wall line needs investigation. Keep shadows off for normal visits while this visual treatment is refined; the single software-rendered pose does not establish the planned lighting or real-device performance.
+
+## Diagnostic left-wall line · 2026-10-14
+
+- [Same-pose shadow probes](phase0/GEOMETRY_BASELINE.md#left-wall-shadow-line-probe--2026-10-14) show that raising shadow-map resolution from 1024² to 2048² does not remove the line at the left/back wall junction. A temporary shadow bias of −0.001 makes it brighter; +0.001 makes it a little fainter. The shadow-off image has no line, and the wall boxes overlap rather than leaving an open gap. This implicates the shadow depth comparison at the junction, but does not distinguish wall caster/receiver geometry from depth precision or filtering.
+- Restore the baseline diagnostic setting after each probe, keep normal visits shadow-free, and defer any permanent bias or lighting change until the corner and the scene's three traces are reviewed together.
