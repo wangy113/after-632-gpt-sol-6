@@ -136,14 +136,20 @@
 ## VSM doorway submission cost · 2026-10-14
 
 - [Fresh matched 632 doorway measurements](phase0/GEOMETRY_BASELINE.md#vsm-doorway-submission-counts--2026-10-14) give PCF 90 draws / 4,393 submitted triangles / 3 renderer calls and temporary VSM 99 / 4,479 / 5. The increase matches two fullscreen blur draws plus seven mat boxes joining VSM's shadow pass. Both fit the plan's numerical draw and triangle limits at this gray-box pose.
-- These counters omit pixel work, render-target bandwidth, GPU and frame time, and real-device performance. Restore baseline PCF and leave normal visits shadow-free; a separately opt-in VSM preview would let reviewers see the candidate without changing the existing diagnostic default.
+- These counters omit pixel work, render-target bandwidth, GPU and frame time, and real-device performance. Restore baseline PCF and leave normal visits shadow-free; the separately opt-in VSM preview below lets reviewers see the candidate without changing the existing diagnostic default.
 
 ## Opt-in shadow-filter preview · 2026-10-14
 
 - Offer VSM through `?shadows=1&shadowFilter=vsm` for direct review. `?shadows=1` keeps the existing PCF diagnostic, and normal visits have no shadow pass. The VSM option changes no room geometry or lighting settings.
-- This exposes the candidate for visual feedback; it does not adopt shadows for regular visits or establish the Balanced-tier performance target. The strong floor patch and other viewpoints still need review.
+- This exposes the candidate for visual feedback; it does not adopt shadows for regular visits or establish the Balanced-tier performance target. The doorway, pegs, and travel-corner reviews below assess more views; the strong floor patch and real-device performance still need review.
 
 ## 661 doorway shadow-filter review · 2026-10-14
 
 - [Matched PCF and VSM captures](phase0/GEOMETRY_BASELINE.md#matched-661-doorway-filter-review--2026-10-14) keep the seat, mat rows, table, and right-side travel things in the same places. VSM removes the apparent narrow left/back wall line at this pose but makes the mats' fine striping less apparent. The bright floor patch remains prominent in both.
-- This doorway view cannot establish whether the tiny letter and coin are readable, and it does not show the pegs or hook. Keep both modes diagnostic-only while the 680 doorway and other views remain unreviewed.
+- This doorway view cannot establish whether the tiny letter and coin are readable, and it does not show the pegs or hook. The later 680 doorway and pegs reviews, summarized below, cover those other views; keep both filters diagnostic-only.
+
+## Cross-view shadow-filter decision · 2026-10-14
+
+- Matched PCF/VSM captures now cover the [doorway](phase0/GEOMETRY_BASELINE.md#matched-680-doorway-filter-review--2026-10-14), [pegs](phase0/GEOMETRY_BASELINE.md#matched-632-pegs-pcfvsm-completion--2026-10-14), and [travel corner](phase0/GEOMETRY_BASELINE.md#matched-632-travel-corner-pcfvsm-completion--2026-10-14) at 632, 661, and 680. VSM makes the thin doorway wall line less apparent, but the broad angular sunlit floor area remains prominent and fine striping on the 661/680 mats becomes flatter. At the pegs, filter differences stay at the far-right seam, away from the dated props. At the travel corner, both filters keep the 661 bags and 680 curved oval trace distinct; VSM brings no clear gain for those focal objects.
+- Keep shadows off for normal visits: the strong floor lighting and reduced contrast in shadowed views remain unresolved. Keep PCF as the opt-in `?shadows=1` diagnostic default because it preserves more mat detail and avoids VSM's extra work in these captures. Keep `?shadows=1&shadowFilter=vsm` as a separate preview of its softer doorway line, not as the chosen filter. At the matched 632 doorway, VSM costs 99 draws / 4,479 submitted triangles / 5 renderer calls versus PCF's 90 / 4,393 / 3. These software-rendered samples do not measure GPU or frame time, real-device performance, or student legibility.
+- The next visual issue is the dominant angular sunlit floor area in the 680 doorway. Investigate its balance against the distinct, nearly white curved oval trace at a matched camera pose before changing production lighting or the trace material.
