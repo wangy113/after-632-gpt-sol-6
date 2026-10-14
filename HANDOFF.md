@@ -2,22 +2,23 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` currently contains only the plan.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Cross-view shadow-filter decision” is the current completed chunk. Wait for feedback or approval before starting another chunk.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “680 doorway directional-sun intensity probe” is the current completed chunk. Wait for feedback or approval before starting another chunk.
 
 ## Verified checkpoint · 2026-10-14
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; shadow-filter decision commit `07e712f` |
+| Implementation branch | `codex/phase0-scaffold`; 680 sun probe evidence commit `80e4622` |
 | Public preview branch | `gh-pages`; unchanged at `b291a33` |
-| GitHub Pages | `b291a33` previously reported `built`; this documentation-only chunk did not alter the live site |
-| Checks at this checkpoint | `git diff --check` passed. No app, asset, or renderer files changed, so build and browser suites were not rerun. The preceding 632 VSM capture passed a production build/typecheck and same-pose browser capture. |
+| GitHub Pages | `b291a33` previously reported `built`; this evidence-only chunk did not alter the live site |
+| Checks at this checkpoint | Production build/typecheck passed before and after the temporary sun change, then again after restoring source. The fresh baseline PNG was byte-identical to the committed 680 PCF image. The 1.0 probe matched its pose, buffer, and 3 renderer calls with no page or request errors. `git diff --check` passed. App and asset suites were not rerun because production source was restored. |
 | Working tree before this handoff update | Clean |
 
-The latest “go” authorized a [cross-view shadow-filter decision](docs/DECISIONS.md#cross-view-shadow-filter-decision--2026-10-14) based on matched doorway, pegs, and travel-corner captures across all three dates. VSM makes the thin doorway wall line less apparent, but does not resolve the prominent angular sunlit floor area, weakens later mat striping, and does not visibly improve the focal peg or travel traces. The current decision keeps shadows off for normal visits, [`?shadows=1`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1) as the PCF diagnostic default, and [`?shadows=1&shadowFilter=vsm`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&shadowFilter=vsm) as an opt-in preview. The next visual priority is the 680 doorway's sunlit floor area beside its distinct pale oval trace. This decision uses software-rendered images and draw counters, not participant legibility or device performance. No application or asset code changed. No participant or screen-reader results have been supplied. `gh-pages` carries only built files; these documents are on the implementation branch, not the public site.
+The latest “continue” authorized a [single 680 PCF doorway sun-intensity probe](docs/phase0/GEOMETRY_BASELINE.md#680-doorway-directional-sun-intensity-probe--2026-10-14). A fresh intensity `2.0` capture was byte-identical to the existing PCF baseline. A temporary `1.0` capture at the same pose darkened the angular lit floor crop from grayscale mean 99.4 to 85.5, left the oval center nearly unchanged (162.7 to 162.3), and darkened the near mat (118.3 to 108.5). The shadowed left floor stayed at 65.0. This softens the broad floor patch but makes the oval more prominent relative to that floor and loses some mat brightness. The original `2.0` source and production build were restored; only the probe image and evidence document changed. Normal visits remain shadow-free, [`?shadows=1`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1) remains the PCF diagnostic default, and [`?shadows=1&shadowFilter=vsm`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&shadowFilter=vsm) remains opt-in. No participant or screen-reader results have been supplied. `gh-pages` carries only built files; this evidence and handoff are on the implementation branch, not the public site.
 
 ## What works now
 
+- The [680 doorway sun-intensity probe](docs/phase0/GEOMETRY_BASELINE.md#680-doorway-directional-sun-intensity-probe--2026-10-14) compares byte-matched PCF baseline intensity `2.0` with a temporary `1.0` capture. The broad sunlit floor darkens, the oval barely changes, and the near mat also darkens. Source and built app are restored; this does not adopt a new light setting.
 - The [cross-view shadow-filter decision](docs/DECISIONS.md#cross-view-shadow-filter-decision--2026-10-14) consolidates the doorway, pegs, and travel-corner evidence. Normal visits remain shadow-free; PCF stays the diagnostic default and VSM stays opt-in. The 680 angular sunlit area is the next focused visual issue.
 - The [matched 632 travel-corner PCF/VSM capture](docs/phase0/GEOMETRY_BASELINE.md#matched-632-travel-corner-pcfvsm-completion--2026-10-14) completes this head-view filter comparison across all three dates. Cups and floor marks stay clear; VSM subtly shifts shadow boundaries in 632, while the later dates show flatter mat striping.
 - The [matched 661/680 travel-corner VSM captures](docs/phase0/GEOMETRY_BASELINE.md#matched-661680-travel-corner-vsm-review--2026-10-14) keep the two bags and later oval distinct. VSM flattens nearby mat striping and changes some right-side shadows without a clear gain for the central trace; PCF remains the diagnostic default.
@@ -60,9 +61,9 @@ The latest “go” authorized a [cross-view shadow-filter decision](docs/DECISI
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent click-only activation of either Compare button. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: probe the 680 sunlit floor area
+## Next proposed chunk: test a midpoint sun intensity
 
-First address any completed screen-reader observations or shadow feedback the user supplies. Otherwise, pending approval, try one temporary reduction of the prototype directional sun from intensity `2.0` at the matched 680 PCF doorway pose. Capture it beside the existing PCF image and record whether the angular sunlit floor area becomes less dominant while the separate pale oval, mat rows, and room remain readable. Restore the original light setting after the probe, document the result in `docs/phase0/GEOMETRY_BASELINE.md`, commit only the evidence, and stop before a production lighting change. The oval uses a translucent unlit `MeshBasicMaterial`, so its appearance may need a separate material review. A real screen-reader pass remains open until a tester runs the check sheet.
+First address any completed screen-reader observations or shadow feedback the user supplies. Otherwise, pending approval, capture one temporary directional-sun intensity `1.5` at the same 680 PCF doorway pose, between the now-documented `2.0` and `1.0` images. Check whether it softens the angular lit floor without darkening the near mat as much or making the nearly unchanged oval overly prominent. Restore intensity `2.0`, record the result in `docs/phase0/GEOMETRY_BASELINE.md`, commit only evidence, and stop before a production lighting change. A real screen-reader pass remains open until a tester runs the check sheet.
 
 When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
@@ -114,6 +115,8 @@ To regenerate the arrival still after changing the room, run:
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
 npm run build
 ```
+
+This 680 doorway sun-intensity probe passed production build/typecheck for baseline intensity `2.0`, temporary intensity `1.0`, and restored intensity `2.0`. A fresh PCF baseline PNG was byte-identical to the earlier committed 680 doorway image. The probe matched the fixed camera pose and 864 × 486 buffer in Chromium 154's SwiftShader WebGL2 fallback, measured 3 renderer calls, and had no page or request failures. The [image and measured crop values](docs/phase0/GEOMETRY_BASELINE.md#680-doorway-directional-sun-intensity-probe--2026-10-14) show a darker broad floor area and near mat but almost unchanged pale oval. Only the evidence PNG and documentation changed; app and asset suites were not rerun and Pages remains `b291a33`. Evidence commit `80e4622` records the capture.
 
 This cross-view shadow-filter decision changed only `docs/DECISIONS.md` and this handoff. It reconciles the older 661 doorway note with the completed 680 doorway, three-date pegs, and three-date travel-corner comparisons. The [decision](docs/DECISIONS.md#cross-view-shadow-filter-decision--2026-10-14) retains normal shadows off, PCF as the diagnostic default, and VSM as an opt-in preview. `git diff --check` passed; no application, asset, or renderer source changed, so build and browser suites were not rerun. Pages remains `b291a33`. Decision commit `07e712f` records the conclusion.
 
