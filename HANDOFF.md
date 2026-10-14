@@ -2,23 +2,23 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` currently contains only the plan.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Idle-render frame check” is the current completed chunk. Wait for feedback or approval before starting another chunk.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Idle rendering after date changes” is the current completed chunk. Wait for feedback or approval before starting another chunk.
 
 ## Verified checkpoint · 2026-10-14
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; test and audit commit `6ebe0d5` (idle rendering) |
+| Implementation branch | `codex/phase0-scaffold`; test and audit commit `5e867b9` (idle rendering after date changes) |
 | Public preview branch | `gh-pages`; remains at `e8c43fe` because no app files changed |
 | GitHub Pages | Existing build for `e8c43fe` reported `built`; the live Compare path was checked in an earlier chunk |
-| Checks at this checkpoint | The new focused idle check and all 34 browser tests passed, including eight axe scans. The preceding checker checkpoint passed the 44,297 / 300,000 first-view and 5,016,889 / 15,000,000 full-visit byte budgets; those and the 17 unit tests were not rerun for this test-only change. |
+| Checks at this checkpoint | The new focused date/Compare idle check and all 35 browser tests passed, including eight axe scans. The earlier checker checkpoint passed the 44,297 / 300,000 first-view and 5,016,889 / 15,000,000 full-visit byte budgets; those and the 17 unit tests were not rerun for this test-only change. |
 | Working tree before this handoff update | Clean |
 
-The user's “continue” authorized the proposed idle-render check. `6ebe0d5` adds a browser path that watches the canvas `data-frames` counter in the 632 doorway, after looking right, and after a move to the head of the room. Each action increased the counter; after two animation frames to settle, it stayed unchanged for a 300 ms quiet interval at each point. The current scheduler needed no fix. This counter measures application render callbacks in Chromium's WebGL2 fallback, not GPU activity or performance on real devices. This test-and-documentation chunk did not change the public build. `main` currently contains only the plan; `gh-pages` carries only built files. Source documentation and this handoff are on the implementation branch, not on the public site.
+The user's “continue” authorized the proposed date/Compare idle-render check. `5e867b9` adds a browser path that confirms a 632-to-661 dissolve starts and finishes, then verifies the canvas `data-frames` counter stays unchanged for 300 ms. It makes the same check after persistent Compare shows 632 and after it restores 661; each switch first increases the counter. The earlier check already covered the stable 632 doorway, a look, and a completed place move. The scheduler needed no fix. The counter measures scheduled application render callbacks in Chromium's WebGL2 fallback, not the two offscreen renders that prepare a dissolve or GPU activity. This test-and-documentation chunk did not change the public build. `main` currently contains only the plan; `gh-pages` carries only built files. Source documentation and this handoff are on the implementation branch, not on the public site.
 
 ## What works now
 
-- The [idle rendering check](docs/phase0/IDLE_RENDER_CHECK.md) confirms that the frame counter stops after room entry, a look, and a completed place move in Chromium's WebGL2 fallback. The full 34-test browser suite passes. Date transitions and Compare are separate rendering paths to check next.
+- The [idle rendering check](docs/phase0/IDLE_RENDER_CHECK.md) confirms that the frame counter stops after room entry, a look, a completed place move, a completed date dissolve, and Compare on and off in Chromium's WebGL2 fallback. The full 35-test browser suite passes. GPU-level activity and real-device frame rates remain open.
 - `npm run check:assets` enforces the plan's **300,000-byte first view** by following stylesheet and arrival-still references in built `index.html`. It reports 44,297 bytes for the current HTML, CSS, and WebP. An isolated fixture showed that changed references alter the total and that oversized, missing, or uncounted resources fail. The full 15,000,000-byte visit check remains.
 - [Compare click-only activation](docs/phase0/COMPARE_VIRTUAL_ACTIVATION.md) lets an assistive-technology style click on **Hold to see 632 CE** show the earlier date persistently; a second click restores the selected date. The Hold button's pressed state reflects the visible comparison. Physical holds still end on release, and the adjacent persistent toggle remains. The browser surrogate passes; an actual screen-reader test remains open.
 - The [screen-reader navigation check sheet](docs/phase0/SCREEN_READER_CHECK.md) gives an actual tester a short path through reading headings and sources, room entry, date/place labels, the view description, Compare, and return to reading. It asks for the exact spoken output and checks whether the Hold button's virtual activation follows the new behavior. This is preparation, **not a completed screen-reader pass**. The current container has no screen-reader program, GUI/audio session, or speech output; Chromium's accessibility tree cannot substitute for hearing the page.
@@ -41,9 +41,9 @@ The user's “continue” authorized the proposed idle-render check. `6ebe0d5` a
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent click-only activation of either Compare button. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: idle rendering after date changes
+## Next proposed chunk: draw-call and triangle baseline
 
-First address any completed screen-reader observations the user supplies. Otherwise, pending approval, extend the idle-frame check to the separate date-dissolve and Compare paths. Select 661, observe `data-date-transition` turn true and then false, and measure a quiet interval; use Compare and return to 661, checking another quiet interval. Fix the scheduler only if frames keep rising, document and test the result, publish if app code changes, then stop for review. A real screen-reader pass remains open until a tester runs the check sheet.
+First address any completed screen-reader observations the user supplies. Otherwise, pending approval, measure draw calls and triangles for representative 632, 661, and 680 frames in the WebGL2 fallback. Check whether the renderer's counters include the shadow pass before comparing them with the plan's roughly 150 draw calls and 800,000 triangles per frame. Record a reproducible baseline and any overage, then stop for review before optimization. A real screen-reader pass remains open until a tester runs the check sheet.
 
 When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
@@ -92,7 +92,9 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
 npm run build
 ```
 
-This idle-render chunk passed the focused browser check and all 34 browser tests. The new check samples a stable 632 room, a look, and a completed move after two animation frames; the counter did not rise during each 300 ms quiet interval. It verifies that look and move actually increased the counter first. No renderer change was needed. See `docs/phase0/IDLE_RENDER_CHECK.md` for method and limits. No unit or asset checks were rerun because application and asset code did not change. Source commit `6ebe0d5` is pushed; the public `gh-pages` build remains `e8c43fe`.
+This date/Compare idle-render chunk passed the focused browser check and all 35 browser tests. It confirms the 661 dissolve starts and finishes, then measures an unchanged frame counter for 300 ms. It repeats after Compare shows 632 and after restoring 661, while confirming each change first renders. No renderer change was needed. The counter does not include the synchronous offscreen draws that prepare a dissolve. See `docs/phase0/IDLE_RENDER_CHECK.md` for method and limits. No unit or asset checks were rerun because application and asset code did not change. Source commit `5e867b9` is pushed; the public `gh-pages` build remains `e8c43fe`.
+
+The preceding idle-render chunk passed the focused browser check and all 34 browser tests. It sampled a stable 632 room, a look, and a completed move after two animation frames; the counter did not rise during each 300 ms quiet interval. It verified that look and move actually increased the counter first. No renderer change was needed. Source commit `6ebe0d5` is pushed.
 
 The preceding first-view budget chunk passed `npm run check:assets`, including a fresh build and typecheck. It measured 44,297 / 300,000 first-view bytes and 5,016,889 / 15,000,000 full-visit bytes. Isolated fixtures showed that changed CSS and still references change the total, while an oversized file, missing file, arrival `srcset`, arrival `<picture>` source, or linked CSS asset reference fails. The check covers the plan's HTML, CSS, and arrival still measure; it does not claim a network transfer timing result. No unit or browser suite was rerun for that checker-only change. Source commit `bd105b4` is pushed; the public `gh-pages` build remains `e8c43fe`.
 
