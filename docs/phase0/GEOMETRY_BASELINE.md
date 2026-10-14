@@ -169,3 +169,16 @@ From a fresh production build, open the PCF and VSM diagnostic URLs above in sep
 The intended clean floor patch stays a distinct pale oval beside the right mat row in both images. Its curved edge separates it from the broad angular sunlit area that enters from the foreground. The oval is nearly featureless white in both filters. PCF shows a sharper boundary around the sunlit area and a thin bright line at the left/back wall junction. VSM softens the floor boundary slightly and the wall line is not apparent, but the sunlit area remains visually prominent. All six mats remain visible; their fine striped pattern is strong in PCF's lit portions and much less apparent under VSM. The rear seat and right table remain visible, but their small tabletop marks cannot be identified at this distance.
 
 The empty hook and wall outline, the pegs, and the taller yard palm are outside this straight doorway view. No object disappears or large clipped area is apparent in this pair. This is a software-rendered visual review of one pose, not a real-device performance, historical suitability, or student legibility result. Normal visits remain shadow-free, and PCF remains the diagnostic default. No renderer or room source changed for these captures.
+
+## Matched 680 pegs filter review · 2026-10-14
+
+From a fresh production build, open the PCF and VSM diagnostic URLs above in separate Chromium 154 pages, select 680 and the pegs place, then look right and left to settle the scene before capturing the canvas. Both captures use the Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and SwiftShader WebGL2. The camera matches at `(2, 1.6, -1.35)`, yaw `1.571`, pitch `-0.1`; both canvas buffers are 864 × 486, while the captured PNGs are 864 × 487. PCF measured 76 draws / 3,737 submitted triangles / 3 renderer calls; VSM measured 78 / 3,739 / 5. The pages completed without script or request failures, and the images differ.
+
+| 680 pegs, PCF | 680 pegs, VSM |
+| --- | --- |
+| [Full-size image](680-pegs-shadow-pcf.png) | [Full-size image](680-pegs-shadow-vsm.png) |
+| ![680 pegs and empty hook with PCF shadows](680-pegs-shadow-pcf.png) | ![Same 680 pegs and empty hook with VSM shadows](680-pegs-shadow-vsm.png) |
+
+The bare hook is individually visible above the tall pale waterskin outline on the left. Three separate dark pegs remain visible against three smaller pale rectangular traces across the center and right. None is clipped or missing. The hook, pegs, and traces look unchanged between the filters; the visible pixel differences are confined to a faint, narrow strip along the far-right vertical wall seam, away from the traces. VSM offers no legibility gain at this pose.
+
+This 680 pair shows the empty hook, but cannot by itself establish the 661-to-680 disappearance of the waterskin; that needs a matched 661 pegs view. The clean floor patch and taller yard palm are outside this frame. This is one software-rendered visual review, not a real-device performance or student legibility result. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for these captures.
