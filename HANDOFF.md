@@ -2,22 +2,23 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` currently contains only the plan.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Small-screen keyboard path” is the current completed chunk. Wait for feedback or approval before starting another chunk.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Screen-reader tester check sheet” is the current completed chunk. Wait for feedback or approval before starting another chunk.
 
-## Verified checkpoint · 2026-10-13
+## Verified checkpoint · 2026-10-14
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; last chunk commit `c31da9f` (keyboard path and retry focus) |
-| Public preview branch | `gh-pages`; published at `6fb1bb7` (keyboard focus fix) |
-| GitHub Pages | Build for `6fb1bb7` reported `built`; live 390 × 844 Chromium forced renderer failure and observed focus on “Try the room again” |
-| Checks at this checkpoint | `npm run check:assets` passed at 5,016,398 / 15,000,000 bytes; 17 unit and 32 browser tests passed, including two new keyboard paths. |
+| Implementation branch | `codex/phase0-scaffold`; last chunk commit `2f41f8e` (screen-reader check sheet) |
+| Public preview branch | `gh-pages`; remains at `6fb1bb7` (keyboard focus fix); no app files changed in this chunk |
+| GitHub Pages | Prior build for `6fb1bb7` reported `built`; live 390 × 844 Chromium forced renderer failure and observed focus on “Try the room again” |
+| Checks at this checkpoint | Check sheet labels, heading levels, and focus destinations reviewed against current source; `git diff --cached --check` passed. No browser or unit tests rerun for this documentation-only chunk. Prior code checkpoint: 17 unit and 32 browser tests, built visit 5,016,398 / 15,000,000 bytes. |
 | Working tree before this handoff update | Clean |
 
-The user's “continue” authorized the keyboard-only audit and one concrete fix if found. No participant sessions or results have been recorded. This handoff commit follows `c31da9f` on the implementation branch. `main` currently contains only the plan; `gh-pages` carries only built files. The audits, config, review packet, asset checker, sky comparison, mobile audit, and this handoff are available on the source branch in GitHub, not on the public site.
+The user's “continue” authorized the proposed screen-reader navigation chunk. This execution environment has Chromium but no usable screen reader, desktop/audio session, or speech output. No spoken announcement was checked, and no participant sessions or results have been recorded. Following the previous handoff's fallback, `2f41f8e` adds a check sheet for an actual tester. This handoff commit follows it on the implementation branch. `main` currently contains only the plan; `gh-pages` carries only built files. The check sheet, audits, config, review packet, asset checker, sky comparison, mobile audit, and this handoff are available on the source branch in GitHub, not on the public site.
 
 ## What works now
 
+- The [screen-reader navigation check sheet](docs/phase0/SCREEN_READER_CHECK.md) gives an actual tester a short path through reading headings and sources, room entry, date/place labels, the view description, Compare, and return to reading. It asks for the exact spoken output and flags the Hold to compare button's virtual activation as a question to check. This is preparation, **not a completed screen-reader pass**. The current container has no screen-reader program, GUI/audio session, or speech output; Chromium's accessibility tree cannot substitute for hearing the page.
 - The [small-screen keyboard audit](docs/phase0/KEYBOARD_AUDIT.md) operates a 390 × 844 reading-to-room path using Tab, Enter, Space, arrows, and Escape. It covers date and place selection, an active movement skip, Compare hold and toggle, a disclosure, and return to reading. A second path forces initial renderer failure. Before the fix, disabling Enter during loading dropped focus to the document body and skipped the retry button in Tab order. Focus now returns to “Try the room again” when entry began with that button focused and the visitor has not moved elsewhere. Both new paths pass; the existing context-loss test still checks focus on the reading heading. A real screen-reader review remains open.
 - The [automated accessibility audit](docs/phase0/ACCESSIBILITY_AUDIT.md) runs axe-core 4.13.0 against the static reading state and rendered room at 1440, 390, and 320 pixels, plus expanded 680 notes at 320 pixels. The expanded room initially exposed a moderate heading-order violation: scene item `h4` headings skipped the room's `h2`. Room labels now use `h3`, while labels beneath reading passage `h3` headings remain `h4`. All eight scans now report zero violations. Axe does not assess WebGL pixels, keyboard operation, or screen-reader announcements; the sampled keyboard path has its own audit, and a real screen-reader pass remains open.
 - The [small-screen layout audit](docs/phase0/MOBILE_LAYOUT_AUDIT.md) records before and after captures at 390 × 844. Before the change, the scene frame ended below the first screen after Enter. Compare and its help now follow the scene in document order, while date and place controls remain before it. The full canvas spans `y=528..730` at both 632 and 661 inside the 844-pixel viewport, and the page has no horizontal overflow. Emulated touch controls and disclosures worked. A real-phone and screen-reader pass remain open.
@@ -37,9 +38,9 @@ The user's “continue” authorized the keyboard-only audit and one concrete fi
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent toggle. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: screen-reader navigation check
+## Next proposed chunk: Compare virtual activation
 
-First address any specific feedback the user gives on the published keyboard fix. Otherwise, pending approval, use an actual screen reader if available to inspect the reading page and one entered-room state. Check the heading sequence, date and place labels, view description, and return-to-reading announcement. Fix one concrete issue if found, record the tool and exact path, and stop for review. If an actual screen reader is unavailable in the environment, do not label an accessibility-tree inspection a screen-reader pass; prepare a short manual check sheet for the user or an available tester instead.
+First address any completed screen-reader observations the user supplies. Otherwise, pending approval, test whether a click-only virtual activation of **Hold to see 632 CE** does anything in the 661 room. If it does not, make that button's activation meaningful without breaking physical press-and-hold or the adjacent persistent toggle; document and test the behavior, publish, then stop for review. A real screen-reader pass remains open until a tester runs the check sheet.
 
 When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
@@ -53,6 +54,7 @@ When the user supplies completed response sheets, synthesize what participants n
 | Mobile audit and evidence | `docs/phase0/MOBILE_LAYOUT_AUDIT.md`, `docs/phase0/mobile-*.png` |
 | Automated accessibility audit | `docs/phase0/ACCESSIBILITY_AUDIT.md`, `tests/e2e/accessibility.spec.ts` |
 | Small-screen keyboard audit | `docs/phase0/KEYBOARD_AUDIT.md`, `tests/e2e/keyboard.spec.ts` |
+| Screen-reader tester path | `docs/phase0/SCREEN_READER_CHECK.md` |
 | Text, citations, and scene labels | `content/*.json`, `scripts/content.ts`, `src/schema/changeIds.ts` |
 | UI state and Compare inputs | `src/main.ts`, `src/state/*.ts` |
 | Camera, renderer, and dated geometry | `src/scene/createRoomView.ts`, `src/render/renderer.ts`, `src/world/*.ts` |
@@ -83,6 +85,8 @@ To regenerate the arrival still after changing the room, run:
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
 npm run build
 ```
+
+This screen-reader preparation chunk changed documentation only. The tester sheet was checked against current headings, labels, and focus code, and `git diff --cached --check` passed before commit. No screen reader was available, so no spoken output was heard and no screen-reader result is claimed. Unit, browser, and asset checks were not rerun because no application or test code changed. The public preview remains at `6fb1bb7`; the new sheet is on the source branch.
 
 This keyboard chunk passed `npm run check:assets` (including typecheck and a fresh build), 17 unit tests, and all 32 browser tests. The two new keyboard paths at 390 × 844 cover the sampled room interaction and initial renderer failure. The failure test first showed that focus fell to the body after Enter was disabled; the fix returns it to the enabled retry button when appropriate. The production `dist/` is 5,016,398 / 15,000,000 bytes. See `docs/phase0/KEYBOARD_AUDIT.md` for the checked path and limits. The public `gh-pages` commit `6fb1bb7` reported `built`; live 390 × 844 Chromium forced renderer failure and confirmed the retry button was focused. A real screen-reader pass remains open.
 
