@@ -130,6 +130,36 @@ test('the alternate sky query keeps the same room and renders mid-morning', asyn
   await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
 });
 
+test('shadow filter URLs leave normal visits off and select PCF or VSM explicitly', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  for (const { query, renderCalls } of [
+    { query: '', renderCalls: 2 },
+    { query: '&shadowFilter=vsm', renderCalls: 2 },
+    { query: '&shadows=1', renderCalls: 3 },
+    { query: '&shadows=1&shadowFilter=vsm', renderCalls: 5 },
+  ]) {
+    await page.goto(`/?gl=1&metrics=1${query}`);
+    await page.getByRole('button', { name: 'Enter the room' }).click();
+    const canvas = page.locator('#scene-frame canvas');
+    await expect(canvas).toHaveAttribute('data-backend', 'WebGL2 fallback');
+    await expect(canvas).toHaveAttribute('data-date', '632');
+    await expect(canvas).toHaveAttribute('data-place', 'doorway');
+
+    const beforeTurn = Number(await canvas.getAttribute('data-frames'));
+    await page.locator('[data-look="right"]').click();
+    await expect.poll(async () => Number(await canvas.getAttribute('data-frames'))).toBeGreaterThan(beforeTurn);
+    const beforeReturn = Number(await canvas.getAttribute('data-frames'));
+    await page.locator('[data-look="left"]').click();
+    await expect.poll(async () => Number(await canvas.getAttribute('data-frames'))).toBeGreaterThan(beforeReturn);
+
+    await expect(canvas).toHaveAttribute('data-position', '0.000,1.600,0.500');
+    await expect(canvas).toHaveAttribute('data-yaw', '0.000');
+    await expect(canvas).toHaveAttribute('data-pitch', '-0.300');
+    await expect(canvas).toHaveAttribute('data-render-calls', String(renderCalls));
+  }
+});
+
 test('the room scene fits on the first small-screen view', async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 }, deviceScaleFactor: 1,

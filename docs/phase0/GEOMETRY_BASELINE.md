@@ -137,3 +137,9 @@ Run the existing `measure:geometry -- --shadow-doorway` command at the 632 doorw
 | VSM increase over PCF | **9** | **86** | **2** |
 
 The additional submissions match the renderer's VSM path: two fullscreen blur draws (one triangle each) plus seven receiving mats that VSM also includes in the shadow-caster pass (seven 12-triangle boxes). PCF includes only meshes marked to cast. The two blur passes explain the extra renderer calls. The VSM row remains under the plan's numerical limits of 150 draw calls and 800,000 submitted triangles **at this one gray-box pose**. These counters do not measure shaded pixels, blur shader samples, render-target bandwidth, frame time, GPU time, or a real device, so they cannot establish the planned Balanced-tier performance. The baseline PCF diagnostic and normal shadow-off visit remain unchanged.
+
+## Live shadow-filter preview · 2026-10-14
+
+The production preview now makes the two diagnostic filters selectable by URL: [`?shadows=1` uses PCF](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1), and [`?shadows=1&shadowFilter=vsm` uses VSM](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&shadowFilter=vsm). Open either link, enter the room, and select the same date and place to compare. `shadowFilter=vsm` by itself leaves shadows off, as do normal visits. Other filter values retain the PCF diagnostic.
+
+The browser check fixes the 632 doorway pose in WebGL2 via SwiftShader and observes 2 renderer calls with shadows off, 3 with PCF, and 5 with VSM after a look. Those counts confirm the diagnostic selection on that path. The matched images and submission counts above remain the visual and numerical evidence; the public link does not establish frame time, real-device behavior, or suitability of the still-bright floor patch.

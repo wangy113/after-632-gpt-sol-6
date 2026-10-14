@@ -8,6 +8,8 @@ The optional 3D view shows the same imagined room in 632, 661, and 680 CE. Its w
 
 The [Phase 0 sky comparison](docs/phase0/SKY_COMPARISON.md) shows two pinned CC0 Qwantani HDRIs from the same yard camera pose. The lighter Qwantani morning sky is the provisional default; `?sky=qwantani_mid_morning_puresky` keeps the darker candidate available for comparison. The sky changes the background only, with the room lights fixed. Its visual and historical suitability still need human review.
 
+For a shadow comparison, open the [PCF preview](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1) or the [VSM preview](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&shadowFilter=vsm), then enter the room. Both are diagnostic URL options; normal visits keep shadows off. VSM is a visual candidate and still needs wider visual and device performance checks.
+
 In the 661 or 680 room, hold Compare to see the preceding date immediately from the same viewpoint. The selected date stays selected while the view and its “Things here” notes show the earlier date; releasing Compare restores the selection. The hold button works with a mouse, touch, or keyboard. A click-only activation of that button switches the comparison on or off for assistive technology that cannot hold it. Holding C while the room is active also compares, and a separate toggle button keeps the comparison visible without holding. Compare is unavailable in 632 because the room has no earlier scene.
 
 The pure state model defines all three dates, four viewpoints, Compare, and movement policy. The three date views, four viewpoints, and Compare are connected to the scene. A doorway still appears before the 3D room opens. The reporting exit remains later work.

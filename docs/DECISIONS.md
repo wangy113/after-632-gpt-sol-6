@@ -137,3 +137,8 @@
 
 - [Fresh matched 632 doorway measurements](phase0/GEOMETRY_BASELINE.md#vsm-doorway-submission-counts--2026-10-14) give PCF 90 draws / 4,393 submitted triangles / 3 renderer calls and temporary VSM 99 / 4,479 / 5. The increase matches two fullscreen blur draws plus seven mat boxes joining VSM's shadow pass. Both fit the plan's numerical draw and triangle limits at this gray-box pose.
 - These counters omit pixel work, render-target bandwidth, GPU and frame time, and real-device performance. Restore baseline PCF and leave normal visits shadow-free; a separately opt-in VSM preview would let reviewers see the candidate without changing the existing diagnostic default.
+
+## Opt-in shadow-filter preview · 2026-10-14
+
+- Offer VSM through `?shadows=1&shadowFilter=vsm` for direct review. `?shadows=1` keeps the existing PCF diagnostic, and normal visits have no shadow pass. The VSM option changes no room geometry or lighting settings.
+- This exposes the candidate for visual feedback; it does not adopt shadows for regular visits or establish the Balanced-tier performance target. The strong floor patch and other viewpoints still need review.
