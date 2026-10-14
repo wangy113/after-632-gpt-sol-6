@@ -156,3 +156,16 @@ From a fresh production build, open the PCF and VSM diagnostic URLs above in sep
 The narrow bright mark at the left/back wall junction is visible in PCF and not apparent in VSM at this pose. The bright near-floor patch remains conspicuous in both; VSM softens its boundary slightly but does not fix the lighting balance. Both mat rows remain visible, though their fine striping is much less apparent in VSM. The plain seat, low table, and travel cluster on the right remain in place in both images. The letter and coin are small marks on the table, and individual travel objects cannot be identified at this distance. The pegs and hook are outside this doorway view.
 
 This is one software-rendered 661 view. It supports further review of the 680 doorway, not adopting either shadow mode for normal visits. No source renderer or room settings changed for these captures.
+
+## Matched 680 doorway filter review · 2026-10-14
+
+From a fresh production build, open the PCF and VSM diagnostic URLs above in separate Chromium 154 pages, select 680, then look right and left to settle the scene before capturing the canvas. Both captures use the Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and SwiftShader WebGL2. The camera matches at `(0, 1.6, 0.5)`, yaw `0`, pitch `-0.3`; both canvas buffers are 864 × 486. The PCF frame measured 85 draws / 3,909 submitted triangles / 3 renderer calls; VSM measured 87 / 3,911 / 5. The pair differs in pixels and both pages completed without script or request failures.
+
+| 680 doorway, PCF | 680 doorway, VSM |
+| --- | --- |
+| [Full-size image](680-doorway-shadow-pcf.png) | [Full-size image](680-doorway-shadow-vsm.png) |
+| ![680 doorway with PCF shadows](680-doorway-shadow-pcf.png) | ![Same 680 doorway with VSM shadows](680-doorway-shadow-vsm.png) |
+
+The intended clean floor patch stays a distinct pale oval beside the right mat row in both images. Its curved edge separates it from the broad angular sunlit area that enters from the foreground. The oval is nearly featureless white in both filters. PCF shows a sharper boundary around the sunlit area and a thin bright line at the left/back wall junction. VSM softens the floor boundary slightly and the wall line is not apparent, but the sunlit area remains visually prominent. All six mats remain visible; their fine striped pattern is strong in PCF's lit portions and much less apparent under VSM. The rear seat and right table remain visible, but their small tabletop marks cannot be identified at this distance.
+
+The empty hook and wall outline, the pegs, and the taller yard palm are outside this straight doorway view. No object disappears or large clipped area is apparent in this pair. This is a software-rendered visual review of one pose, not a real-device performance, historical suitability, or student legibility result. Normal visits remain shadow-free, and PCF remains the diagnostic default. No renderer or room source changed for these captures.
