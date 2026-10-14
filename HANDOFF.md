@@ -2,22 +2,23 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` currently contains only the plan.
 
-The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “One diagnostic shadow frame” is the current completed chunk. Wait for feedback or approval before starting another chunk.
+The user wants work delivered **one small chunk at a time**, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Matched 632 doorway shadow review” is the current completed chunk. Wait for feedback or approval before starting another chunk.
 
 ## Verified checkpoint · 2026-10-14
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; diagnostic shadow commit `d26ce18` |
-| Public preview branch | `gh-pages`; published `673990d` with the opt-in shadow flag |
-| GitHub Pages | `673990d` reported `built`; live Chromium opened the public 632 doorway with `?metrics=1&shadows=1` and read 90 draw calls / 4,393 triangles / 3 renderer calls with no page errors |
-| Checks at this checkpoint | Paired 632 doorway measurements: 61 draws / 3,077 triangles by default; 90 draws / 4,393 triangles with diagnostic shadows. Renderer calls rose from 2 to 3. 17 unit tests and the targeted room browser check passed. Asset check passed: 44,297 / 300,000 first-view bytes and 5,017,462 / 15,000,000 visit bytes. |
+| Implementation branch | `codex/phase0-scaffold`; matched shadow review commit `5334ddd` |
+| Public preview branch | `gh-pages`; still `673990d` with the opt-in shadow flag |
+| GitHub Pages | `673990d` reported `built`; this capture-and-documentation chunk did not change public files |
+| Checks at this checkpoint | Production build and `capture:shadow-pair` passed; both images share the same 632 doorway pose and renderer calls are 2 off / 3 on; the images were inspected and `git diff --check` passed. No app tests or asset checks were rerun for this source-only chunk. |
 | Working tree before this handoff update | Clean |
 
-The user's “next tiniest small thing” authorized one paired shadow measurement, a narrow slice of the proposed shadow spike. `d26ce18` adds `?shadows=1`, which enables a 1024 × 1024 directional shadow map only for a diagnostic visit. The settled 632 doorway measured 61 draw calls / 3,077 triangles / 2 renderer calls without shadows and 90 / 4,393 / 3 with shadows. The extra renderer call confirms the shadow pass. [The baseline document](docs/phase0/GEOMETRY_BASELINE.md) records the command and limits. Other dates and viewpoints, visual quality, frame time, and the future Balanced tier remain unchecked. Normal visits still have shadows off. `main` currently contains only the plan; `gh-pages` carries only built files. Source documentation and this handoff are on the implementation branch, not on the public site.
+The user's “read the repo and what the other agent did and then continue” authorized this next small chunk. The local branch was fast-forwarded from `3255a2f` to the other agent's `8de94fa` before work began; those 26 commits added asset and first-view budget checks, sky comparisons, mobile and accessibility checks, idle and geometry measurements, and the opt-in shadow diagnostic. `5334ddd` adds matched default and `?shadows=1` captures from the same 632 doorway pose, with a repeatable command and visual review. Normal visits still have shadows off. No participant or screen-reader results have been supplied. `main` currently contains only the plan; `gh-pages` carries only built files. Source documentation and this handoff are on the implementation branch, not on the public site.
 
 ## What works now
 
+- The [matched 632 doorway shadow images and review](docs/phase0/GEOMETRY_BASELINE.md#matched-doorway-shadow-images--2026-10-14) can be regenerated with `npm run capture:shadow-pair`. Both use the same 864 × 486 canvas buffer and fixed camera pose. The diagnostic shadow image has a strong, hard-edged floor patch and darker walls/floor; mats and cups lose some contrast, while the footprints remain visible. A narrow bright line along the left wall edge needs investigation. Shadows remain off for normal visits.
 - The [WebGL2 geometry baseline and diagnostic shadow check](docs/phase0/GEOMETRY_BASELINE.md) are reproducible with `npm run measure:geometry` and its `--shadow-doorway` option. Normal visits have no shadow pass. The opt-in 632 doorway shadow pass added 29 draw calls and 1,316 submitted triangles, still below the plan's numerical limits in that one pose. The Balanced, all-view, and frame-time targets remain open.
 - The [idle rendering check](docs/phase0/IDLE_RENDER_CHECK.md) confirms that the frame counter stops after room entry, a look, a completed place move, a completed date dissolve, and Compare on and off in Chromium's WebGL2 fallback. The full 35-test browser suite passes. GPU-level activity and real-device frame rates remain open.
 - `npm run check:assets` enforces the plan's **300,000-byte first view** by following stylesheet and arrival-still references in built `index.html`. It reports 44,297 bytes for the current HTML, CSS, and WebP. An isolated fixture showed that changed references alter the total and that oversized, missing, or uncounted resources fail. The full 15,000,000-byte visit check remains.
@@ -42,9 +43,9 @@ The user's “next tiniest small thing” authorized one paired shadow measureme
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent click-only activation of either Compare button. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: inspect one shadow pair
+## Next proposed chunk: investigate the shadow wall edge
 
-First address any completed screen-reader observations the user supplies. Otherwise, pending approval, capture the 632 doorway at the same pose with and without diagnostic shadows. Inspect the pair for clipping, harsh contrast, and whether the three imagined traces remain legible; record the findings before extending the measurement to other dates and viewpoints. Keep normal visits unchanged. A real screen-reader pass remains open until a tester runs the check sheet.
+First address any completed screen-reader observations or shadow feedback the user supplies. Otherwise, pending approval, isolate the narrow bright line along the left wall in the 632 doorway diagnostic shadow capture. Determine whether the shadow map or room geometry causes it, using one focused experiment and a matched capture. Keep normal visits unchanged; do not extend shadow measurements to other dates or viewpoints until this pose is understood. A real screen-reader pass remains open until a tester runs the check sheet.
 
 When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
@@ -61,7 +62,7 @@ When the user supplies completed response sheets, synthesize what participants n
 | Small-screen keyboard audit | `docs/phase0/KEYBOARD_AUDIT.md`, `tests/e2e/keyboard.spec.ts` |
 | Screen-reader tester path | `docs/phase0/SCREEN_READER_CHECK.md` |
 | Idle-render check | `docs/phase0/IDLE_RENDER_CHECK.md`, `tests/e2e/room.spec.ts` |
-| Geometry baseline and measurement command | `docs/phase0/GEOMETRY_BASELINE.md`, `scripts/measure-geometry.mjs` |
+| Geometry baseline, shadow images, and capture commands | `docs/phase0/GEOMETRY_BASELINE.md`, `docs/phase0/632-doorway-shadow-*.png`, `scripts/measure-geometry.mjs`, `scripts/capture-shadow-pair.mjs` |
 | Compare click-only behavior and limits | `docs/phase0/COMPARE_VIRTUAL_ACTIVATION.md` |
 | Text, citations, and scene labels | `content/*.json`, `scripts/content.ts`, `src/schema/changeIds.ts` |
 | UI state and Compare inputs | `src/main.ts`, `src/state/*.ts` |
@@ -85,6 +86,7 @@ npm run build
 npm run check:assets
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run measure:geometry
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run measure:geometry -- --shadow-doorway
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:shadow-pair
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run e2e
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:sky
 ```
@@ -96,7 +98,9 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
 npm run build
 ```
 
-This diagnostic shadow chunk sampled only the 632 doorway. With `?shadows=1`, draw calls increased from 61 to 90, submitted triangles from 3,077 to 4,393, and renderer calls from 2 to 3. The regular six-view command still returned its prior counts. `npm run check:assets` passed with 44,297 / 300,000 first-view bytes and 5,017,462 / 15,000,000 visit bytes. All 17 unit tests and the focused opt-in room browser test passed. The full browser suite was not rerun for this URL-gated change. Source commit `d26ce18` and Pages commit `673990d` were pushed. Pages reported `built`; live Chromium measured 90 / 4,393 / 3 at the public shadow URL with no page errors.
+This matched shadow review chunk used `npm run capture:shadow-pair`, which passed a production build and captured 864 × 487 PNGs from identical 632 doorway poses. Renderer calls were 2 without shadows and 3 with the diagnostic flag. The shadow image darkened most surfaces, added a hard-edged bright floor patch, reduced mat and cup contrast, and exposed a narrow bright left-wall line. The footprints remained visible; no object moved or disappeared. [The review](docs/phase0/GEOMETRY_BASELINE.md#matched-doorway-shadow-images--2026-10-14) records the method and limits. No application code or built site files changed, so app and asset suites were not rerun and Pages remains `673990d`. Source commit `5334ddd` is the feature commit for this chunk.
+
+The preceding diagnostic shadow chunk sampled only the 632 doorway. With `?shadows=1`, draw calls increased from 61 to 90, submitted triangles from 3,077 to 4,393, and renderer calls from 2 to 3. The regular six-view command still returned its prior counts. `npm run check:assets` passed with 44,297 / 300,000 first-view bytes and 5,017,462 / 15,000,000 visit bytes. All 17 unit tests and the focused opt-in room browser test passed. The full browser suite was not rerun for this URL-gated change. Source commit `d26ce18` and Pages commit `673990d` were pushed. Pages reported `built`; live Chromium measured 90 / 4,393 / 3 at the public shadow URL with no page errors.
 
 The preceding geometry-baseline chunk ran `npm run measure:geometry` against the production build twice; both runs returned the same six samples. The highest sampled draw count was 67 (632 yard), and the highest triangle count was 3,545 (661 yard). The opt-in metrics hook is not used on normal visits. `npm run check:assets` passed with 44,297 / 300,000 first-view bytes and 5,017,162 / 15,000,000 visit bytes; all 17 unit and 35 browser tests passed. The counters would include shadow draws, but normal visits render no shadow pass; see `docs/phase0/GEOMETRY_BASELINE.md`. Source commit `05ed412` and Pages commit `de5500b` were pushed. Pages reported `built`, and a live Chromium check matched the 632 doorway's 61 draw calls / 3,077 triangles with no page errors.
 
