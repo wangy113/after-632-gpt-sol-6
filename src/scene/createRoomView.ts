@@ -74,6 +74,9 @@ export async function createRoomView(
     throw error;
   }
   const { renderer, backend } = rendered;
+  const measureGeometry = new URLSearchParams(location.search).has('metrics');
+  // Three.js also has its own RAF, which otherwise resets these counters between app frames.
+  if (measureGeometry) renderer.info.autoReset = false;
   const world = createRoomWorld(textures, sky);
   const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 100);
   camera.position.set(...viewpoints.doorway.position);
@@ -166,6 +169,7 @@ export async function createRoomView(
       }
       aimCamera();
       try {
+        if (measureGeometry) renderer.info.reset();
         if (dateTransition) {
           const active = dateTransition;
           active.startedAt ??= now;
@@ -181,6 +185,11 @@ export async function createRoomView(
           }
         } else {
           renderer.render(world.scene, camera);
+        }
+        if (measureGeometry) {
+          canvas.dataset.drawCalls = String(renderer.info.render.drawCalls);
+          canvas.dataset.triangles = String(renderer.info.render.triangles);
+          canvas.dataset.renderCalls = String(renderer.info.render.frameCalls);
         }
       } catch {
         onLost();
