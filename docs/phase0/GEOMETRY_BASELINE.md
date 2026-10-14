@@ -181,4 +181,17 @@ From a fresh production build, open the PCF and VSM diagnostic URLs above in sep
 
 The bare hook is individually visible above the tall pale waterskin outline on the left. Three separate dark pegs remain visible against three smaller pale rectangular traces across the center and right. None is clipped or missing. The hook, pegs, and traces look unchanged between the filters; the visible pixel differences are confined to a faint, narrow strip along the far-right vertical wall seam, away from the traces. VSM offers no legibility gain at this pose.
 
-This 680 pair shows the empty hook, but cannot by itself establish the 661-to-680 disappearance of the waterskin; that needs a matched 661 pegs view. The clean floor patch and taller yard palm are outside this frame. This is one software-rendered visual review, not a real-device performance or student legibility result. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for these captures.
+This 680 pair shows the empty hook, but cannot by itself establish the 661-to-680 disappearance of the waterskin; see the matched 661 pegs view below for the earlier state. The clean floor patch and taller yard palm are outside this frame. This is one software-rendered visual review, not a real-device performance or student legibility result. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for these captures.
+
+## Matched 661 pegs filter and date review · 2026-10-14
+
+From a fresh production build, open the PCF and VSM diagnostic URLs above in separate Chromium 154 pages, select 661 and the pegs place, then look right and left to settle the scene before capturing the canvas. Both captures use the Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and SwiftShader WebGL2. The camera matches the 680 pegs captures at `(2, 1.6, -1.35)`, yaw `1.571`, pitch `-0.1`; both canvas buffers are 864 × 486, while the PNGs are 864 × 487. PCF measured 83 draws / 4,621 submitted triangles / 3 renderer calls; VSM measured 85 / 4,623 / 5. The pages completed without script or request failures.
+
+| 661 pegs, PCF | 661 pegs, VSM |
+| --- | --- |
+| [Full-size image](661-pegs-shadow-pcf.png) | [Full-size image](661-pegs-shadow-vsm.png) |
+| ![661 waterskin and three bare pegs with PCF shadows](661-pegs-shadow-pcf.png) | ![Same 661 waterskin and bare pegs with VSM shadows](661-pegs-shadow-vsm.png) |
+
+The gray waterskin body and neck occupy the left hook area at 661. In the [matched 680 pair](#matched-680-pegs-filter-review--2026-10-14), that area shows a bare hook above a tall pale wall outline. The three smaller pegs remain bare and individually visible against their pale traces at both dates. Comparing PNG pixels within each filter localizes every 661-to-680 change to `x=235..327, y=208..352`, around the waterskin and outline. The floor bags are outside this close wall frame, so these captures do not assess their visibility.
+
+The 661 PCF and VSM images differ only along the faint far-right wall seam (`x=668..704`), away from the waterskin and pegs. Neither filter changes their apparent legibility or clips them at this pose. This pair confirms the implemented visual change between the dates; the objects and traces are invented interpretation, not evidence of historical belongings. It is a software-rendered visual review, not a real-device performance or student legibility result. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for these captures.
