@@ -195,3 +195,16 @@ From a fresh production build, open the PCF and VSM diagnostic URLs above in sep
 The gray waterskin body and neck occupy the left hook area at 661. In the [matched 680 pair](#matched-680-pegs-filter-review--2026-10-14), that area shows a bare hook above a tall pale wall outline. The three smaller pegs remain bare and individually visible against their pale traces at both dates. Comparing PNG pixels within each filter localizes every 661-to-680 change to `x=235..327, y=208..352`, around the waterskin and outline. The floor bags are outside this close wall frame, so these captures do not assess their visibility.
 
 The 661 PCF and VSM images differ only along the faint far-right wall seam (`x=668..704`), away from the waterskin and pegs. Neither filter changes their apparent legibility or clips them at this pose. This pair confirms the implemented visual change between the dates; the objects and traces are invented interpretation, not evidence of historical belongings. It is a software-rendered visual review, not a real-device performance or student legibility result. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for these captures.
+
+## Matched 661 and 680 floor-bag review · 2026-10-14
+
+From a fresh production build, open the PCF diagnostic URL above in separate Chromium 154 pages for 661 and 680. Select the head-of-room place, look left five times and down once, then capture the settled canvas. Both captures use the Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and SwiftShader WebGL2. The camera matches at `(-1.55, 1.6, -3.65)`, yaw `2.042`, pitch `-0.340`; both canvas buffers are 864 × 486 and PNGs are 864 × 487. The 661 frame measured 108 draws / 5,689 submitted triangles / 3 renderer calls, and 680 measured 99 / 4,357 / 3. Both pages completed without script or request failures, and the images differ.
+
+| 661 floor bags, PCF | 680 floor trace, PCF |
+| --- | --- |
+| [Full-size image](661-bags-shadow-pcf.png) | [Full-size image](680-bags-shadow-pcf.png) |
+| ![Two separate floor bags near the table in 661](661-bags-shadow-pcf.png) | ![Pale oval floor trace in place of the bags in 680](680-bags-shadow-pcf.png) |
+
+At 661, two separate gray rounded bag forms sit between the low table and nearest mat row. Their silhouettes do not touch or clip the frame, though this view does not show construction details. Both forms are absent at 680. A broad, bright, nearly featureless oval floor trace occupies their former area; its curved edge remains visible beside the table and nearest mat. The table and mat row remain, while the waterskin on the wall changes to the empty hook and pale outline already seen in the pegs pair. Yard and right-floor shadows also change by date, so the full-frame difference is not limited to the bags. No obvious new shadow artifact appears around the bags or oval in this PCF pair.
+
+These are invented interpretive objects and traces, not evidence of historical belongings. This one software-rendered PCF view establishes the implemented visual change, not student legibility, real-device performance, or VSM behavior at this camera. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for these captures.
