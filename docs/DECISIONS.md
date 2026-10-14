@@ -142,3 +142,8 @@
 
 - Offer VSM through `?shadows=1&shadowFilter=vsm` for direct review. `?shadows=1` keeps the existing PCF diagnostic, and normal visits have no shadow pass. The VSM option changes no room geometry or lighting settings.
 - This exposes the candidate for visual feedback; it does not adopt shadows for regular visits or establish the Balanced-tier performance target. The strong floor patch and other viewpoints still need review.
+
+## 661 doorway shadow-filter review · 2026-10-14
+
+- [Matched PCF and VSM captures](phase0/GEOMETRY_BASELINE.md#matched-661-doorway-filter-review--2026-10-14) keep the seat, mat rows, table, and right-side travel things in the same places. VSM removes the apparent narrow left/back wall line at this pose but makes the mats' fine striping less apparent. The bright floor patch remains prominent in both.
+- This doorway view cannot establish whether the tiny letter and coin are readable, and it does not show the pegs or hook. Keep both modes diagnostic-only while the 680 doorway and other views remain unreviewed.

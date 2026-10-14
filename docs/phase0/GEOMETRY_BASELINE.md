@@ -143,3 +143,16 @@ The additional submissions match the renderer's VSM path: two fullscreen blur dr
 The production preview now makes the two diagnostic filters selectable by URL: [`?shadows=1` uses PCF](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1), and [`?shadows=1&shadowFilter=vsm` uses VSM](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&shadowFilter=vsm). Open either link, enter the room, and select the same date and place to compare. `shadowFilter=vsm` by itself leaves shadows off, as do normal visits. Other filter values retain the PCF diagnostic.
 
 The browser check fixes the 632 doorway pose in WebGL2 via SwiftShader and observes 2 renderer calls with shadows off, 3 with PCF, and 5 with VSM after a look. Those counts confirm the diagnostic selection on that path. The matched images and submission counts above remain the visual and numerical evidence; the public link does not establish frame time, real-device behavior, or suitability of the still-bright floor patch.
+
+## Matched 661 doorway filter review · 2026-10-14
+
+From a fresh production build, open the PCF and VSM diagnostic URLs above in separate Chromium 154 pages, select 661, then look right and left to settle the scene before capturing the canvas. Both captures use the Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and SwiftShader WebGL2. The camera matches at `(0, 1.6, 0.5)`, yaw `0`, pitch `-0.3`; both canvas buffers are 864 × 486. The PCF frame makes 3 renderer calls, the VSM frame 5. Both pages completed without script or request failures, and the images differ.
+
+| 661 doorway, PCF | 661 doorway, VSM |
+| --- | --- |
+| [Full-size image](661-doorway-shadow-pcf.png) | [Full-size image](661-doorway-shadow-vsm.png) |
+| ![661 doorway with PCF shadows](661-doorway-shadow-pcf.png) | ![Same 661 doorway with VSM shadows](661-doorway-shadow-vsm.png) |
+
+The narrow bright mark at the left/back wall junction is visible in PCF and not apparent in VSM at this pose. The bright near-floor patch remains conspicuous in both; VSM softens its boundary slightly but does not fix the lighting balance. Both mat rows remain visible, though their fine striping is much less apparent in VSM. The plain seat, low table, and travel cluster on the right remain in place in both images. The letter and coin are small marks on the table, and individual travel objects cannot be identified at this distance. The pegs and hook are outside this doorway view.
+
+This is one software-rendered 661 view. It supports further review of the 680 doorway, not adopting either shadow mode for normal visits. No source renderer or room settings changed for these captures.
