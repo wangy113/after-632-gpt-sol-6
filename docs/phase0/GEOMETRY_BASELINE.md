@@ -245,3 +245,16 @@ From a fresh production build, open the VSM diagnostic URL above in Chromium 154
 The focal wall remains bare in both filters, with no new clipping or broad shadow artifact. A pixel comparison finds 1,676 changed pixels, all in the narrow far-right vertical seam (`x=668..704, y=0..485`); every pixel around the future hook and pegs is identical. The complete PCF-versus-VSM difference image is also pixel-identical for the 632, 661, and 680 pegs pairs. Thus the filter choice changes only that seam in these three matched views, while the dated wall props and traces retain the same appearance. VSM adds 9 draws, 86 submitted triangles, and 2 renderer calls at this 632 pose without a visible gain around the focal wall.
 
 This is a software-rendered comparison of one pose, not a frame-time, real-device, or student legibility result. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for this capture.
+
+## Matched 661/680 travel-corner VSM review · 2026-10-14
+
+From a fresh production build, open the VSM diagnostic URL above in separate Chromium 154 pages for 661 and 680. Select the head-of-room place, look left five times and down once, then capture the settled canvas. This matches the [PCF bag pair](#matched-661-and-680-floor-bag-review--2026-10-14) at camera `(-1.55, 1.6, -3.65)`, yaw `2.042`, pitch `-0.340`, with the Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and SwiftShader WebGL2. Both buffers are 864 × 486 and PNGs are 864 × 487. The 661 VSM frame measured 110 draws / 5,691 submitted triangles / 5 renderer calls (PCF: 108 / 5,689 / 3); the 680 VSM frame measured 101 / 4,359 / 5 (PCF: 99 / 4,357 / 3). Both VSM pages completed without script or request failures and differ from their PCF counterparts and each other.
+
+| 661 floor bags, VSM | 680 floor trace, VSM |
+| --- | --- |
+| [Full-size image](661-bags-shadow-vsm.png) | [Full-size image](680-bags-shadow-vsm.png) |
+| ![Two separate 661 floor bags under VSM shadows](661-bags-shadow-vsm.png) | ![Bright 680 oval floor trace under VSM shadows](680-bags-shadow-vsm.png) |
+
+The two gray bags remain separate, unclipped forms in 661 VSM. The 680 oval remains broad and bright, with a curved edge distinguishable beside the table and nearest mat; it stays separate from the angular sunlit area farther right. The wall's waterskin-to-empty-hook change also remains visible. Comparing each date with PCF, VSM makes the nearby mats' fine striping much less apparent and changes some right-side floor and yard shading; the coarse mat shadow boundaries remain. The filter differences begin around the second bag and extend across the mats and yard (`x=398..863` overall); the left bag, small wall objects, and table marks look unchanged. No new clipping or obvious artifact appears around the bags or oval. VSM does not visibly improve the bag or oval reading at this pose, and the date-driven yard changes mean the full 661/680 image difference cannot be attributed only to the bags.
+
+These are invented interpretive objects and traces, not evidence of historical belongings. This one software-rendered pose cannot establish student legibility, frame time, or real-device performance. Normal visits remain shadow-free, PCF remains the diagnostic default, and no renderer or room source changed for these captures.
