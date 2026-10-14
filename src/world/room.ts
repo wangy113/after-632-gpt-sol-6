@@ -6,7 +6,7 @@ import { addMissing680 } from './missing680';
 import type { RoomTextures } from './roomTextures';
 
 /** A stable imagined room and yard with all three dated details. */
-export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
+export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture, diagnosticShadows = false): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
   const scene = new THREE.Scene();
   scene.background = sky ?? new THREE.Color(0xd9dad8);
 
@@ -133,6 +133,16 @@ export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture
   const sun = new THREE.DirectionalLight(0xffffff, 2.0);
   sun.position.set(-3, 8, 5);
   sun.target.position.set(0, 0, -2);
+  if (diagnosticShadows) {
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024);
+    sun.shadow.camera.left = -10;
+    sun.shadow.camera.right = 10;
+    sun.shadow.camera.top = 10;
+    sun.shadow.camera.bottom = -10;
+    sun.shadow.camera.far = 30;
+    sun.shadow.camera.updateProjectionMatrix();
+  }
   scene.add(ambient, sun, sun.target);
 
   // All change sets remain in the same room so switching preserves the viewpoint.

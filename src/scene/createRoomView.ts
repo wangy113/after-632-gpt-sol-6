@@ -74,10 +74,13 @@ export async function createRoomView(
     throw error;
   }
   const { renderer, backend } = rendered;
-  const measureGeometry = new URLSearchParams(location.search).has('metrics');
+  const params = new URLSearchParams(location.search);
+  const measureGeometry = params.has('metrics');
+  const diagnosticShadows = params.get('shadows') === '1';
   // Three.js also has its own RAF, which otherwise resets these counters between app frames.
   if (measureGeometry) renderer.info.autoReset = false;
-  const world = createRoomWorld(textures, sky);
+  if (diagnosticShadows) renderer.shadowMap.enabled = true;
+  const world = createRoomWorld(textures, sky, diagnosticShadows);
   const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 100);
   camera.position.set(...viewpoints.doorway.position);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));

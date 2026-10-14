@@ -5,6 +5,7 @@ const server = await preview({
   logLevel: 'error',
   preview: { host: '127.0.0.1', port: 0, strictPort: true },
 });
+const shadowDoorway = process.argv.includes('--shadow-doorway');
 let browser;
 
 try {
@@ -19,7 +20,7 @@ try {
     deviceScaleFactor: 1,
     reducedMotion: 'reduce',
   });
-  await page.goto(`http://127.0.0.1:${address.port}/?gl=1&metrics=1`);
+  await page.goto(`http://127.0.0.1:${address.port}/?gl=1&metrics=1${shadowDoorway ? '&shadows=1' : ''}`);
   await page.getByRole('button', { name: 'Enter the room' }).click();
   const canvas = page.locator('#scene-frame canvas');
 
@@ -68,14 +69,19 @@ try {
 
   const rows = [];
   await waitForFrame('632', 'doorway');
-  for (const date of ['632', '661', '680']) {
-    if (date !== '632') await clickAndWait(`[data-room-date="${date}"]`, date, 'yard');
-    if (date !== '632') await clickAndWait('[data-room-place="doorway"]', date, 'doorway');
-    rows.push(await sample(date, 'doorway'));
-    await clickAndWait('[data-room-place="yard"]', date, 'yard');
-    rows.push(await sample(date, 'yard'));
+  if (shadowDoorway) {
+    rows.push(await sample('632', 'doorway'));
+    if (rows[0].renderCalls <= 2) throw new Error('Expected an additional shadow render call');
+  } else {
+    for (const date of ['632', '661', '680']) {
+      if (date !== '632') await clickAndWait(`[data-room-date="${date}"]`, date, 'yard');
+      if (date !== '632') await clickAndWait('[data-room-place="doorway"]', date, 'doorway');
+      rows.push(await sample(date, 'doorway'));
+      await clickAndWait('[data-room-place="yard"]', date, 'yard');
+      rows.push(await sample(date, 'yard'));
+    }
   }
-  console.log(`Chromium ${browser.version()}, 1440×900 viewport, DPR 1, reduced motion, WebGL2 fallback via SwiftShader`);
+  console.log(`Chromium ${browser.version()}, 1440×900 viewport, DPR 1, reduced motion, WebGL2 fallback via SwiftShader, diagnostic shadows: ${shadowDoorway}`);
   console.table(rows);
 } finally {
   await browser?.close();
