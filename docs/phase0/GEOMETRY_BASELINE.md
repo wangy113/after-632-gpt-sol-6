@@ -311,3 +311,16 @@ The same fixed PNG regions as above, converted to 8-bit grayscale, give these sc
 | Shadowed left floor, `70,300..170,350` | 65.0 | 65.0 | 65.0 |
 
 At `1.5`, the angular floor area is dimmer than baseline without darkening the near mat as much as `1.0`. Its hard outline remains, and the nearly unchanged pale oval stands out more against the darker surrounding floor. The midpoint therefore adjusts brightness but does not resolve the shape or balance of the two bright areas. Keep the production sun at `2.0`; this one software-rendered pose does not support a wider lighting change or establish real-device performance.
+
+## 680 doorway floor-mark opacity probe · 2026-10-14
+
+Temporarily change only `floorTrace.opacity` in `src/world/missing680.ts` from `0.45` to `0.30`, keeping directional sun intensity `2.0` and PCF shadows. A fresh production build captured the same 680 doorway pose as the preceding probes: camera `(0, 1.6, 0.5)`, yaw `0`, pitch `-0.3`, Qwantani morning sky, Chromium 154 SwiftShader WebGL2, 1440 × 900 viewport, DPR 1, and reduced motion. The buffer was 864 × 486, PNG 864 × 487, and the settled frame made 3 renderer calls without script, request, or HTTP errors. Restore opacity `0.45` and rebuild afterward; the restored capture was byte-identical to the committed baseline.
+
+| Baseline opacity `0.45` | Temporary opacity `0.30` |
+| --- | --- |
+| ![680 doorway baseline floor mark](680-doorway-shadow-pcf.png) | ![Same doorway with lower floor-mark opacity](680-doorway-shadow-opacity30-probe.png) |
+| [Full-size image](680-doorway-shadow-pcf.png) | [Full-size image](680-doorway-shadow-opacity30-probe.png) |
+
+The lower-opacity oval remains plainly visible, with more underlying floor texture showing through. It is less bright but retains its hard curved outline and still reads as a disc at this pose. The difference bounds are confined to the oval (`x=577..778, y=289..385`); every pixel outside those bounds is unchanged. Using the same grayscale crop method as the sun probes, the oval-center mean falls from **162.7 to 147.8**, while the lit floor remains **99.4**, near mat **118.3**, and shadowed left floor **65.0**. This adjusts the mark without dimming the room or mats, but does not establish whether students read it as a cleaned area.
+
+Keep the production opacity at `0.45` pending a matched travel-corner review and human interpretation. This evidence-only probe does not change the live site or establish device performance.
