@@ -86,3 +86,9 @@
 - The [390 × 844 keyboard audit](phase0/KEYBOARD_AUDIT.md) follows entry, date and place selection, movement skip, scene turning, Compare, a disclosure, and return to reading using keyboard input. It also checks initial renderer failure and recovery through the reading link.
 - Initial renderer failure previously left focus on the body because the focused Enter button was disabled during loading. On that failure, focus now returns to the enabled retry button if it was on Enter before loading and has not moved to another control. A context loss after the room opens still focuses the reading heading.
 - The automated path passed after the fix. A manual screen-reader review and real-device checks remain open.
+
+## Compare click-only activation · 2026-10-14
+
+- A [click-only activation check](phase0/COMPARE_VIRTUAL_ACTIVATION.md) showed that the Hold button did nothing when it received `click` without pointer or physical key events. This can occur with an assistive-technology button command, although no real screen reader is available here to confirm its event sequence.
+- An unaccompanied click on Hold now switches the existing persistent comparison on or off. Pointer, touch, Space, Enter, and C holds remain temporary. A click following a physical hold is ignored so release does not leave Compare on. The Hold button's pressed state now reflects the visible comparison, and its help text explains the single-activation option.
+- Browser checks cover the click-only surrogate and physical releases. Spoken announcements and actual assistive-technology activation remain open for a tester using the [screen-reader check sheet](phase0/SCREEN_READER_CHECK.md).

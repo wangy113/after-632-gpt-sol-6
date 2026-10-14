@@ -40,6 +40,9 @@ let state = reduce(initialState, { type: 'setReducedMotion', reduced: motionQuer
 let pointerHoldId: number | null = null;
 let cKeyHeld = false;
 let buttonKeyHeld = false;
+let ignorePointerClick = false;
+let ignorePointerClickReset: ReturnType<typeof setTimeout> | undefined;
+let ignoreKeyboardClick = false;
 let loading = false;
 let restoreEntryFocusOnFailure = false;
 let generation = 0;
@@ -72,6 +75,10 @@ function renderViewDescription(direction: ViewDirection | 'moving' = room?.viewD
 }
 
 function clearHeldInputs() {
+  clearTimeout(ignorePointerClickReset);
+  ignorePointerClickReset = undefined;
+  ignorePointerClick = false;
+  ignoreKeyboardClick = false;
   const pointerId = pointerHoldId;
   pointerHoldId = null;
   if (pointerId !== null && compareHold.hasPointerCapture(pointerId)) {
@@ -80,6 +87,21 @@ function clearHeldInputs() {
   cKeyHeld = false;
   buttonKeyHeld = false;
   state = reduce(state, { type: 'setCompareHeld', held: false });
+}
+
+function startPointerHold() {
+  clearTimeout(ignorePointerClickReset);
+  ignorePointerClickReset = undefined;
+  ignorePointerClick = true;
+}
+
+function finishPointerHold(clickDelay: number) {
+  clearTimeout(ignorePointerClickReset);
+  // Touch can generate a delayed click after pointerup.
+  ignorePointerClickReset = setTimeout(() => {
+    ignorePointerClick = false;
+    ignorePointerClickReset = undefined;
+  }, clickDelay);
 }
 
 function resetCompare() {
@@ -123,9 +145,9 @@ function renderRoomDate(message?: string, transition?: { token: number; animate:
   compareHold.textContent = earlierDate ? `Hold to see ${earlierDate} CE` : 'Hold to compare';
   compareToggle.textContent = earlierDate ? `Keep ${earlierDate} CE visible` : 'Keep earlier date visible';
   compareHelp.textContent = earlierDate
-    ? `In ${state.date} CE, hold the first button or the C key to see ${earlierDate} CE from the same viewpoint. Release to return. Press the second button to keep ${earlierDate} CE visible; press again to return.`
+    ? `In ${state.date} CE, hold the first button or the C key to see ${earlierDate} CE from the same viewpoint. Release to return. With assistive technology that cannot hold a button, activate Hold once to keep ${earlierDate} CE visible and again to return. The second button also switches that persistent view.`
     : 'Choose 661 or 680 CE to compare with the previous date from the same viewpoint.';
-  compareHold.setAttribute('aria-pressed', String(state.compareHeld));
+  compareHold.setAttribute('aria-pressed', String(isComparing(state)));
   compareToggle.setAttribute('aria-pressed', String(state.compareToggled));
   status.textContent = message ?? (comparing
     ? `Comparing ${date} CE from the same viewpoint. ${state.date} CE remains selected.`
@@ -195,9 +217,10 @@ function syncHeld() {
   renderRoomDate();
 }
 
-function releasePointer(pointerId: number) {
+function releasePointer(pointerId: number, pointerType: string) {
   if (pointerHoldId !== pointerId) return;
   pointerHoldId = null;
+  finishPointerHold(pointerType === 'touch' ? 500 : 0);
   syncHeld();
 }
 
@@ -292,18 +315,30 @@ motionQuery.addEventListener('change', () => {
 });
 compareHold.addEventListener('pointerdown', event => {
   if (!room || !compareAvailable(state) || !event.isPrimary || event.button !== 0 || pointerHoldId !== null) return;
+  startPointerHold();
   pointerHoldId = event.pointerId;
   compareHold.setPointerCapture(event.pointerId);
   syncHeld();
 });
-compareHold.addEventListener('pointerup', event => releasePointer(event.pointerId));
-compareHold.addEventListener('pointercancel', event => releasePointer(event.pointerId));
-compareHold.addEventListener('lostpointercapture', event => releasePointer(event.pointerId));
-compareToggle.addEventListener('click', () => {
+compareHold.addEventListener('pointerup', event => releasePointer(event.pointerId, event.pointerType));
+compareHold.addEventListener('pointercancel', event => releasePointer(event.pointerId, event.pointerType));
+compareHold.addEventListener('lostpointercapture', event => releasePointer(event.pointerId, event.pointerType));
+function togglePersistentCompare() {
   if (!room || !compareAvailable(state)) return;
   state = reduce(state, { type: 'toggleCompare' });
   renderRoomDate();
+}
+compareHold.addEventListener('click', event => {
+  if (ignoreKeyboardClick) return;
+  if (ignorePointerClick && event.detail > 0) {
+    clearTimeout(ignorePointerClickReset);
+    ignorePointerClickReset = undefined;
+    ignorePointerClick = false;
+    return;
+  }
+  togglePersistentCompare();
 });
+compareToggle.addEventListener('click', togglePersistentCompare);
 window.addEventListener('keydown', event => {
   if (!room || !compareAvailable(state) || event.altKey || event.ctrlKey || event.metaKey) return;
   if (event.target instanceof HTMLElement &&
@@ -313,7 +348,7 @@ window.addEventListener('keydown', event => {
     if (!cKeyHeld) { cKeyHeld = true; syncHeld(); }
   } else if (event.target === compareHold && (event.code === 'Space' || event.code === 'Enter')) {
     event.preventDefault();
-    if (!buttonKeyHeld) { buttonKeyHeld = true; syncHeld(); }
+    if (!buttonKeyHeld) { ignoreKeyboardClick = true; buttonKeyHeld = true; syncHeld(); }
   }
 });
 window.addEventListener('keyup', event => {
@@ -321,7 +356,10 @@ window.addEventListener('keyup', event => {
     cKeyHeld = false;
     syncHeld();
   } else if ((event.code === 'Space' || event.code === 'Enter') && buttonKeyHeld) {
+    event.preventDefault();
     buttonKeyHeld = false;
+    // The canceled key event cannot create a later click; clear before the next command.
+    queueMicrotask(() => { ignoreKeyboardClick = false; });
     syncHeld();
   }
 });

@@ -486,6 +486,51 @@ test('Compare previews 632 at the same viewpoint and clears on release, blur, an
   await expect(canvas).toHaveAttribute('data-date', '661');
 });
 
+test('click-only activation of Hold can switch Compare on and off', async ({ page }) => {
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  const selected = room.locator('[data-room-date="661"]');
+  const hold = room.locator('#compare-hold');
+  const toggle = room.locator('#compare-toggle');
+  await selected.click();
+  await room.getByRole('button', { name: 'Look right' }).click();
+  const yaw = await canvas.getAttribute('data-yaw');
+
+  // A virtual button command may send click without pointer or physical key events.
+  // DOM click is a surrogate for that event sequence, not a screen-reader pass.
+  await hold.evaluate((button: HTMLButtonElement) => button.click());
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(canvas).toHaveAttribute('data-yaw', yaw!);
+  await expect(selected).toHaveAttribute('aria-pressed', 'true');
+  await expect(hold).toHaveAttribute('aria-pressed', 'true');
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await expect(room.locator('#room-title')).toHaveText('632 CE · Comparing with 661 CE');
+  await expect(room.locator('#scene-frame')).toHaveAttribute('aria-describedby', 'room-description-632 room-help');
+  await expect(room.locator('[data-room-panel="632"]')).toBeVisible();
+
+  await hold.evaluate((button: HTMLButtonElement) => button.click());
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-yaw', yaw!);
+  await expect(hold).toHaveAttribute('aria-pressed', 'false');
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await expect(room.locator('#room-title')).toHaveText('661 CE · Inside the imagined room');
+
+  await hold.focus();
+  await page.keyboard.down('Enter');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await page.keyboard.up('Enter');
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await hold.evaluate((button: HTMLButtonElement) => button.click());
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await hold.evaluate((button: HTMLButtonElement) => button.click());
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await hold.click();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+});
+
 test('touch holds Compare only until release', async ({ page }) => {
   await page.goto('/?gl=1');
   await page.getByRole('button', { name: 'Enter the room' }).click();
@@ -507,6 +552,9 @@ test('touch holds Compare only until release', async ({ page }) => {
     await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   }
   await expect(canvas).toHaveAttribute('data-date', '661');
+  await page.waitForTimeout(600);
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(room.locator('#compare-toggle')).toHaveAttribute('aria-pressed', 'false');
 });
 
 test('four places to stand move the same camera and keep the selected date', async ({ page }) => {
