@@ -16,6 +16,7 @@
     "fetch:assets": "node scripts/fetch-polyhaven.mjs",
     "capture:arrival": "node scripts/capture-arrival.mjs",
     "capture:sky": "node scripts/capture-sky-comparison.mjs",
+    "capture:shadow-pair": "npm run build && node scripts/capture-shadow-pair.mjs",
     "preview": "vite preview",
     "e2e": "playwright test"
   },

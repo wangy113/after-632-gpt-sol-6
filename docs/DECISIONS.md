@@ -103,3 +103,7 @@
 - The [idle rendering check](phase0/IDLE_RENDER_CHECK.md) samples the canvas `data-frames` counter after the 632 doorway settles, after looking right, and after moving to the head of the room. Each action increases the counter, then it stays unchanged during a 300 ms quiet interval. The scheduler already stops requesting frames at those settled points, so no application change was needed.
 - A follow-up check confirms that a 632-to-661 date dissolve actually starts and ends, then the counter stays still. Persistent Compare to 632 and back to 661 each render the changed view and also settle without further frames. No scheduler change was needed for these paths.
 - The counter measures scheduled render callbacks in Chromium's WebGL2 fallback with SwiftShader. GPU work and frame rates on the demo laptop, Chromebook, and phone remain unmeasured.
+
+## Diagnostic shadow pair · 2026-10-14
+
+- The [matched 632 doorway captures](phase0/GEOMETRY_BASELINE.md#matched-doorway-shadow-images--2026-10-14) show a hard-edged bright floor patch, darker wall and floor surfaces, and lower mat and cup contrast with `?shadows=1`. The three imagined traces remain visible, but a narrow bright left-wall line needs investigation. Keep shadows off for normal visits while this visual treatment is refined; the single software-rendered pose does not establish the planned lighting or real-device performance.
