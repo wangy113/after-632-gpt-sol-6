@@ -117,3 +117,8 @@
 
 - The [same-pose caster/receiver probes](phase0/GEOMETRY_BASELINE.md#leftback-wall-caster-and-receiver-probe--2026-10-14) identify the left wall as the caster and the back wall as the receiver for the narrow bright line. Removing left-wall casting widens the bright area on the back wall; removing back-wall reception brightens that whole wall. Removing back-wall casting produces a byte-identical image. Neither flag change is a suitable visual fix.
 - The exact edge mechanism remains open: overlapping wall geometry, shadow depth precision, or filtering could set the thin bright boundary. Restore both wall flags and keep the diagnostic and normal visit settings unchanged until a focused junction-geometry probe and scene-wide light review are complete.
+
+## Flush wall junction probe · 2026-10-14
+
+- [The matched flush-junction capture](phase0/GEOMETRY_BASELINE.md#flush-leftback-wall-junction-probe--2026-10-14) shortens the diagnostic left wall by 10 cm at its rear edge, removing its depth overlap with the back wall while keeping its front edge fixed. The bright corner line becomes a faint dotted trace rather than disappearing, and no broad light wedge appears at the sampled doorway pose. This shows the junction dimensions affect the shadow boundary.
+- The flush test leaves coplanar wall faces at the contact strip, so it does not isolate geometry from depth precision or filtering and is not a permanent fix. Restore the original wall dimensions; normal visits and the baseline shadow diagnostic remain unchanged.

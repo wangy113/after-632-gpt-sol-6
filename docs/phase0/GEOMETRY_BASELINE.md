@@ -76,3 +76,19 @@ The previous bias test narrowed the bright line to the shadow comparison at the 
 At pixel `(155, 185)` on the original line, baseline RGB is `(82, 60, 36)`. It becomes `(114, 91, 65)` when the left wall does not cast or the back wall does not receive. The nearby left-wall pixel `(150, 185)` stays `(77, 57, 33)` in all three. These matched captures identify the **left wall as the relevant caster and the back wall as the receiver** for this line. The back wall's own casting has no visible effect at this pose. The result does not yet distinguish a contact edge formed by the overlapping boxes from shadow-map precision or filtering at that edge. Removing the left caster or back receiver is not a usable fix: each creates a much larger bright area.
 
 Normal visits and the baseline `?shadows=1` settings remain unchanged. Before adopting shadows more widely, a focused geometry-junction test can adjust the left/back wall overlap in the diagnostic scene, capture the same pose, then restore it. The hard floor patch and three trace contrasts still need review.
+
+## Flush left/back wall junction probe · 2026-10-14
+
+The left wall normally spans `z=-5.1..0.1`; the back wall's front face is at `z=-5.0`, leaving a 10 cm overlap in depth at the corner. For one **temporary diagnostic-only** test, shorten the left wall box from 5.2 to 5.1 units and move its center from `z=-2.5` to `z=-2.45`. Its front edge stays at `z=0.1`, while its rear edge meets the back wall front face at `z=-5.0`. The shadow-off geometry stays on its original dimensions. Run `capture:shadow-pair` at the same fixed 632 doorway pose, save the shadow-on capture below, then restore the original geometry and baseline captures.
+
+| Baseline | Flush diagnostic junction |
+| --- | --- |
+| [Full image](632-doorway-shadow-on.png) | [Full image](632-doorway-shadow-flush-left-wall.png) |
+
+The following crop shows image pixels `x=105..189, y=20..264` enlarged 4× with nearest-neighbor scaling; the left panel is baseline:
+
+![Baseline and flush-junction corner crops](632-doorway-shadow-corner-flush-compare.png)
+
+The flush-junction capture passed the same pose checks and measured 2 renderer calls with shadows off and 3 with them on. The bright line becomes a faint dotted trace, but it does not disappear. At pixel `(155, 185)`, RGB changes from `(82, 60, 36)` to `(79, 58, 33)`; the nearby wall pixel `(150, 185)` remains `(77, 57, 33)`. Differences in the full images are confined to `x=0..166, y=0..304`; sampled central back-wall and floor regions are unchanged. The full image shows no broad new light wedge.
+
+This establishes that the junction geometry influences the line at this pose. It does not establish a finished correction: the rear cap of the shortened left wall is coplanar with a strip of the back wall's front face, and the remaining dotted line may reflect contact depth or shadow filtering. The temporary geometry was restored, leaving normal visits and the opt-in diagnostic unchanged. A later geometry trial should use a joined corner without overlapping or coplanar faces before considering a permanent shadow change.
