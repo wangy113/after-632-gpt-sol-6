@@ -1,8 +1,19 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator, type Page } from '@playwright/test';
 import experience from '../../content/experience.json' with { type: 'json' };
 import changes from '../../content/changes.json' with { type: 'json' };
 import views from '../../content/views.json' with { type: 'json' };
 import sources from '../../content/sources.json' with { type: 'json' };
+
+async function expectIdleFrames(page: Page, canvas: Locator) {
+  // Let a final render or ResizeObserver callback finish before the quiet interval.
+  await page.evaluate(() => new Promise<void>(resolve => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+  }));
+  const before = Number(await canvas.getAttribute('data-frames'));
+  await page.waitForTimeout(300);
+  expect(Number(await canvas.getAttribute('data-frames'))).toBe(before);
+  return before;
+}
 
 test('the room is opt-in and returning to reading releases the canvas', async ({ page }) => {
   await page.goto('/?gl=1');
@@ -57,29 +68,57 @@ test('the room stops drawing after entry, looking, and moving settle', async ({ 
   await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
 
   const frameCount = async () => Number(await canvas.getAttribute('data-frames'));
-  const expectIdle = async () => {
-    // Let a final render or ResizeObserver callback finish before the quiet interval.
-    await page.evaluate(() => new Promise<void>(resolve => {
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-    }));
-    const before = await frameCount();
-    await page.waitForTimeout(300);
-    expect(await frameCount()).toBe(before);
-    return before;
-  };
-
-  const afterEntry = await expectIdle();
+  const afterEntry = await expectIdleFrames(page, canvas);
   await room.getByRole('button', { name: 'Look right' }).click();
   await expect(canvas).toHaveAttribute('data-yaw', '0.220');
   await expect.poll(frameCount).toBeGreaterThan(afterEntry);
-  const afterLook = await expectIdle();
+  const afterLook = await expectIdleFrames(page, canvas);
 
   await room.getByRole('button', { name: 'Head of room' }).click();
   await expect(canvas).toHaveAttribute('data-moving', 'true');
   await expect(canvas).toHaveAttribute('data-moving', 'false');
   await expect(canvas).toHaveAttribute('data-place', 'head');
   await expect.poll(frameCount).toBeGreaterThan(afterLook);
-  await expectIdle();
+  await expectIdleFrames(page, canvas);
+});
+
+test('the room stops drawing after a date dissolve and Compare', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+  const room = page.locator('#room-view');
+  const canvas = room.locator('#scene-frame canvas');
+  await expect(canvas).toHaveAttribute('data-backend', 'WebGL2 fallback');
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
+  const frameCount = async () => Number(await canvas.getAttribute('data-frames'));
+  const afterEntry = await expectIdleFrames(page, canvas);
+
+  const started = await room.locator('[data-room-date="661"]').evaluate((button: HTMLButtonElement) => {
+    button.click();
+    const canvas = document.querySelector<HTMLCanvasElement>('#scene-frame canvas')!;
+    return { date: canvas.dataset.date, transition: canvas.dataset.dateTransition };
+  });
+  expect(started).toEqual({ date: '661', transition: 'true' });
+  await expect.poll(frameCount).toBeGreaterThan(afterEntry);
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false', { timeout: 3_000 });
+  await expect(room.locator('#date-transition-caption')).toBeHidden();
+  const afterDate = await expectIdleFrames(page, canvas);
+
+  const compare = room.locator('#compare-toggle');
+  await compare.click();
+  await expect(canvas).toHaveAttribute('data-date', '632');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+  await expect(compare).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(frameCount).toBeGreaterThan(afterDate);
+  const afterCompare = await expectIdleFrames(page, canvas);
+
+  await compare.click();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+  await expect(compare).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(frameCount).toBeGreaterThan(afterCompare);
+  await expectIdleFrames(page, canvas);
 });
 
 test('the alternate sky query keeps the same room and renders mid-morning', async ({ page }) => {

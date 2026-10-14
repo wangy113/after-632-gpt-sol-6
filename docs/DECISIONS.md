@@ -101,4 +101,5 @@
 ## Idle room rendering · 2026-10-14
 
 - The [idle rendering check](phase0/IDLE_RENDER_CHECK.md) samples the canvas `data-frames` counter after the 632 doorway settles, after looking right, and after moving to the head of the room. Each action increases the counter, then it stays unchanged during a 300 ms quiet interval. The scheduler already stops requesting frames at those settled points, so no application change was needed.
+- A follow-up check confirms that a 632-to-661 date dissolve actually starts and ends, then the counter stays still. Persistent Compare to 632 and back to 661 each render the changed view and also settle without further frames. No scheduler change was needed for these paths.
 - The counter measures scheduled render callbacks in Chromium's WebGL2 fallback with SwiftShader. GPU work and frame rates on the demo laptop, Chromebook, and phone remain unmeasured.
