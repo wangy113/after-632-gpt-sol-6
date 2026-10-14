@@ -112,3 +112,8 @@
 
 - [Same-pose shadow probes](phase0/GEOMETRY_BASELINE.md#left-wall-shadow-line-probe--2026-10-14) show that raising shadow-map resolution from 1024² to 2048² does not remove the line at the left/back wall junction. A temporary shadow bias of −0.001 makes it brighter; +0.001 makes it a little fainter. The shadow-off image has no line, and the wall boxes overlap rather than leaving an open gap. This implicates the shadow depth comparison at the junction, but does not distinguish wall caster/receiver geometry from depth precision or filtering.
 - Restore the baseline diagnostic setting after each probe, keep normal visits shadow-free, and defer any permanent bias or lighting change until the corner and the scene's three traces are reviewed together.
+
+## Wall corner shadow participation · 2026-10-14
+
+- The [same-pose caster/receiver probes](phase0/GEOMETRY_BASELINE.md#leftback-wall-caster-and-receiver-probe--2026-10-14) identify the left wall as the caster and the back wall as the receiver for the narrow bright line. Removing left-wall casting widens the bright area on the back wall; removing back-wall reception brightens that whole wall. Removing back-wall casting produces a byte-identical image. Neither flag change is a suitable visual fix.
+- The exact edge mechanism remains open: overlapping wall geometry, shadow depth precision, or filtering could set the thin bright boundary. Restore both wall flags and keep the diagnostic and normal visit settings unchanged until a focused junction-geometry probe and scene-wide light review are complete.

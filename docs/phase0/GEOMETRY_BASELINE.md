@@ -61,3 +61,18 @@ The line follows the junction of the left and back wall boxes. Those boxes overl
 At image pixel `(155, 185)`, near the middle of the line, baseline RGB is `(82, 60, 36)`, negative bias is `(91, 68, 44)`, and positive bias is `(81, 59, 35)`; a nearby wall pixel `(150, 185)` stays `(77, 57, 33)` in all three. A larger map moves the brightest pixel at this row from `x=155` to `x=154` without removing the line. In three.js's shadow comparison, negative bias makes this receiver easier to light and positive bias makes it harder. The opposite responses identify the visible line as sensitive to shadow depth comparison, not an open visible gap in the room mesh. They do **not** establish whether the overlapping wall junction, shadow filtering, or depth precision creates that near-threshold comparison. Doubling the map resolution alone did not solve it.
 
 The default diagnostic settings and normal shadow-off visit are unchanged. No bias adjustment has been adopted: this probe only narrows the cause, and the hard floor patch and trace contrast still need visual review before any wider shadow use. A next focused probe can change which wall casts or receives diagnostic shadows at this corner, capture the same pose, and restore the wall settings afterward.
+
+## Left/back wall caster and receiver probe · 2026-10-14
+
+The previous bias test narrowed the bright line to the shadow comparison at the wall junction. This probe temporarily changed one wall's `castShadow` or `receiveShadow` flag **only when `diagnosticShadows` was true** in `src/world/room.ts`. Each variant ran `capture:shadow-pair` at the same 632 doorway pose, passed a production build, and still measured 2 renderer calls with shadows off and 3 with them on. The original source and baseline captures were restored after each run.
+
+| Diagnostic variant | Capture | Observation |
+| --- | --- | --- |
+| Both walls cast and receive shadows | [Baseline](632-doorway-shadow-on.png) | A narrow bright line follows the left/back junction. |
+| Left wall does not cast | [View full image](632-doorway-shadow-no-left-caster.png) | The line opens into a broad bright wedge on the back wall near the corner. |
+| Back wall does not cast | Same as baseline | The entire 864 × 487 PNG is byte-for-byte identical to the baseline capture (SHA-256 `7fde0d2d5e3e25506deb5c904bf63bf897e19f0d5526413931e7637eebe03c7d`). |
+| Back wall does not receive | [View full image](632-doorway-shadow-no-back-receiver.png) | The back wall brightens, and the narrow shadow line is no longer isolated at its left edge. |
+
+At pixel `(155, 185)` on the original line, baseline RGB is `(82, 60, 36)`. It becomes `(114, 91, 65)` when the left wall does not cast or the back wall does not receive. The nearby left-wall pixel `(150, 185)` stays `(77, 57, 33)` in all three. These matched captures identify the **left wall as the relevant caster and the back wall as the receiver** for this line. The back wall's own casting has no visible effect at this pose. The result does not yet distinguish a contact edge formed by the overlapping boxes from shadow-map precision or filtering at that edge. Removing the left caster or back receiver is not a usable fix: each creates a much larger bright area.
+
+Normal visits and the baseline `?shadows=1` settings remain unchanged. Before adopting shadows more widely, a focused geometry-junction test can adjust the left/back wall overlap in the diagnostic scene, capture the same pose, then restore it. The hard floor patch and three trace contrasts still need review.
