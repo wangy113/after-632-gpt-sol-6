@@ -1,4 +1,4 @@
-# Automated accessibility check · 2026-10-13
+# Automated accessibility check · updated 2026-10-14
 
 ## Method and result
 
@@ -10,8 +10,9 @@
 | Entered 632 room after the canvas rendered | 1440, 390, 320 px | 0 at each width |
 | Static 680 reading notes expanded | 320 px | 0 |
 | Entered 680 room, view description and scene notes expanded | 320 px | 0 |
+| Plain reporting exit, optional lenses expanded | 320 px | 0 |
 
-The expanded 680 room scan initially reported one **moderate `heading-order`** violation: the first scene item was an `h4` immediately below the room's `h2`. The room list now uses `h3` headings. The same list under each reading passage keeps `h4` headings beneath that passage's `h3`. The shared styling keeps their appearance consistent. All eight scans passed after the change.
+The expanded 680 room scan initially reported one **moderate `heading-order`** violation: the first scene item was an `h4` immediately below the room's `h2`. The room list now uses `h3` headings. The same list under each reading passage keeps `h4` headings beneath that passage's `h3`. The shared styling keeps their appearance consistent. All nine current scans pass. The exit scan was added with the separate reporting page; it checks the expanded disclosure and source links at the narrowest sampled width.
 
 Run after `npm run build`:
 
