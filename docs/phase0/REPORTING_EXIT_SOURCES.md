@@ -1,6 +1,6 @@
 # Reporting exit: source review
 
-**Checked 2026-10-14 (America/Chicago; 2026-10-15 UTC).** This is the source record for the [planned plain-page exit](../PLAN.md#the-experience), not released page copy. The two reports are dated snapshots of a changing conflict. Reopen the publisher pages and check dates, links, and any claim repeated in the app when the exit is built and before release.
+**Checked 2026-10-14 (America/Chicago; 2026-10-15 UTC).** This is the source record for the [plain-page exit](../../exit.html), not its student-facing copy. The two reports are dated snapshots of a changing conflict. Their publisher pages and dates were rechecked while building the exit preview; check them again before final release or replacing either report.
 
 ## Two reports to compare
 
@@ -18,6 +18,6 @@ Both full publisher pages were reachable and read at this check. Link to the art
 
 The room ends in **680 CE**, before Zayd ibn Ali's 740 uprising and long before the modern Houthi movement. The older history may prompt questions about authority and remembrance, but these sources do not support a direct causal line from Karbala to Yemen's present war, a Zaydi = Houthi equation, or a purely sectarian account of the conflict. Keep this context and both reports **outside the 3D room**, alongside the plan's open invitation and optional report-reading lenses.
 
-## Before the exit ships
+## Before final release
 
 Recheck all four links and their displayed dates; replace a missing or substantially revised report rather than silently retaining an obsolete claim. Have an instructor or relevant community reviewer check the context wording and how the two reports are framed. Record the check date in the released source metadata. Participant and screen-reader reviews remain separate open work.

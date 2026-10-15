@@ -75,3 +75,14 @@ test('expanded 680 room notes have no axe violations at 320px', async ({ page })
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations, violations(results)).toEqual([]);
 });
+
+test('plain reporting exit has no axe violations at 320px', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await page.goto('/exit.html');
+  await page.locator('.exit-invitation summary').click();
+  await expect(page.locator('.exit-invitation details')).toHaveAttribute('open', '');
+  await expect(page.locator('script, canvas')).toHaveCount(0);
+
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations, violations(results)).toEqual([]);
+});

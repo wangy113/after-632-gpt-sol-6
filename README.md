@@ -14,7 +14,7 @@ To compare the 680 pale floor mark in normal lighting, open the [baseline view](
 
 In the 661 or 680 room, hold Compare to see the preceding date immediately from the same viewpoint. The selected date stays selected while the view and its “Things here” notes show the earlier date; releasing Compare restores the selection. The hold button works with a mouse, touch, or keyboard. A click-only activation of that button switches the comparison on or off for assistive technology that cannot hold it. Holding C while the room is active also compares, and a separate toggle button keeps the comparison visible without holding. Compare is unavailable in 632 because the room has no earlier scene.
 
-The pure state model defines all three dates, four viewpoints, Compare, and movement policy. The three date views, four viewpoints, and Compare are connected to the scene. A doorway still appears before the 3D room opens. The reporting exit remains later work.
+The pure state model defines all three dates, four viewpoints, Compare, and movement policy. The three date views, four viewpoints, and Compare are connected to the scene. A doorway still appears before the 3D room opens. [Into the present](https://wangy113.github.io/after-632-gpt-sol-6/exit.html) is a separate plain page with two dated Yemen report links, a sourced Zaydi/Twelver note, and an open question. It works without JavaScript; leaving the room unloads its renderer. The [source review](docs/phase0/REPORTING_EXIT_SOURCES.md) records what each source supports and its limits. Instructor and community review of the wording remains open.
 
 ## Run
 
@@ -37,4 +37,4 @@ npx playwright install chromium
 npm run e2e
 ```
 
-The Playwright checks use the built page on port 4173 and cover the opt-in room, dated label sets and passage links, date transitions, the four viewpoints, Compare input and release, renderer failure, and passages without JavaScript. If Chromium is already installed, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` for `npm run e2e`.
+The Playwright checks use the built pages on port 4173 and cover the opt-in room, dated label sets and passage links, date transitions, the four viewpoints, Compare input and release, renderer failure, the separate reporting exit, and both pages without JavaScript. If Chromium is already installed, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` for `npm run e2e`.

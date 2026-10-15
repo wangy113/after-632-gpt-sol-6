@@ -4,7 +4,9 @@ import sources from '../../content/sources.json' with { type: 'json' };
 import changes from '../../content/changes.json' with { type: 'json' };
 import views from '../../content/views.json' with { type: 'json' };
 import objects from '../../content/objects.json' with { type: 'json' };
+import reporting from '../../content/reporting.json' with { type: 'json' };
 import { escapeHtml, renderPage, validateContent } from '../../scripts/content';
+import { renderReportingExit, validateReportingExit } from '../../scripts/reporting';
 
 describe('the reading page', () => {
   it('has three sourced passages within the word limit', () => {
@@ -125,5 +127,32 @@ describe('the reading page', () => {
     const missingRecord = structuredClone(views);
     missingRecord['661'].recordLabelId = 'missing';
     expect(() => validateContent(experience, sources, changes, objects, missingRecord)).toThrow('661: view description needs a sourced record label');
+  });
+});
+
+describe('the plain reporting exit', () => {
+  it('has two dated reports and source-linked context in the static page', () => {
+    expect(() => validateReportingExit()).not.toThrow();
+    const page = renderReportingExit();
+    expect(page).toContain(escapeHtml(reporting.invitation));
+    for (const report of reporting.reports) {
+      expect(page).toContain(`datetime="${report.publishedOn}"`);
+      expect(page).toContain(`href="${report.url}"`);
+    }
+    for (const source of reporting.context.sources) expect(page).toContain(`href="${source.url}"`);
+  });
+
+  it('rejects an undated report or duplicate source link', () => {
+    const undated = structuredClone(reporting);
+    undated.reports[0].publishedOn = '2026-02-30';
+    expect(() => validateReportingExit(undated)).toThrow('valid publication date');
+
+    const duplicate = structuredClone(reporting);
+    duplicate.reports[1].url = duplicate.reports[0].url;
+    expect(() => validateReportingExit(duplicate)).toThrow('unique HTTPS links');
+
+    const unsourced = structuredClone(reporting);
+    unsourced.context.claims[0].sourceId = 'missing';
+    expect(() => validateReportingExit(unsourced)).toThrow('distinct context source');
   });
 });

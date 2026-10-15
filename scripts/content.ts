@@ -318,6 +318,7 @@ export function renderPage(
       <p id="skip-movement-help" class="room-note">Finish a camera move or date change immediately. Press Escape while using the room, or choose Skip movement. If none is underway, the view stays as it is.</p>
       <p id="pause-motion-help" class="room-note">Pause motion finishes any current move or date change and makes later changes immediate. Press again to resume motion. Your system reduced-motion setting still applies.</p>
       ${roomContent}
+      <p class="exit-route"><a class="read-link" href="./exit.html">Leave the room for the present</a></p>
       <p class="room-note">This room and yard are illustrative, not a reconstruction of a documented place.</p>
     </section>
     <section id="reading" aria-labelledby="reading-title">
@@ -325,6 +326,7 @@ export function renderPage(
       <p>${e(data.shared.text)} <a href="#source-${e(data.shared.sourceId)}">Historical source</a></p>
       <nav class="date-nav" aria-label="Choose a date">${navigation}</nav>
       ${moments}
+      <p class="exit-route"><a class="read-link" href="./exit.html">Continue to the present</a></p>
     </section>
   </main>
   <footer>

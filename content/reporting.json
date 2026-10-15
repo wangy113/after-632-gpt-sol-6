@@ -1,0 +1,63 @@
+{
+  "checkedOn": "2026-10-14",
+  "intro": "The room ends in 680 CE. These two reports turn to Yemen in the present. Each is a dated account of part of a changing conflict.",
+  "reports": [
+    {
+      "id": "YEMEN-01",
+      "title": "‘We left everything behind’: 125,000 people displaced as war reignites in Yemen",
+      "author": "Nasser Al-Sakkaf",
+      "publisher": "The Guardian",
+      "publishedOn": "2026-09-17",
+      "url": "https://www.theguardian.com/world/2026/sep/17/displaced-people-yemen-war",
+      "focus": "Families displaced around Taiz describe leaving home, finding shelter, and losing livelihoods."
+    },
+    {
+      "id": "YEMEN-02",
+      "title": "UN envoy meets Houthi negotiators in a bid to halt escalating violence in Yemen",
+      "author": "Samy Magdy and Ahmed Hatem",
+      "publisher": "Associated Press",
+      "publishedOn": "2026-09-29",
+      "url": "https://apnews.com/article/yemen-war-houthis-saudi-arabia-iran-un-envoy-049d586b6e8ca0a0394bc013e3322da3",
+      "focus": "The UN envoy describes talks with Houthi negotiators and Yemen’s internationally recognized government amid renewed fighting."
+    }
+  ],
+  "context": {
+    "claims": [
+      {
+        "text": "Zaydi and Twelver are different traditions within Shi'a Islam; Twelver Shi'ism is prominent in Iran. The modern Houthi movement grew from Yemen's Zaydi tradition in the 1990s. Zayd ibn Ali's uprising came in 740 CE, after this room's last date.",
+        "sourceId": "CONTEXT-01"
+      },
+      {
+        "text": "Not all Zaydi Muslims are Houthis.",
+        "sourceId": "CONTEXT-02"
+      }
+    ],
+    "closing": "These older events do not explain Yemen's war on their own.",
+    "sources": [
+      {
+        "id": "CONTEXT-01",
+        "title": "A pragmatic view on Yemen’s Houthis",
+        "author": "Bruce Riedel",
+        "publisher": "Brookings",
+        "dateLabel": "11 January 2021",
+        "locator": "The Houthis: A primer",
+        "url": "https://www.brookings.edu/articles/a-pragmatic-view-on-yemens-houthis/"
+      },
+      {
+        "id": "CONTEXT-02",
+        "title": "World Directory of Minorities and Indigenous Peoples - Yemen: Zaydi Shias",
+        "author": "Minority Rights Group International",
+        "publisher": "UNHCR Refworld",
+        "dateLabel": "January 2018",
+        "locator": "Profile and Current issues",
+        "url": "https://www.refworld.org/reference/countryrep/mrgi/2018/64960"
+      }
+    ]
+  },
+  "invitation": "What does this older history help you notice, and what would you still need to learn about this conflict?",
+  "optionalLenses": [
+    "Who is absent from each report?",
+    "What is missing from its history?",
+    "What does it add?"
+  ]
+}

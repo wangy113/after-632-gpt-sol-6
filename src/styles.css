@@ -76,3 +76,16 @@ button:disabled { cursor: wait; opacity: .65; }
 .moment { padding: 1.5rem 0; border-top: 1px solid #b7b4a8; }
 .lens { color: #575c50; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
 footer { padding: 0 0 3rem; }
+.exit-route { margin-block: 2rem; }
+.exit-intro { padding-bottom: 1rem; border-bottom: 1px solid #b7b4a8; }
+.exit-kicker { margin: 0 0 .75rem; color: #575c50; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.report-list { list-style: none; display: grid; gap: 1rem; padding: 0; }
+.report-card { padding: 1.25rem; border: 1px solid #b7b4a8; background: #fffdf8; }
+.report-card h3 { margin-block: .4rem; }
+.report-card p { margin-block: .4rem; }
+.report-date, .source-credit { color: #575c50; }
+.report-date { font-weight: 700; }
+.exit-context, .exit-invitation, .exit-sources { border-top: 1px solid #b7b4a8; margin-top: 2rem; }
+.exit-invitation > p { font-family: Georgia, serif; font-size: 1.35rem; line-height: 1.45; }
+.exit-invitation summary { cursor: pointer; font-weight: 700; }
+.exit-back { margin-block: 2rem; }
