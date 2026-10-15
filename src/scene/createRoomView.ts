@@ -2,6 +2,7 @@ import * as THREE from 'three/webgpu';
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 import assetConfig from '../../assets.config.json' with { type: 'json' };
 import { createRenderer } from '../render/renderer';
+import { renderTierFromSearch, renderTiers } from '../render/tiers';
 import type { RoomDate } from '../schema/changeIds';
 import type { PlaceId } from '../state/places';
 import { viewDirection, type ViewDirection } from '../state/viewDirections';
@@ -52,7 +53,9 @@ export async function createRoomView(
   forceWebGL: boolean,
   onLookChange?: () => void,
 ): Promise<RoomView> {
-  const skyId = new URLSearchParams(location.search).get('sky') ?? 'qwantani_morning_puresky';
+  const params = new URLSearchParams(location.search);
+  const tier = renderTierFromSearch(location.search);
+  const skyId = params.get('sky') ?? 'qwantani_morning_puresky';
   const skyRecord = assetConfig.skies.find(record => record.id === skyId);
   if (!skyRecord) throw new Error(`Unknown sky candidate: ${skyId}`);
   const textures = await loadRoomTextures();
@@ -74,7 +77,6 @@ export async function createRoomView(
     throw error;
   }
   const { renderer, backend } = rendered;
-  const params = new URLSearchParams(location.search);
   const measureGeometry = params.has('metrics');
   const diagnosticShadows = params.get('shadows') === '1';
   const floorMarkOpacity = params.get('floorMarkOpacity') === '0.30' ? 0.30 : 0.45;
@@ -88,7 +90,7 @@ export async function createRoomView(
   const world = createRoomWorld(textures, sky, diagnosticShadows, floorMarkOpacity, softFloorMarkEdge);
   const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 100);
   camera.position.set(...viewpoints.doorway.position);
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, renderTiers[tier].maxPixelRatio));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.AgXToneMapping;
 
@@ -107,6 +109,7 @@ export async function createRoomView(
   const canvas = renderer.domElement;
   canvas.setAttribute('aria-hidden', 'true');
   canvas.dataset.backend = backend;
+  canvas.dataset.tier = tier;
   canvas.dataset.sky = skyRecord.id;
   canvas.dataset.date = '632';
   canvas.dataset.place = 'doorway';

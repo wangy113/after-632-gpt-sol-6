@@ -18,6 +18,8 @@ The pure state model defines all three dates, four viewpoints, Compare, and move
 
 The [Phase 3 source and credit audit](docs/phase3/SOURCE_CREDIT_AUDIT.md) records the current passage, label, reporting, museum-reference, and asset checks. The 680 passage now links a second historical source for its family-casualty detail.
 
+For a rendering comparison on a high-density screen, open the [normal preview](https://wangy113.github.io/after-632-gpt-sol-6/) and the [explicit Low preview](https://wangy113.github.io/after-632-gpt-sol-6/?tier=low), then enter the room. Low caps the canvas drawing buffer at device pixel ratio 1; regular visits retain the current 1.5 cap. The [matched measurement and images](docs/phase4/LOW_TIER_PREVIEW.md) show the scope of this first Phase 4 option. Both URLs still load the same 1k textures and sky, and automatic tier selection has not been added.
+
 ## Run
 
 Use Node.js 22.12 or later.
@@ -30,6 +32,7 @@ npm run dev
 The six pinned Poly Haven JPGs and two HDR sky candidates are committed under `public/assets/polyhaven/`. Run `npm run fetch:assets` to re-fetch missing files or verify existing copies against the sizes and MD5 hashes in `assets.config.json`; this command requires `curl`.
 Run `npm run check:assets` to build and verify the committed and built assets against their pinned records, confirm the recorded CC0 source, check the built HTML, linked CSS, and arrival still against the 300 KB first-view budget, and check the full built visit against the 15 MB budget. This check works offline and does not change the source assets. Run `npm run capture:sky` with Chromium installed to reproduce the comparison images.
 Run `npm run check:content` to build both pages and verify that their source links, report dates, credits, and no-photo treatment agree with the recorded content. This check is offline; publication still needs a live source-link review.
+Run `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run measure:tier -- --capture` to compare the normal and Low drawing buffers at emulated device pixel ratio 2 and refresh their matched doorway images. Omit `--capture` to leave the images untouched. The command requires Chromium and measures submitted work, not real-device frame time.
 
 For the production build and checks:
 
