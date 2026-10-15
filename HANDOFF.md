@@ -2,22 +2,24 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` currently contains only the plan.
 
-The user wants work delivered in reviewable chunks, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “680 shadow-free floor-mark review” is the current completed chunk. Wait for feedback or approval before starting another chunk.
+The user wants work delivered in reviewable chunks, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. “Neutral 680 mark review sheet” and “live shadow-free variant verification” are the current completed chunks. Wait for feedback or approval before starting another chunk.
 
 ## Verified checkpoint · 2026-10-15
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; shadow-free evidence commit `4beb508` (app feature commit `4949e18`) |
+| Implementation branch | `codex/phase0-scaffold`; review sheet `427d773`, live verification `c27f901` (app feature commit `4949e18`) |
 | Public preview branch | `gh-pages`; built commit `423de19` |
-| GitHub Pages | [Baseline PCF](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1), [hard-edge `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&floorMarkOpacity=0.30), and [soft-edge `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&floorMarkOpacity=0.30&floorMarkEdge=soft) are live |
-| Checks at this checkpoint | Fresh production build/typecheck passed. Six matched shadow-free Chromium captures measured 2 renderer calls each with no page, request, or HTTP errors; pixel differences between variants stayed inside the floor mark. Unit, asset, and full browser suites were last run at the preceding app checkpoint (18 unit, 38 browser; 44,297 / 300,000 first-view and 5,018,050 / 15,000,000 full-visit bytes). Pages remains `423de19`. |
+| GitHub Pages | Shadow-free [baseline](https://wangy113.github.io/after-632-gpt-sol-6/), [hard `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30), and [soft `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30&floorMarkEdge=soft) are live; PCF options remain available with `shadows=1` |
+| Checks at this checkpoint | The six public shadow-free PNGs matched the six committed images byte for byte in Chromium 154 SwiftShader WebGL2 at matched poses, with 2 renderer calls each and no page, request, or HTTP errors. The remote Pages branch still points to built commit `423de19`. These documentation-only chunks did not rerun build, unit, asset, or full browser suites; their last results are in the preceding checkpoint (18 unit, 38 browser; 44,297 / 300,000 first-view and 5,018,050 / 15,000,000 full-visit bytes). |
 | Working tree at checkpoint | Clean after the handoff commit |
 
-The latest “continue the next small portion” authorized the [680 shadow-free floor-mark review](docs/phase0/GEOMETRY_BASELINE.md#680-shadow-free-floor-mark-review--2026-10-15). Its matched doorway and travel-corner images compare baseline `0.45`, hard-edge `0.30`, and soft-edge `0.30` in the normal no-shadow lighting. Each variant changes only pixels inside the mark; the oval remains prominent, but the angular PCF sun patch and PCF mat striping are absent. Normal visits still use shadow-free opacity `0.45`; the other two settings remain opt-in, PCF remains the shadow diagnostic default, and VSM remains opt-in. No participant or screen-reader results have been supplied.
+The latest “work on next two small portions” authorized the [neutral 680 floor-mark review sheet](docs/phase0/680_FLOOR_MARK_REVIEW_SHEET.md) and [live shadow-free check](docs/phase0/GEOMETRY_BASELINE.md#live-shadow-free-mark-verification--2026-10-15). The sheet uses private A/B/C codes, varied order, open questions before any floor prompt, and blank response fields; no sessions have run. The public baseline, hard `0.30`, and soft `0.30` views match all six saved shadow-free images. Normal visits still use shadow-free opacity `0.45`; the other two settings remain opt-in, PCF remains the shadow diagnostic default, and VSM remains opt-in. No participant or screen-reader results have been supplied.
 
 ## What works now
 
+- The [680 floor-mark review sheet](docs/phase0/680_FLOOR_MARK_REVIEW_SHEET.md) is ready for 3 to 5 participants. It keeps the intended cleaned-area reading private until after first impressions, rotates A/B/C order, records exact words from doorway and travel views, and separates spontaneous from prompted readings. It contains no results. The original three-date packet remains intact.
+- The [live shadow-free verification](docs/phase0/GEOMETRY_BASELINE.md#live-shadow-free-mark-verification--2026-10-15) found all six deployed 680 PNGs byte-identical to the saved normal-lighting images at matched poses. Each measured 2 renderer calls without page, request, or HTTP errors. Pages did not need republishing.
 - The [680 shadow-free mark review](docs/phase0/GEOMETRY_BASELINE.md#680-shadow-free-floor-mark-review--2026-10-15) provides six matched doorway/travel-corner captures for the [normal baseline](https://wangy113.github.io/after-632-gpt-sol-6/), [hard `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30), and [soft `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30&floorMarkEdge=soft) without diagnostic shadows. The two opt-in variants affect only the mark. Both make it less stark, but it is still a pale oval whose interpretation needs people, not more screenshot inference.
 - The [live soft-edge preview](docs/phase0/GEOMETRY_BASELINE.md#live-soft-edge-floor-mark-preview--2026-10-15) lets reviewers compare [baseline](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1), [hard-edge `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&floorMarkOpacity=0.30), and [soft-edge `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&floorMarkOpacity=0.30&floorMarkEdge=soft) at 680. The exact two-option URL selects the soft edge; other variants retain their prior pixels.
 - The [680 soft-edge probe](docs/phase0/GEOMETRY_BASELINE.md#680-soft-edge-floor-mark-probe--2026-10-15) compares matched `0.30` doorway and travel-corner images with a temporary feathered perimeter. Changes stay inside the mark; the edge is softer but the pale oval remains. The temporary code was restored after that probe; the treatment is now separately opt-in through the live URL above.
@@ -68,9 +70,9 @@ The latest “continue the next small portion” authorized the [680 shadow-free
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent click-only activation of either Compare button. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: prepare a neutral 680 mark review sheet
+## Next proposed chunk: guard the normal shadow-free variants
 
-First address any completed screen-reader observations or visual feedback the user supplies. Otherwise, pending approval, prepare a short participant sheet from the six shadow-free images: show the 680 mark without naming its intended meaning, ask what changed and what it suggests, and record whether each variant reads as a cleaned area or something else. Keep the existing three-date [gray-box review packet](docs/phase0/GRAYBOX_REVIEW_PACKET.md) intact, and make no production visual choice from the sheet alone. A real screen-reader and participant interpretation pass remain open.
+First address any completed screen-reader observations or visual feedback the user supplies. Otherwise, pending approval, add a focused browser regression for the normal shadow-free baseline, hard `0.30`, and soft `0.30` at matched 680 doorway and travel-corner poses. Check the option selection, two renderer calls, and variant image differences without making a screenshot test depend on every pixel. The app's default visual choice should stay at `0.45`; a real screen-reader and participant interpretation pass remain open.
 
 When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
@@ -82,6 +84,7 @@ When the user supplies completed response sheets, synthesize what participants n
 | First-view and full-visit budget checker | `scripts/check-assets.mjs`, `README.md` |
 | Texture and sky records, fetch script, committed files | `assets.config.json`, `scripts/fetch-polyhaven.mjs`, `public/assets/polyhaven/` |
 | Sky comparison and capture | `docs/phase0/SKY_COMPARISON.md`, `scripts/capture-sky-comparison.mjs` |
+| Participant review sheets | `docs/phase0/GRAYBOX_REVIEW_PACKET.md`, `docs/phase0/680_FLOOR_MARK_REVIEW_SHEET.md` |
 | Mobile audit and evidence | `docs/phase0/MOBILE_LAYOUT_AUDIT.md`, `docs/phase0/mobile-*.png` |
 | Automated accessibility audit | `docs/phase0/ACCESSIBILITY_AUDIT.md`, `tests/e2e/accessibility.spec.ts` |
 | Small-screen keyboard audit | `docs/phase0/KEYBOARD_AUDIT.md`, `tests/e2e/keyboard.spec.ts` |
@@ -122,6 +125,10 @@ To regenerate the arrival still after changing the room, run:
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run capture:arrival
 npm run build
 ```
+
+The live shadow-free verification opened the public baseline, hard `0.30`, and soft `0.30` at the same 680 doorway and travel-corner poses in Chromium 154 SwiftShader WebGL2. All six public PNGs matched their saved images byte for byte, measured 2 renderer calls with 864 × 486 buffers, and had no page, request, or HTTP errors. The remote Pages branch still points to `423de19`. [The verification record](docs/phase0/GEOMETRY_BASELINE.md#live-shadow-free-mark-verification--2026-10-15) is source documentation only; no application or built site changed, so build, unit, asset, and full browser suites were not rerun. Commit `c27f901` records this second small portion.
+
+The neutral 680 mark sheet uses the six existing shadow-free PNGs as private A/B/C cards, rotates presentation order, asks open questions from the doorway and travel corner before comparison, and records any later floor prompt separately. [The sheet](docs/phase0/680_FLOOR_MARK_REVIEW_SHEET.md) leaves all response and coding fields blank. No session, participant interpretation, or production visual decision is claimed. The existing three-date gray-box packet was left intact. This documentation-only first small portion did not rerun app checks. Commit `427d773` records the sheet.
 
 The shadow-free 680 mark review passed a fresh production build/typecheck, then captured baseline `0.45`, hard `0.30`, and soft `0.30` at matched doorway and travel-corner poses in Chromium 154 SwiftShader WebGL2. All six captures had 864 × 486 buffers, 2 renderer calls, and no page/request/HTTP errors. [The images and pixel measurements](docs/phase0/GEOMETRY_BASELINE.md#680-shadow-free-floor-mark-review--2026-10-15) show that variant differences stay inside the oval; compared with PCF, the normal room lacks the angular sun patch and the mats appear flat gray. The oval remains prominent and has no participant interpretation yet. No application or asset source changed, so unit, asset, and full browser suites were not rerun; Pages remains `423de19`. Evidence commit `4beb508` records the six images and review.
 
