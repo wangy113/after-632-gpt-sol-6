@@ -251,6 +251,62 @@ test('the soft floor-mark edge needs both URL options and changes both reviewed 
   expect(captures.get('hard')!.travel!.equals(captures.get('soft')!.travel!)).toBe(false);
 });
 
+test('the shadow-free floor-mark variants change both 680 views with two renderer calls', async ({ page }) => {
+  test.setTimeout(180_000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const captures = new Map<string, { doorway: Buffer; travel: Buffer }>();
+
+  for (const { label, query } of [
+    { label: 'baseline', query: '' },
+    { label: 'hard', query: '&floorMarkOpacity=0.30' },
+    { label: 'soft', query: '&floorMarkOpacity=0.30&floorMarkEdge=soft' },
+  ]) {
+    await page.goto(`/?gl=1&metrics=1${query}`);
+    await page.getByRole('button', { name: 'Enter the room' }).click();
+    const canvas = page.locator('#scene-frame canvas');
+    await expect(canvas).toHaveAttribute('data-backend', 'WebGL2 fallback');
+    const beforeDate = Number(await canvas.getAttribute('data-frames'));
+    await page.locator('[data-room-date="680"]').click();
+    await expect(canvas).toHaveAttribute('data-date', '680');
+    await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+    await expect.poll(async () => Number(await canvas.getAttribute('data-frames'))).toBeGreaterThan(beforeDate);
+
+    async function look(direction: 'right' | 'left' | 'down') {
+      const before = Number(await canvas.getAttribute('data-frames'));
+      await page.locator(`[data-look="${direction}"]`).click();
+      await expect.poll(async () => Number(await canvas.getAttribute('data-frames'))).toBeGreaterThan(before);
+    }
+
+    await look('right');
+    await look('left');
+    await expect(canvas).toHaveAttribute('data-place', 'doorway');
+    await expect(canvas).toHaveAttribute('data-position', '0.000,1.600,0.500');
+    await expect(canvas).toHaveAttribute('data-yaw', '0.000');
+    await expect(canvas).toHaveAttribute('data-pitch', '-0.300');
+    await expect(canvas).toHaveAttribute('data-render-calls', '2');
+    const doorway = await canvas.screenshot({ type: 'png' });
+
+    const beforeMove = Number(await canvas.getAttribute('data-frames'));
+    await page.locator('[data-room-place="head"]').click();
+    await expect(canvas).toHaveAttribute('data-place', 'head');
+    await expect(canvas).toHaveAttribute('data-moving', 'false');
+    await expect.poll(async () => Number(await canvas.getAttribute('data-frames'))).toBeGreaterThan(beforeMove);
+    for (let turn = 0; turn < 5; turn += 1) await look('left');
+    await look('down');
+    await expect(canvas).toHaveAttribute('data-position', '-1.550,1.600,-3.650');
+    await expect(canvas).toHaveAttribute('data-yaw', '2.042');
+    await expect(canvas).toHaveAttribute('data-pitch', '-0.340');
+    await expect(canvas).toHaveAttribute('data-render-calls', '2');
+    captures.set(label, { doorway, travel: await canvas.screenshot({ type: 'png' }) });
+  }
+
+  for (const pose of ['doorway', 'travel'] as const) {
+    expect(captures.get('baseline')![pose].equals(captures.get('hard')![pose])).toBe(false);
+    expect(captures.get('baseline')![pose].equals(captures.get('soft')![pose])).toBe(false);
+    expect(captures.get('hard')![pose].equals(captures.get('soft')![pose])).toBe(false);
+  }
+});
+
 test('the room scene fits on the first small-screen view', async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 }, deviceScaleFactor: 1,
