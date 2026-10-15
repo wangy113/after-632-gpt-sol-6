@@ -1,0 +1,23 @@
+# Reporting exit: source review
+
+**Checked 2026-10-14 (America/Chicago; 2026-10-15 UTC).** This is the source record for the [planned plain-page exit](../PLAN.md#the-experience), not released page copy. The two reports are dated snapshots of a changing conflict. Reopen the publisher pages and check dates, links, and any claim repeated in the app when the exit is built and before release.
+
+## Two reports to compare
+
+| Report | What the page supports | Source limit and reading lens |
+| --- | --- | --- |
+| **Civilian experience:** Nasser Al-Sakkaf, [“‘We left everything behind’: 125,000 people displaced as war reignites in Yemen”](https://www.theguardian.com/world/2026/sep/17/displaced-people-yemen-war), *The Guardian*, **17 September 2026**. The page says it was last modified 18 September at 23:19 EDT (19 September UTC). | Al-Sakkaf interviews displaced people in Taiz about leaving homes, finding shelter, and losing livelihoods. The article attributes its 125,000 newly displaced figure to UN OCHA **as of that reporting period**. | A report from affected families, not a full account of negotiations or armed actors. Its headline count is a dated estimate, not today's total. Ask whose account it adds and whose decisions it cannot explain. |
+| **Mediation and regional frame:** Samy Magdy and Ahmed Hatem, [“UN envoy meets Houthi negotiators in a bid to halt escalating violence in Yemen”](https://apnews.com/article/yemen-war-houthis-saudi-arabia-iran-un-envoy-049d586b6e8ca0a0394bc013e3322da3), *Associated Press*, **29 September 2026** (published at 13:00 UTC; page metadata records a same-day revision). | An AP interview with UN envoy Hans Grundberg reports his talks with Houthi negotiators and with Yemen's internationally recognized government and regional powers. It describes diplomacy amid renewed fighting; its casualty and displacement numbers are attributed to UN agencies. | The envoy's perspective and regional trade/security concerns dominate. It has no comparable interviews with displaced Yemenis and does not establish that talks produced an agreement. Ask who speaks and who is spoken about. |
+
+Both full publisher pages were reachable and read at this check. Link to the articles and show their publication dates and publishers; do not copy their photographs, article text, or live-looking casualty figures into the app. Their different voices make a useful comparison, but neither alone explains the whole conflict. The two articles were published twelve days apart, so do not read their figures or front-line descriptions as measurements from one moment.
+
+## Zaydi and Twelver context
+
+- Bruce Riedel, [“A pragmatic view on Yemen’s Houthis”](https://www.brookings.edu/articles/a-pragmatic-view-on-yemens-houthis/), *Brookings*, **11 January 2021**, “The Houthis: A primer”: says the Houthis come from a Zaydi Shi'a tradition that differs in doctrine and beliefs from Twelver Shi'ism; identifies Zayd ibn Ali's uprising in **740 CE**; and places the modern movement's emergence in the **1990s**. The article is policy commentary from 2021. Use this short historical distinction, not its then-current policy claims, as the planned Brookings source.
+- [“World Directory of Minorities and Indigenous Peoples - Yemen: Zaydi Shias”](https://www.refworld.org/reference/countryrep/mrgi/2018/64960), *Minority Rights Group International*, updated **January 2018**, hosted by UNHCR Refworld: explicitly says that not all Zaydis are Houthis. This guards against equating a faith tradition with one political movement. It is an older country profile, not a live demographic or conflict report; its population estimates are inconsistent within the page and should not be reused.
+
+The room ends in **680 CE**, before Zayd ibn Ali's 740 uprising and long before the modern Houthi movement. The older history may prompt questions about authority and remembrance, but these sources do not support a direct causal line from Karbala to Yemen's present war, a Zaydi = Houthi equation, or a purely sectarian account of the conflict. Keep this context and both reports **outside the 3D room**, alongside the plan's open invitation and optional report-reading lenses.
+
+## Before the exit ships
+
+Recheck all four links and their displayed dates; replace a missing or substantially revised report rather than silently retaining an obsolete claim. Have an instructor or relevant community reviewer check the context wording and how the two reports are framed. Record the check date in the released source metadata. Participant and screen-reader reviews remain separate open work.

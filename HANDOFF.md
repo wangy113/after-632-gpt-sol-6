@@ -2,19 +2,21 @@
 
 This repository is being rebuilt as the imagined meeting-room experience in [the plan](docs/PLAN.md). The current build is a working gray-box prototype with three dates and four places to stand; it is not the planned photoreal release. Continue on `codex/phase0-scaffold`; `main` currently contains only the plan.
 
-The user wants work delivered in reviewable chunks, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. The matched shadow-free three-date review packet and full verification are the current completed portion. Wait for feedback or approval before starting another chunk.
+The user wants work delivered in reviewable chunks, with approval before starting the next chunk. They also asked to see completed chunks through GitHub. The public preview is [GitHub Pages](https://wangy113.github.io/after-632-gpt-sol-6/), built from `gh-pages`. The [reporting-exit source review](docs/phase0/REPORTING_EXIT_SOURCES.md) is the current completed portion. Wait for feedback or approval before starting another chunk.
 
 ## Verified checkpoint
 
 | Item | State |
 | --- | --- |
-| Implementation branch | `codex/phase0-scaffold`; complete normal-lighting review evidence commit `711ce13` (app feature commit `4949e18`) |
+| Implementation branch | `codex/phase0-scaffold`; reporting-exit source review is the latest docs work; normal-lighting review evidence commit `711ce13` (app feature commit `4949e18`) |
 | Public preview branch | `gh-pages`; built commit `423de19` |
 | GitHub Pages | Shadow-free [baseline](https://wangy113.github.io/after-632-gpt-sol-6/), [hard `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30), and [soft `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30&floorMarkEdge=soft) are live; PCF options remain available with `shadows=1` |
-| Checks at this checkpoint | 18 unit tests, all 39 browser tests, production build/typecheck, and asset budgets passed (44,297 / 300,000 first-view bytes; 5,018,050 / 15,000,000 visit bytes). New matched pegs, doorway, and yard captures used 2 renderer calls each with no page, request, or HTTP errors. Fresh 661/680 pegs and 632/680 doorway captures matched saved baselines byte for byte. `git diff --check` passed; no app or asset source changed. |
+| Checks at this checkpoint | The two report pages and two context sources were read on their publisher/host pages on 2026-10-14 America/Chicago (2026-10-15 UTC); dates, claims, and limits are in the source review. This docs-only portion changed no app or asset source. At the previous app checkpoint, 18 unit tests, 39 browser tests, production build/typecheck, and asset budgets passed (44,297 / 300,000 first-view bytes; 5,018,050 / 15,000,000 visit bytes). |
 | Working tree at checkpoint | Clean after the handoff commit |
 
-The latest “read the handoff agent and continue the next big portion” authorized completing the normal-lighting three-date review. The [new 632 pegs image](docs/phase0/GEOMETRY_BASELINE.md#completed-shadow-free-three-date-pegs-wall) completes that wall sequence, a [661 doorway capture](docs/phase0/GEOMETRY_BASELINE.md#matched-shadow-free-three-date-doorway) fills the missing straight view, and a [turned yard comparison](docs/phase0/GEOMETRY_BASELINE.md#matched-shadow-free-yard-palm) shows the 632/661 palm unchanged and the 680 palm taller, with the crown top cropped. The [current textured-prototype packet](docs/phase0/TEXTURED_REVIEW_PACKET.md) joins those views to the three-date travel sequence and asks for neutral first impressions. All 39 browser checks now pass. The [decision](docs/DECISIONS.md#normal-lighting-three-date-review-readiness) keeps normal visits shadow-free at floor-mark opacity `0.45`; hard and soft `0.30` remain opt-in, PCF stays the shadow diagnostic default, and VSM stays opt-in. No participant or screen-reader results have been supplied. These source-only images and documents did not change the built public site.
+The latest “continue” authorized source research for the planned reporting exit. The [source review](docs/phase0/REPORTING_EXIT_SOURCES.md) records two dated publisher reports (Guardian, 17 September 2026; AP, 29 September 2026), the requested Brookings Zaydi/Twelver context, and a Minority Rights Group distinction between Zaydi Muslims and the Houthi movement. It states the claims each source supports, what remains uncertain, and what must be rechecked before release. No exit UI, contemporary claim in the app, or news image was added. The public Pages preview is unchanged. No participant or screen-reader results have been supplied.
+
+The previous normal-lighting three-date review is complete. The [current textured-prototype packet](docs/phase0/TEXTURED_REVIEW_PACKET.md) joins matched pegs, doorway, travel, and yard views and asks for neutral first impressions. The [decision](docs/DECISIONS.md#normal-lighting-three-date-review-readiness) keeps normal visits shadow-free at floor-mark opacity `0.45`; hard and soft `0.30` remain opt-in, PCF stays the shadow diagnostic default, and VSM stays opt-in. The yard crown is partly cropped, so its date cue still needs participant judgment.
 
 ## What works now
 
@@ -76,9 +78,9 @@ The latest “read the handoff agent and continue the next big portion” author
 - Compare shows the previous date from the same camera while preserving the selected date. It works by pointer or keyboard hold, the C key, or a persistent click-only activation of either Compare button. Returning to reading releases the renderer; renderer failure falls back to the reading page.
 - The pure state model defines all three dates, four places, Compare, and motion policy. Date, place, Compare, Pause, and reduced-motion behavior are wired to the live room.
 
-## Next proposed chunk: verify the reporting-exit sources
+## Next proposed chunk: build the plain reporting exit
 
-First address any completed participant sheets, screen-reader observations, or visual feedback the user supplies. Otherwise, pending approval, verify two dated Yemen reports and a source for the Zaydi/Twelver context note required by the [planned reporting exit](docs/PLAN.md#the-experience). Record exact article dates, relevant claims, links, and source limits in a concise source note before writing exit UI or copy. Keep the contemporary material outside the 3D room. Real participant and screen-reader passes remain open.
+First address any completed participant sheets, screen-reader observations, or visual feedback the user supplies. Otherwise, pending approval, build a plain static exit outside the 3D room using the [source review](docs/phase0/REPORTING_EXIT_SOURCES.md): two dated report links, a concise sourced Zaydi/Twelver note that does not equate all Zaydis with Houthis, the planned invitation, and optional report-reading lenses. Recheck the source pages and dates at implementation, keep historical/contemporary wording in `content/*.json`, provide a path from the room and reading page, and verify the no-JavaScript and keyboard routes. Do not add news imagery or modern objects to the room. Instructor/community review, participant testing, and real screen-reader passes remain open.
 
 When the user supplies completed response sheets, synthesize what participants noticed and how they interpreted it into `docs/DECISIONS.md` before committing to visual refinements.
 
@@ -91,6 +93,7 @@ When the user supplies completed response sheets, synthesize what participants n
 | Texture and sky records, fetch script, committed files | `assets.config.json`, `scripts/fetch-polyhaven.mjs`, `public/assets/polyhaven/` |
 | Sky comparison and capture | `docs/phase0/SKY_COMPARISON.md`, `scripts/capture-sky-comparison.mjs` |
 | Participant review sheets | `docs/phase0/GRAYBOX_REVIEW_PACKET.md`, `docs/phase0/TEXTURED_REVIEW_PACKET.md`, `docs/phase0/680_FLOOR_MARK_REVIEW_SHEET.md` |
+| Reporting-exit sources and limits | `docs/phase0/REPORTING_EXIT_SOURCES.md` |
 | Mobile audit and evidence | `docs/phase0/MOBILE_LAYOUT_AUDIT.md`, `docs/phase0/mobile-*.png` |
 | Automated accessibility audit | `docs/phase0/ACCESSIBILITY_AUDIT.md`, `tests/e2e/accessibility.spec.ts` |
 | Small-screen keyboard audit | `docs/phase0/KEYBOARD_AUDIT.md`, `tests/e2e/keyboard.spec.ts` |
