@@ -341,3 +341,23 @@ The lower-opacity mark remains distinct beside the table and nearest mat, with m
 The lower-opacity candidate can now be selected with [`?shadows=1&floorMarkOpacity=0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&floorMarkOpacity=0.30); compare it with the [baseline PCF view](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1). Enter the room, select 680, and inspect the doorway and head-of-room places. The exact `floorMarkOpacity=0.30` value selects the candidate; absent or other values use baseline `0.45`. The option is independent of the shadow-filter option, and 632/661 have no 680 floor mark to change.
 
 A browser check captures the same settled 680 doorway pose for the default, an unrelated value, and `0.30`. The first two PNG buffers match byte for byte; the `0.30` image differs. The matched doorway and travel-corner probe images above show what that change looks like. The candidate retains a hard oval outline and has not been adopted for regular visits; student interpretation and real-device behavior remain open.
+
+## 680 soft-edge floor-mark probe · 2026-10-15
+
+This probe tested one temporary feathered edge on the live `0.30` floor-mark candidate, leaving its center opacity, circle geometry, position, directional sun intensity `2.0`, and PCF shadows unchanged. A generated 128 × 128 white RGBA map kept full alpha through 80% of the mark's radius, then eased it to zero at the perimeter with a smoothstep curve and linear sampling. The map was applied only to the `floorMarkOpacity=0.30` mark during this probe. It did not change the floor texture or other room materials.
+
+Before changing the source, fresh doorway and travel-corner `0.30` captures were byte-identical to the committed images from the earlier opacity probes. Both pairs used Chromium 154 SwiftShader WebGL2, the Qwantani morning sky, a 1440 × 900 viewport, DPR 1, reduced motion, an 864 × 486 canvas buffer (864 × 487 PNG), and 3 PCF renderer calls. The doorway camera remained `(0, 1.6, 0.5)`, yaw `0`, pitch `-0.3`; the head-of-room travel-corner camera remained `(-1.55, 1.6, -3.65)`, yaw `2.042`, pitch `-0.340`. No page, request, or HTTP errors occurred.
+
+| `0.30` candidate, doorway | Temporary feathered edge, doorway |
+| --- | --- |
+| ![680 doorway floor mark at opacity 0.30 with a hard oval edge](680-doorway-shadow-opacity30-probe.png) | ![Same 680 doorway mark with its outer edge feathered](680-doorway-shadow-softedge-probe.png) |
+| [Full-size image](680-doorway-shadow-opacity30-probe.png) | [Full-size image](680-doorway-shadow-softedge-probe.png) |
+
+| `0.30` candidate, travel corner | Temporary feathered edge, travel corner |
+| --- | --- |
+| ![680 travel-corner floor mark at opacity 0.30 with a hard oval edge](680-bags-shadow-opacity30-probe.png) | ![Same 680 travel-corner mark with its outer edge feathered](680-bags-shadow-softedge-probe.png) |
+| [Full-size image](680-bags-shadow-opacity30-probe.png) | [Full-size image](680-bags-shadow-softedge-probe.png) |
+
+The edge fades into the floor at both poses instead of ending in a sharp curve. The mark remains a broad pale oval, so these images do not establish that visitors would read it as a cleaned area. A pixel comparison against the `0.30` candidate found 4,508 changed doorway pixels, all within `x=577..778, y=289..385`, and 1,984 changed travel-corner pixels, all within `x=322..464, y=245..299`. Those are the same mark bounds found in the opacity probes; surrounding objects and lighting are unchanged. The doorway oval-center grayscale mean is **147.8** before and **147.7** with feathering; the nearby mat stays **118.3** and shadowed left floor **65.0**. These are screenshot values, not perceptual or device measurements.
+
+The temporary map was removed and the production build rebuilt. Fresh restored doorway and travel-corner PNGs were byte-identical to the pre-probe `0.30` captures. The public baseline `0.45` and opt-in `0.30` URLs remain as before; this soft-edge image is evidence for review, not a live setting. No participant or screen-reader judgment has been supplied.
