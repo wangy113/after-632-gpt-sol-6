@@ -448,3 +448,48 @@ From a fresh production build, capture 661 and 680 at the pegs place without `sh
 The waterskin occupies the left hook position at 661; at 680 a bare hook sits above a tall pale rectangular wall trace. The three smaller dark pegs and their pale traces remain in the same places. The shadow-free 661→680 PNG comparison changes 10,240 RGB pixels, all within `x=235..327, y=208..352` around that one wall object. The [matched PCF pair](#matched-661-pegs-filter-and-date-review--2026-10-14) changes 10,398 pixels in the same bounds. The normal shadow-free wall is brighter and its surface texture more apparent; a fixed unoccupied left-wall crop (`x=70..170, y=100..180`) has an 8-bit grayscale mean of **79.4** in both shadow-free dates versus **61.8** in both PCF dates. These are screenshot values, not physical light measurements.
 
 This close wall view clarifies the small wall change seen in the [shadow-free travel corner](#matched-shadow-free-three-date-travel-corner--2026-10-15). It does not show the floor bags, oval mark, or yard palm. The waterskin and traces are invented visual cues, not historical belongings. The captures do not establish participant interpretation or real-device performance. No app code or visual default changed.
+
+## Completed shadow-free three-date pegs wall
+
+A fresh production build captured the missing 632 pegs wall at the [same shadow-free pose](#matched-shadow-free-661680-pegs-wall--2026-10-15) as 661 and 680. All three dates used Chromium 154 SwiftShader WebGL2, `?gl=1&metrics=1&sky=qwantani_morning_puresky` without diagnostic shadows, a 1440 × 900 viewport, DPR 1, reduced motion, and a right/left look after selecting the pegs place. Each settled camera was `(2, 1.6, -1.35)`, yaw `1.571`, pitch `-0.100`, with an 864 × 486 buffer, an 864 × 487 PNG, and **2 renderer calls**. No page, request, or HTTP errors occurred. Fresh 661 and 680 PNGs were byte-identical to the committed pair, so only the missing 632 image was added.
+
+| 632: bare wall | 661: waterskin and pegs | 680: empty hook and pegs |
+| --- | --- | --- |
+| ![Shadow-free 632 wall before the later hooks and pegs](632-pegs-shadow-off.png) | ![Shadow-free 661 wall with waterskin and three smaller pegs](661-pegs-shadow-off.png) | ![Shadow-free 680 wall with empty hook and three smaller pegs](680-pegs-shadow-off.png) |
+| [Full-size image](632-pegs-shadow-off.png) | [Full-size image](661-pegs-shadow-off.png) | [Full-size image](680-pegs-shadow-off.png) |
+
+| Date | Draw calls | Submitted triangles | Renderer calls |
+| --- | ---: | ---: | ---: |
+| 632 | 17 | 2,165 | 2 |
+| 661 | 25 | 2,517 | 2 |
+| 680 | 24 | 2,329 | 2 |
+
+The focal wall is bare in 632. A waterskin and three smaller peg-and-trace pairs appear in 661; the waterskin position becomes an empty hook above a tall pale outline in 680, while the three smaller pairs remain. The matched 632→661 PNGs differ in 15,632 pixels within `x=235..578, y=202..352`, covering all new wall details. The 661→680 pair differs in 10,240 pixels within `x=235..327, y=208..352`, around only the waterskin/hook area. These are implemented imagined cues, not evidence of historical belongings or a test of participant interpretation.
+
+## Matched shadow-free three-date doorway
+
+At the same normal-lighting doorway pose, a new 661 capture joins the existing [632 shadow-off image](632-doorway-shadow-off.png) and [680 baseline image](680-doorway-shadow-off-baseline.png). Each date used the setup above, then a right/left look at camera `(0, 1.6, 0.5)`, yaw `0`, pitch `-0.300`. Buffers were 864 × 486 and PNGs 864 × 487, with **2 renderer calls** and no page, request, or HTTP errors. Fresh 632 and 680 doorway PNGs were byte-identical to their committed baselines.
+
+| 632: loose arrangement | 661: travel things | 680: things missing |
+| --- | --- | --- |
+| ![Shadow-free 632 doorway with loose mats and cups](632-doorway-shadow-off.png) | ![Shadow-free 661 doorway with aligned mats, table, and travel things](661-doorway-shadow-off.png) | ![Shadow-free 680 doorway with pale floor mark beside the table](680-doorway-shadow-off-baseline.png) |
+| [Full-size image](632-doorway-shadow-off.png) | [Full-size image](661-doorway-shadow-off.png) | [Full-size image](680-doorway-shadow-off-baseline.png) |
+
+| Date | Draw calls | Submitted triangles | Renderer calls |
+| --- | ---: | ---: | ---: |
+| 632 | 61 | 3,077 | 2 |
+| 661 | 35 | 2,949 | 2 |
+| 680 | 33 | 2,501 | 2 |
+
+The 632 mat circle and cups give way to the 661 facing rows, table, and two rounded travel forms; the 680 frame retains the table and rows while replacing those forms with a pale oval mark. At this pose, 632→661 changes 80,251 RGB pixels within `x=148..818, y=185..485`; 661→680 changes 13,885 within `x=577..778, y=269..385`, around the travel forms and oval. Small tabletop marks and the wall hook cannot be judged from this straight doorway frame. The [travel corner](#matched-shadow-free-three-date-travel-corner--2026-10-15) and [pegs wall](#completed-shadow-free-three-date-pegs-wall) give closer views.
+
+## Matched shadow-free yard palm
+
+To include the palm, select the yard place for each date, look left six times and up six times, and capture at camera `(0, 1.6, 4.4)`, yaw `-1.320`, pitch `0.500` (the upward-look limit). The default yard starting view looks toward the doorway and does not show the palm. All three captures used the same shadow-free browser setup as above, 864 × 486 buffers, 864 × 487 PNGs, **22 draws / 2,609 triangles / 2 renderer calls**, and no page, request, or HTTP errors.
+
+| 632 yard | 661 yard | 680 yard |
+| --- | --- | --- |
+| ![Shadow-free 632 yard with palm and sky](632-yard-shadow-off.png) | ![Shadow-free 661 yard at the same palm view](661-yard-shadow-off.png) | ![Shadow-free 680 yard with a taller palm at the same view](680-yard-shadow-off.png) |
+| [Full-size image](632-yard-shadow-off.png) | [Full-size image](661-yard-shadow-off.png) | [Full-size image](680-yard-shadow-off.png) |
+
+The 632 and 661 PNGs are byte-identical: the palm does not change at 661. At 680 its taller trunk and raised fronds change 70,650 pixels within `x=78..670, y=0..485`; the room shell and sky outside that region stay fixed. The top of the palm extends beyond this close camera frame at both heights, so these images show a date difference but cannot establish whether a viewer can infer taller growth or judge the full tree. The [current prototype review packet](TEXTURED_REVIEW_PACKET.md) asks people what they notice without supplying that meaning. This software-rendered comparison does not establish participant legibility or real-device performance; the app and visual defaults are unchanged.
