@@ -12,8 +12,30 @@ export interface Missing680ChangeSet {
   dispose(): void;
 }
 
+function createSoftEdgeMap(): THREE.DataTexture {
+  const size = 128;
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y += 1) {
+    for (let x = 0; x < size; x += 1) {
+      const radius = Math.hypot((x + 0.5 - size / 2) / (size / 2), (y + 0.5 - size / 2) / (size / 2));
+      const t = Math.max(0, Math.min(1, (radius - 0.8) / 0.2));
+      const alpha = Math.round(255 * (1 - t * t * (3 - 2 * t)));
+      const offset = (y * size + x) * 4;
+      data[offset] = 255;
+      data[offset + 1] = 255;
+      data[offset + 2] = 255;
+      data[offset + 3] = alpha;
+    }
+  }
+  const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.needsUpdate = true;
+  return texture;
+}
+
 /** Marks ordinary things missing in 680; no person or historical owner is depicted. */
-export function addMissing680(scene: THREE.Scene, tallerPalm: THREE.Group, floorMarkOpacity = 0.45): Missing680ChangeSet {
+export function addMissing680(scene: THREE.Scene, tallerPalm: THREE.Group, floorMarkOpacity = 0.45, softFloorMarkEdge = false): Missing680ChangeSet {
   const root = new THREE.Group();
   root.name = '680-missing';
   const cleanPatch = new THREE.Group();
@@ -25,10 +47,12 @@ export function addMissing680(scene: THREE.Scene, tallerPalm: THREE.Group, floor
 
   const geometries = new Set<THREE.BufferGeometry>();
   const materials = new Set<THREE.Material>();
+  const softEdgeMap = softFloorMarkEdge && floorMarkOpacity === 0.30 ? createSoftEdgeMap() : undefined;
   const floorTrace = new THREE.MeshBasicMaterial({
     color: 0xe7e6de,
     transparent: true,
     opacity: floorMarkOpacity,
+    ...(softEdgeMap ? { map: softEdgeMap } : {}),
     depthWrite: false,
     side: THREE.DoubleSide,
   });
@@ -83,6 +107,7 @@ export function addMissing680(scene: THREE.Scene, tallerPalm: THREE.Group, floor
       // Only the room disposes those resources.
       for (const geometry of geometries) geometry.dispose();
       for (const material of materials) material.dispose();
+      softEdgeMap?.dispose();
     },
   };
 }

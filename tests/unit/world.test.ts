@@ -67,4 +67,15 @@ describe('dated room geometry', () => {
     world.dispose();
     expect(dispose).toHaveBeenCalledTimes(1);
   });
+
+  it('releases the opt-in floor-mark edge texture when the room closes', () => {
+    const world = createRoomWorld(undefined, undefined, false, 0.30, true);
+    const patch = world.scene.getObjectByName('680-clean-floor-patch') as THREE.Mesh;
+    const map = (patch.material as THREE.MeshBasicMaterial).map;
+    expect(map).toBeInstanceOf(THREE.DataTexture);
+    const dispose = vi.spyOn(map!, 'dispose');
+    world.dispose();
+    world.dispose();
+    expect(dispose).toHaveBeenCalledTimes(1);
+  });
 });

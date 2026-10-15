@@ -158,3 +158,8 @@
 
 - The [doorway and travel-corner opacity probes](phase0/GEOMETRY_BASELINE.md#680-doorway-floor-mark-opacity-probe--2026-10-14) show that `0.30` exposes more floor texture than baseline `0.45`, while the 680 mark stays visible and keeps its hard oval edge. Offer the lower-opacity candidate through the exact `floorMarkOpacity=0.30` URL option for direct comparison; other values retain `0.45`.
 - Keep baseline opacity for regular visits until viewer feedback establishes whether the mark reads as a cleaned area. The URL option makes the candidate available for review without resolving its shape or the separate broad doorway light patch.
+
+## Opt-in soft-edge floor-mark preview · 2026-10-15
+
+- The [matched soft-edge probe](phase0/GEOMETRY_BASELINE.md#680-soft-edge-floor-mark-probe--2026-10-15) fades the outside 20% of the `0.30` mark into the floor at the 680 doorway and travel corner. Its center and surrounding surfaces remain effectively unchanged, but the mark is still a broad pale oval. Offer this treatment through the exact `floorMarkOpacity=0.30&floorMarkEdge=soft` URL combination for direct comparison. `floorMarkEdge=soft` alone leaves the baseline `0.45` mark unchanged; the existing `floorMarkOpacity=0.30` URL keeps its hard edge.
+- Keep both alternatives diagnostic-only. The images do not establish whether visitors understand either one as a cleaned area, and neither addresses the separate angular doorway light patch. Normal visits retain opacity `0.45` and shadows off.
