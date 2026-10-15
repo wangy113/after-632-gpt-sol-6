@@ -411,3 +411,22 @@ The shadow-free captures show the production lighting context, but they do not t
 Open the public [baseline](https://wangy113.github.io/after-632-gpt-sol-6/), [hard `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30), and [soft `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30&floorMarkEdge=soft) variants with `gl=1&metrics=1&sky=qwantani_morning_puresky` added for measurement. Do not enable diagnostic shadows. In Chromium 154.0.8037.57 with SwiftShader WebGL2, a 1440 × 900 viewport, DPR 1, and reduced motion, select 680 and repeat the doorway and travel-corner camera steps documented above. All six public canvas PNGs are **byte-identical** to their respective committed shadow-free images. Each has an 864 × 486 buffer and **2 renderer calls** at its matched pose; no page, request, or HTTP errors were observed. The remote `gh-pages` branch still points to built commit `423de19`.
 
 This confirms that the three variants in the [neutral participant sheet](680_FLOOR_MARK_REVIEW_SHEET.md) can be reviewed on the deployed site in the same shadow-free state as the saved images. It does not supply participant answers or a reason to adopt either opt-in treatment. No application files, built site files, or visual defaults changed in this verification.
+
+## Matched shadow-free three-date travel corner · 2026-10-15
+
+From a fresh production build, capture the normal room without `shadows=1` at 632, 661, and 680. Use Chromium 154 SwiftShader WebGL2 with `?gl=1&metrics=1&sky=qwantani_morning_puresky`, a 1440 × 900 viewport, DPR 1, and reduced motion. At each date, select the head-of-room place, look left five times and down once, then check the settled camera at `(-1.55, 1.6, -3.65)`, yaw `2.042`, pitch `-0.340`. All three canvas buffers are 864 × 486 (PNG 864 × 487), with **2 renderer calls** and no page, request, or HTTP errors. The fresh 680 PNG was byte-identical to the [saved baseline](680-bags-shadow-off-baseline.png), so only the missing 632 and 661 images were added.
+
+| 632: loose arrangement | 661: travel things | 680: things missing |
+| --- | --- | --- |
+| ![Shadow-free 632 travel corner with loose mats, cups, and floor marks](632-bags-shadow-off.png) | ![Shadow-free 661 travel corner with table and two bags](661-bags-shadow-off.png) | ![Shadow-free 680 travel corner with pale floor oval](680-bags-shadow-off-baseline.png) |
+| [Full-size image](632-bags-shadow-off.png) | [Full-size image](661-bags-shadow-off.png) | [Full-size image](680-bags-shadow-off-baseline.png) |
+
+| Date | Draw calls | Submitted triangles | Renderer calls |
+| --- | ---: | ---: | ---: |
+| 632 | 62 | 3,289 | 2 |
+| 661 | 50 | 3,585 | 2 |
+| 680 | 47 | 2,949 | 2 |
+
+The 632 view has the older loose mats and three cups, with small pale marks near the rear wall. The 661 view replaces that arrangement with a low table, aligned mats, two separate rounded travel forms, and a waterskin on the wall. At 680, the table and mat layout stay while the two bags disappear and a broad pale floor oval appears beside the table; the wall object also changes. The focused [shadow-free pegs view below](#matched-shadow-free-661680-pegs-wall--2026-10-15) shows that wall change more clearly. In these matched shadow-free PNGs, 661→680 changes 8,003 RGB pixels within `x=322..464, y=110..299`, covering the wall object and floor mark; there is no moving cast-shadow region. The older 632→661 arrangement changes a much larger part of the frame (99,647 RGB pixels, `x=0..863, y=107..485`).
+
+The earlier [PCF travel-corner sequence](#matched-661-and-680-floor-bag-review--2026-10-14) includes date-driven cast-shadow differences around the mats and yard. Without that pass, the room is brighter and the later mats appear flat gray; the date-driven props and traces remain separate at this pose. These invented forms demonstrate the implemented visual sequence, not historical belongings or a participant's interpretation. This software-rendered review does not establish real-device performance or student legibility. No app code or visual default changed.
