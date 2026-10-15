@@ -369,3 +369,39 @@ The probed feathered edge is now available through the [soft-edge URL](https://w
 The browser check captures settled 680 doorway frames for baseline, edge-only, hard `0.30`, unrelated edge value, and soft `0.30`, plus matched hard/soft travel-corner frames. Baseline and edge-only PNGs match, as do hard `0.30` and the unrelated edge value; the soft treatment differs from hard `0.30` at both poses. Fresh production captures of both hard and soft variants at both poses are byte-identical to the committed probe images above. The generated alpha texture is disposed when the room closes. These opt-in views remain visual candidates, with no participant interpretation or real-device performance result.
 
 Pages commit `423de19` reported `built`. Live Chromium opened the baseline, hard `0.30`, and soft `0.30` public URLs; each doorway and travel-corner canvas was byte-identical to its saved PCF image above, made 3 renderer calls, and had no page, request, or HTTP errors.
+
+## 680 shadow-free floor-mark review · 2026-10-15
+
+From a fresh production build, capture the normal shadow-free room at 680 for the baseline `0.45` mark, hard-edge `0.30` (`?floorMarkOpacity=0.30`), and soft-edge `0.30` (`?floorMarkOpacity=0.30&floorMarkEdge=soft`). Use `?gl=1&metrics=1&sky=qwantani_morning_puresky` for all three; do not add `shadows=1`. Chromium 154's SwiftShader WebGL2 fallback uses a 1440 × 900 viewport, DPR 1, reduced motion, and an 864 × 486 canvas buffer (864 × 487 PNG). Select the doorway and settle it with a right/left look at camera `(0, 1.6, 0.5)`, yaw `0`, pitch `-0.300`; then select the head-of-room place and look left five times and down once for the travel corner at `(-1.55, 1.6, -3.65)`, yaw `2.042`, pitch `-0.340`. All six captures matched those poses, measured **2 renderer calls**, and completed without page, request, or HTTP errors.
+
+| Doorway: baseline `0.45` | Doorway: hard `0.30` | Doorway: soft `0.30` |
+| --- | --- | --- |
+| ![Shadow-free 680 doorway with the baseline pale oval](680-doorway-shadow-off-baseline.png) | ![Shadow-free doorway with lower-opacity hard oval](680-doorway-shadow-off-opacity30.png) | ![Shadow-free doorway with lower-opacity feathered oval](680-doorway-shadow-off-softedge.png) |
+| [Full-size image](680-doorway-shadow-off-baseline.png) | [Full-size image](680-doorway-shadow-off-opacity30.png) | [Full-size image](680-doorway-shadow-off-softedge.png) |
+
+| Travel corner: baseline `0.45` | Travel corner: hard `0.30` | Travel corner: soft `0.30` |
+| --- | --- | --- |
+| ![Shadow-free 680 travel corner with the baseline pale oval](680-bags-shadow-off-baseline.png) | ![Shadow-free travel corner with lower-opacity hard oval](680-bags-shadow-off-opacity30.png) | ![Shadow-free travel corner with lower-opacity feathered oval](680-bags-shadow-off-softedge.png) |
+| [Full-size image](680-bags-shadow-off-baseline.png) | [Full-size image](680-bags-shadow-off-opacity30.png) | [Full-size image](680-bags-shadow-off-softedge.png) |
+
+The three variants at each pose differ only inside the mark. In both views, `0.30` exposes more of the floor texture and lowers the oval's brightness; the soft option feathers its outer edge without visibly changing its center. The oval remains a conspicuous pale shape from both angles. Unlike the [PCF doorway](680-doorway-shadow-pcf.png) and [PCF travel corner](680-bags-shadow-pcf.png), the shadow-free floor has no large angular sunlit boundary, no sharp prop or palm shadows, and the nearby mats appear flat gray rather than finely striped. Those broad lighting and mat differences come from turning off the diagnostic shadow pass, so a cross-mode pixel difference cannot be attributed to the mark alone.
+
+| Same-mode PNG comparison | Doorway changed pixels / bounds | Travel-corner changed pixels / bounds |
+| --- | ---: | ---: |
+| Shadow-free baseline `0.45` → hard `0.30` | 12,612; `x=577..778, y=289..385` | 5,775; `x=322..464, y=245..299` |
+| Shadow-free hard `0.30` → soft `0.30` | 4,511; same bounds | 1,989; same bounds |
+| PCF baseline `0.45` → hard `0.30` | 12,612; same bounds | 5,775; same bounds |
+| PCF hard `0.30` → soft `0.30` | 4,508; same bounds | 1,984; same bounds |
+
+Fixed PNG crops converted to 8-bit grayscale give these screen-image means. The `0.30` and soft options leave the sampled floor and mat values unchanged **within the shadow-free trio**; PCF values are included only to show the effect of the shadow mode at the same pose.
+
+| Pose and crop (`x1,y1..x2,y2`) | Shadow-free baseline / hard / soft | PCF baseline / hard / soft |
+| --- | ---: | ---: |
+| Doorway oval center (`640,310..710,355`) | 166.1 / 152.8 / 152.7 | 162.7 / 147.8 / 147.7 |
+| Doorway near mat (`392,405..495,475`) | 134.0 / 134.0 / 134.0 | 118.3 / 118.3 / 118.3 |
+| Doorway floor below/right (`715,395..825,475`) | 102.2 / 102.2 / 102.2 | 99.4 / 99.4 / 99.4 |
+| Travel oval center (`350,260..400,280`) | 166.2 / 153.0 / 153.0 | 161.9 / 146.6 / 146.6 |
+| Travel near mat (`482,338..538,367`) | 130.8 / 130.8 / 130.8 | 95.5 / 95.5 / 95.5 |
+| Travel floor below (`345,310..395,330`) | 103.8 / 103.8 / 103.8 | 65.8 / 65.8 / 65.8 |
+
+The shadow-free captures show the production lighting context, but they do not tell us whether visitors interpret the oval as a cleaned patch. Keep normal visits at shadow-free baseline opacity `0.45`; the hard and soft `0.30` variants remain opt-in for review. These software-rendered screenshots do not establish participant legibility, screen-reader behavior, or real-device performance. No application or asset source changed for this review.
