@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import sharp from 'sharp';
 
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const firstViewBudgetBytes = 300_000;
@@ -28,6 +29,16 @@ async function verifyFile(path, map, label) {
   const md5 = createHash('md5').update(bytes).digest('hex');
   requireRecord(bytes.length === map.sizeBytes && md5 === map.md5,
     `${label}: expected ${map.sizeBytes} bytes / ${map.md5}, got ${bytes.length} bytes / ${md5}`);
+}
+
+async function verifyLowFile(path, map, label) {
+  const bytes = await readFile(path);
+  const sha256 = createHash('sha256').update(bytes).digest('hex');
+  requireRecord(bytes.length === map.sizeBytes && sha256 === map.sha256,
+    `${label}: expected ${map.sizeBytes} bytes / ${map.sha256}, got ${bytes.length} bytes / ${sha256}`);
+  const image = await sharp(bytes).metadata();
+  requireRecord(image.format === 'webp' && image.width === 512 && image.height === 512,
+    `${label}: expected a 512 × 512 WebP map`);
 }
 
 function tagAttribute(tag, name) {
@@ -113,8 +124,10 @@ export async function checkAssets(root = repositoryRoot) {
   const seenRoles = new Set();
   const seenSkyIds = new Set();
   let textureBytes = 0;
+  let lowTextureBytes = 0;
   let skyBytes = 0;
   let mapCount = 0;
+  let lowMapCount = 0;
 
   for (const texture of config.textures) {
     requireRecord(texture && typeof texture.id === 'string' && /^[a-z0-9_]+$/.test(texture.id)
@@ -132,6 +145,18 @@ export async function checkAssets(root = repositoryRoot) {
       `${texture.id}: unsupported texture resolution or format`);
     requireRecord(texture.maps && Object.keys(texture.maps).sort().join(',') === Object.keys(mapSuffixes).sort().join(','),
       `${texture.id}: expected Diffuse, nor_gl, and arm maps`);
+    const low = texture.low;
+    requireRecord(low?.resolution === '512'
+      && low.sourceResolution === texture.resolution
+      && low.generator?.tool === 'sharp' && low.generator.version === sharp.versions.sharp
+      && low.generator.kernel === 'lanczos3' && low.generator.fastShrinkOnLoad === false
+      && low.generator.diffuse?.format === 'webp'
+      && low.generator.diffuse.quality === 90 && low.generator.diffuse.effort === 4
+      && low.generator.diffuse.smartSubsample === true
+      && low.generator.data?.format === 'webp'
+      && low.generator.data.lossless === true && low.generator.data.effort === 4
+      && low.maps && Object.keys(low.maps).sort().join(',') === Object.keys(mapSuffixes).sort().join(','),
+    `${texture.id}: Low maps need the pinned 512-pixel Sharp recipe`);
 
     for (const [kind, suffix] of Object.entries(mapSuffixes)) {
       const map = texture.maps[kind];
@@ -146,6 +171,19 @@ export async function checkAssets(root = repositoryRoot) {
       await verifyFile(join(distDirectory, 'assets/polyhaven', path), map, `Built ${texture.id}/${kind}`);
       textureBytes += map.sizeBytes;
       mapCount++;
+
+      const lowMap = low.maps[kind];
+      const lowFilename = `${texture.id}_${suffix}_512.webp`;
+      requireRecord(lowMap && lowMap.file === lowFilename
+        && Number.isSafeInteger(lowMap.sizeBytes) && lowMap.sizeBytes > 0
+        && typeof lowMap.sha256 === 'string' && /^[a-f0-9]{64}$/.test(lowMap.sha256),
+      `${texture.id}/${kind}: invalid pinned Low file, size, or SHA-256`);
+      const lowPath = join(texture.id, lowFilename);
+      expectedPaths.add(lowPath);
+      await verifyLowFile(join(sourceDirectory, lowPath), lowMap, `Committed Low ${texture.id}/${kind}`);
+      await verifyLowFile(join(distDirectory, 'assets/polyhaven', lowPath), lowMap, `Built Low ${texture.id}/${kind}`);
+      lowTextureBytes += lowMap.sizeBytes;
+      lowMapCount++;
     }
   }
 
@@ -177,6 +215,10 @@ export async function checkAssets(root = repositoryRoot) {
   const actualPaths = new Set((await listFiles(sourceDirectory)).map(path => relative(sourceDirectory, path)));
   requireRecord(actualPaths.size === expectedPaths.size && [...actualPaths].every(path => expectedPaths.has(path)),
     'Committed Poly Haven files must match the pinned asset list exactly');
+  const builtAssetDirectory = join(distDirectory, 'assets/polyhaven');
+  const builtPaths = new Set((await listFiles(builtAssetDirectory)).map(path => relative(builtAssetDirectory, path)));
+  requireRecord(builtPaths.size === expectedPaths.size && [...builtPaths].every(path => expectedPaths.has(path)),
+    'Built Poly Haven files must match the pinned asset list exactly');
 
   const builtFiles = await listFiles(distDirectory);
   requireRecord(builtFiles.some(path => relative(distDirectory, path) === 'index.html'),
@@ -186,13 +228,14 @@ export async function checkAssets(root = repositoryRoot) {
   for (const path of builtFiles) visitBytes += (await stat(path)).size;
   requireRecord(visitBytes <= visitBudgetBytes,
     `Built visit is ${visitBytes} bytes, above the ${visitBudgetBytes}-byte budget`);
-  return { textureCount: config.textures.length, mapCount, textureBytes, ...firstView,
+  return { textureCount: config.textures.length, mapCount, textureBytes, lowMapCount, lowTextureBytes, ...firstView,
     skyCount: config.skies.length, skyBytes, visitBytes, visitBudgetBytes };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const result = await checkAssets();
   console.log(`Verified ${result.mapCount} maps across ${result.textureCount} Poly Haven textures (${result.textureBytes} bytes).`);
+  console.log(`Verified ${result.lowMapCount} derived Low maps (${result.lowTextureBytes} bytes).`);
   console.log(`Verified ${result.skyCount} Poly Haven skies (${result.skyBytes} bytes).`);
   console.log(`Built first view (HTML, CSS, arrival still): ${result.firstViewBytes} / ${result.firstViewBudgetBytes} bytes.`);
   console.log(`Built visit: ${result.visitBytes} / ${result.visitBudgetBytes} bytes.`);

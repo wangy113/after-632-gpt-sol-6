@@ -31,6 +31,35 @@
           "md5": "55fabcbfc3c70876b9101345b8e1f0ac",
           "sizeBytes": 385592
         }
+      },
+      "low": {
+        "resolution": "512",
+        "sourceResolution": "1k",
+        "generator": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "fastShrinkOnLoad": false,
+          "diffuse": { "format": "webp", "quality": 90, "effort": 4, "smartSubsample": true },
+          "data": { "format": "webp", "lossless": true, "effort": 4 }
+        },
+        "maps": {
+          "Diffuse": {
+            "file": "clay_plaster_diff_512.webp",
+            "sizeBytes": 4180,
+            "sha256": "3e2a5637320bff73a34f035c41e71112bccb8b8500f750aa4b27fbeb9849caf1"
+          },
+          "nor_gl": {
+            "file": "clay_plaster_nor_gl_512.webp",
+            "sizeBytes": 333736,
+            "sha256": "e99734bc80abb55736403d007748ca6e0010ac1575d6fa4e959bc8ccc823e11a"
+          },
+          "arm": {
+            "file": "clay_plaster_arm_512.webp",
+            "sizeBytes": 198648,
+            "sha256": "9c3ee75833189ebf591446dfd44dbf2f45a278b42f3388e0211f0617301d6ba0"
+          }
+        }
       }
     },
     {
@@ -56,6 +85,35 @@
           "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_floor_001/clay_floor_001_arm_1k.jpg",
           "md5": "f5f6784cb5bdd0a0dd05075e0313479b",
           "sizeBytes": 93379
+        }
+      },
+      "low": {
+        "resolution": "512",
+        "sourceResolution": "1k",
+        "generator": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "fastShrinkOnLoad": false,
+          "diffuse": { "format": "webp", "quality": 90, "effort": 4, "smartSubsample": true },
+          "data": { "format": "webp", "lossless": true, "effort": 4 }
+        },
+        "maps": {
+          "Diffuse": {
+            "file": "clay_floor_001_diff_512.webp",
+            "sizeBytes": 25968,
+            "sha256": "c8a5d0c12d6d803df20386175b48467465b2ce26cd783830cf32dc89057a1caa"
+          },
+          "nor_gl": {
+            "file": "clay_floor_001_nor_gl_512.webp",
+            "sizeBytes": 151004,
+            "sha256": "ecb8eb4db56f50a5e5d0352698c9a05a6441d74c4f35d2f271700d05717d2499"
+          },
+          "arm": {
+            "file": "clay_floor_001_arm_512.webp",
+            "sizeBytes": 227764,
+            "sha256": "6278208635914c22311d987d69d0e9816de33f6a44a10ced3a2b9a1317aeaf0a"
+          }
         }
       }
     }

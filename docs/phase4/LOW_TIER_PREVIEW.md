@@ -1,16 +1,18 @@
 # Explicit Low rendering preview · 2026-10-15
 
+**Earlier checkpoint:** This page records the DPR-only Low preview before smaller maps were added. Low now also loads pinned 512-pixel WebP maps; see the [current texture follow-up](LOW_512_TEXTURES.md). References below to shared 1k maps and no asset saving describe this earlier checkpoint.
+
 The first Phase 4 rendering option is an opt-in `?tier=low` preview. It caps the room renderer's device pixel ratio at **1**. A regular visit, or an unrecognized `tier` value, keeps the existing **1.5** cap. The option changes the canvas drawing-buffer size; it does not select a tier automatically or change the authored scene.
 
 ## Matched measurement
 
-Run from a checkout with dependencies installed and Chromium available:
+To reproduce this earlier DPR-only checkpoint, check out source commit `c272fb6` with dependencies installed and Chromium available, then run:
 
 ```sh
 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run measure:tier -- --capture
 ```
 
-The command builds the production site, serves it locally, and samples settled 632 doorway and 680 yard views in Chromium 154's SwiftShader WebGL2 fallback. It fixes the browser viewport at 1440 × 900 CSS pixels, emulates device pixel ratio 2, requests reduced motion, and uses the same camera pose for each tier. At each pose it turns right and back left before reading the canvas buffer and render counters. `--capture` writes the matched 632 doorway images below.
+At that commit, the command builds the production site, serves it locally, and samples settled 632 doorway and 680 yard views in Chromium 154's SwiftShader WebGL2 fallback. It fixes the browser viewport at 1440 × 900 CSS pixels, emulates device pixel ratio 2, requests reduced motion, and uses the same camera pose for each tier. At each pose it turns right and back left before reading the canvas buffer and render counters. The earlier `--capture` wrote the matched doorway images below. On the current branch, `--capture` uses distinct `texture-*-dpr2.png` filenames and selects the new Low maps.
 
 | Tier | View | Canvas CSS size | Drawing buffer | Buffer pixels | Draw calls | Triangles | Renderer calls |
 | --- | --- | --- | --- | ---: | ---: | ---: | ---: |

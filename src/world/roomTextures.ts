@@ -1,5 +1,6 @@
 import * as THREE from 'three/webgpu';
 import assetConfig from '../../assets.config.json' with { type: 'json' };
+import type { RenderTier } from '../render/tiers';
 
 interface TextureSet {
   diffuse: THREE.Texture;
@@ -16,21 +17,22 @@ export interface RoomTextures {
 type TextureRecord = typeof assetConfig.textures[number];
 type MapName = keyof TextureRecord['maps'];
 
-function textureUrl(record: TextureRecord, map: MapName): string {
-  const sourceUrl = record.maps[map].url;
-  const fileName = sourceUrl.slice(sourceUrl.lastIndexOf('/') + 1);
+function textureUrl(record: TextureRecord, map: MapName, tier: RenderTier): string {
+  const fileName = tier === 'low'
+    ? record.low.maps[map].file
+    : record.maps[map].url.slice(record.maps[map].url.lastIndexOf('/') + 1);
   return `${import.meta.env.BASE_URL}assets/polyhaven/${record.id}/${fileName}`;
 }
 
 /** Load committed, verified copies before showing the room. */
-export async function loadRoomTextures(): Promise<RoomTextures> {
+export async function loadRoomTextures(tier: RenderTier): Promise<RoomTextures> {
   const wall = assetConfig.textures.find(record => record.role === 'room-walls');
   const floor = assetConfig.textures.find(record => record.role === 'room-floor');
   if (!wall || !floor) throw new Error('Wall or floor texture record is missing');
 
   const loader = new THREE.TextureLoader();
   const requests = [wall, floor].flatMap(record =>
-    (['Diffuse', 'nor_gl', 'arm'] as const).map(map => loader.loadAsync(textureUrl(record, map))),
+    (['Diffuse', 'nor_gl', 'arm'] as const).map(map => loader.loadAsync(textureUrl(record, map, tier))),
   );
   const results = await Promise.allSettled(requests);
   const failed = results.find(result => result.status === 'rejected');

@@ -58,7 +58,7 @@ export async function createRoomView(
   const skyId = params.get('sky') ?? 'qwantani_morning_puresky';
   const skyRecord = assetConfig.skies.find(record => record.id === skyId);
   if (!skyRecord) throw new Error(`Unknown sky candidate: ${skyId}`);
-  const textures = await loadRoomTextures();
+  const textures = await loadRoomTextures(tier);
   let sky: THREE.DataTexture | undefined;
   try {
     const filename = skyRecord.file.url.slice(skyRecord.file.url.lastIndexOf('/') + 1);

@@ -4,12 +4,32 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
 import { preview } from 'vite';
 
-// Compare settled views at a high device pixel ratio. This checks drawing-buffer
-// work and render counters; it is not a frame-time or device performance test.
+// Compare settled views, drawing buffers, render counters, and asset transfers.
+// This is not a frame-time or device performance test.
 const viewport = { width: 1440, height: 900 };
 const deviceScaleFactor = 2;
 const capture = process.argv.includes('--capture');
+const captureTextures = process.argv.includes('--capture-textures');
 const captureDirectory = new URL('../docs/phase4/', import.meta.url);
+const textureIds = ['clay_plaster', 'clay_floor_001'];
+const mapKinds = ['diff', 'nor_gl', 'arm'];
+const skyPath = 'sky/qwantani_morning_puresky_1k.hdr';
+
+function assetPath(url) {
+  const pathname = new URL(url).pathname;
+  const marker = '/assets/polyhaven/';
+  const index = pathname.indexOf(marker);
+  return index < 0 ? null : pathname.slice(index + marker.length);
+}
+
+function expectedAssets(tier) {
+  const suffix = tier === 'low' ? '512.webp' : '1k.jpg';
+  return [
+    ...textureIds.flatMap(id => mapKinds.map(kind => `${id}/${id}_${kind}_${suffix}`)),
+    skyPath,
+  ].sort();
+}
+
 const server = await preview({
   logLevel: 'error',
   preview: { host: '127.0.0.1', port: 0, strictPort: true },
@@ -25,10 +45,18 @@ try {
     args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
   });
 
-  async function measure(tier) {
-    const page = await browser.newPage({ viewport, deviceScaleFactor, reducedMotion: 'reduce' });
+  async function measure(tier, dpr = deviceScaleFactor) {
+    // Fresh contexts prevent the baseline visit from caching Low's comparison.
+    const context = await browser.newContext({ viewport, deviceScaleFactor: dpr, reducedMotion: 'reduce' });
+    const page = await context.newPage();
     const pageErrors = [];
+    const requestFailures = [];
+    const assetResponses = [];
     page.on('pageerror', error => pageErrors.push(error.message));
+    page.on('requestfailed', request => requestFailures.push(`${request.url()}: ${request.failure()?.errorText}`));
+    page.on('response', response => {
+      if (assetPath(response.url())) assetResponses.push(response);
+    });
     try {
       await page.goto(`${origin}/?gl=1&metrics=1${tier === 'low' ? '&tier=low' : ''}`);
       await page.getByRole('button', { name: 'Enter the room' }).click();
@@ -89,22 +117,38 @@ try {
 
       await waitForFrame('632', 'doorway');
       const doorway = await sample('632', 'doorway');
-      if (capture) {
+      if ((dpr === 2 && capture) || (dpr === 1 && captureTextures)) {
         await mkdir(captureDirectory, { recursive: true });
-        await canvas.screenshot({ path: fileURLToPath(new URL(`tier-632-doorway-${tier}.png`, captureDirectory)) });
+        const name = dpr === 1 ? `texture-632-doorway-${tier}.png` : `texture-632-doorway-${tier}-dpr2.png`;
+        await canvas.screenshot({ path: fileURLToPath(new URL(name, captureDirectory)) });
       }
       await clickAndWait('[data-room-date="680"]', '680', 'doorway');
       await clickAndWait('[data-room-place="yard"]', '680', 'yard');
       const yard = await sample('680', 'yard');
+      if (dpr === 1 && captureTextures) {
+        await canvas.screenshot({ path: fileURLToPath(new URL(`texture-680-yard-${tier}.png`, captureDirectory)) });
+      }
+      const assets = await Promise.all(assetResponses.map(async response => {
+        assert.equal(response.status(), 200, `${tier} asset HTTP status for ${response.url()}`);
+        const { responseBodySize } = await response.request().sizes();
+        assert.ok(responseBodySize > 0, `${tier} asset transferred no body bytes: ${response.url()}`);
+        return { path: assetPath(response.url()), bytes: responseBodySize };
+      }));
+      assert.deepEqual(assets.map(asset => asset.path).sort(), expectedAssets(tier), `${tier} asset request set`);
       assert.deepEqual(pageErrors, [], `${tier} page errors`);
-      return [doorway, yard];
+      assert.deepEqual(requestFailures, [], `${tier} request failures`);
+      const textureBytes = assets.filter(asset => asset.path !== skyPath).reduce((sum, asset) => sum + asset.bytes, 0);
+      const skyBytes = assets.find(asset => asset.path === skyPath).bytes;
+      return { views: [doorway, yard], transfer: { tier, dpr, textureBytes, skyBytes, textureAndSkyBytes: textureBytes + skyBytes } };
     } finally {
-      await page.close();
+      await context.close();
     }
   }
 
-  const baseline = await measure('baseline');
-  const low = await measure('low');
+  const baselineRun = await measure('baseline');
+  const lowRun = await measure('low');
+  const baseline = baselineRun.views;
+  const low = lowRun.views;
   const comparisons = [];
   for (let index = 0; index < baseline.length; index++) {
     const normal = baseline[index];
@@ -140,7 +184,28 @@ try {
     pixels, drawCalls, triangles, renderCalls,
   })));
   console.table(comparisons);
-  if (capture) console.log('Saved matched 632 doorway canvas screenshots to docs/phase4/.');
+  assert.ok(lowRun.transfer.textureBytes < baselineRun.transfer.textureBytes, 'Low maps did not reduce texture transfer bytes');
+  assert.equal(lowRun.transfer.skyBytes, baselineRun.transfer.skyBytes, 'Tier changed the sky transfer size');
+  console.table([baselineRun.transfer, lowRun.transfer]);
+  console.log(`Low texture transfer: ${(100 * lowRun.transfer.textureBytes / baselineRun.transfer.textureBytes).toFixed(1)}% of baseline; textures plus sky: ${(100 * lowRun.transfer.textureAndSkyBytes / baselineRun.transfer.textureAndSkyBytes).toFixed(1)}% of baseline. Encoded response bodies only, excluding headers, code, and the arrival still.`);
+  if (capture) console.log('Saved DPR 2 asset-preview doorway images to docs/phase4/texture-*-dpr2.png.');
+
+  if (captureTextures) {
+    const normalTextures = await measure('baseline', 1);
+    const lowTextures = await measure('low', 1);
+    for (let index = 0; index < normalTextures.views.length; index++) {
+      const normal = normalTextures.views[index];
+      const reduced = lowTextures.views[index];
+      assert.deepEqual(
+        [normal.date, normal.place, normal.position, normal.yaw, normal.pitch, normal.cssWidth, normal.cssHeight, normal.bufferWidth, normal.bufferHeight],
+        [reduced.date, reduced.place, reduced.position, reduced.yaw, reduced.pitch, reduced.cssWidth, reduced.cssHeight, reduced.bufferWidth, reduced.bufferHeight],
+        'DPR 1 texture captures differ in pose or canvas size',
+      );
+      assert.ok(Math.abs(normal.bufferWidth / normal.cssWidth - 1) < 0.02, 'DPR 1 texture capture has unexpected buffer width');
+      assert.ok(Math.abs(normal.bufferHeight / normal.cssHeight - 1) < 0.02, 'DPR 1 texture capture has unexpected buffer height');
+    }
+    console.log('Saved matched DPR 1 texture-only doorway and yard pairs to docs/phase4/texture-*.png.');
+  }
 } finally {
   await browser?.close();
   await new Promise((resolve, reject) => server.httpServer.close(error => error ? reject(error) : resolve()));
