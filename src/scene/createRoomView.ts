@@ -77,13 +77,14 @@ export async function createRoomView(
   const params = new URLSearchParams(location.search);
   const measureGeometry = params.has('metrics');
   const diagnosticShadows = params.get('shadows') === '1';
+  const floorMarkOpacity = params.get('floorMarkOpacity') === '0.30' ? 0.30 : 0.45;
   // Three.js also has its own RAF, which otherwise resets these counters between app frames.
   if (measureGeometry) renderer.info.autoReset = false;
   if (diagnosticShadows) {
     renderer.shadowMap.enabled = true;
     if (params.get('shadowFilter') === 'vsm') renderer.shadowMap.type = THREE.VSMShadowMap;
   }
-  const world = createRoomWorld(textures, sky, diagnosticShadows);
+  const world = createRoomWorld(textures, sky, diagnosticShadows, floorMarkOpacity);
   const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 100);
   camera.position.set(...viewpoints.doorway.position);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));

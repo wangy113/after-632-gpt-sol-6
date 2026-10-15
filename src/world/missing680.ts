@@ -13,7 +13,7 @@ export interface Missing680ChangeSet {
 }
 
 /** Marks ordinary things missing in 680; no person or historical owner is depicted. */
-export function addMissing680(scene: THREE.Scene, tallerPalm: THREE.Group): Missing680ChangeSet {
+export function addMissing680(scene: THREE.Scene, tallerPalm: THREE.Group, floorMarkOpacity = 0.45): Missing680ChangeSet {
   const root = new THREE.Group();
   root.name = '680-missing';
   const cleanPatch = new THREE.Group();
@@ -28,7 +28,7 @@ export function addMissing680(scene: THREE.Scene, tallerPalm: THREE.Group): Miss
   const floorTrace = new THREE.MeshBasicMaterial({
     color: 0xe7e6de,
     transparent: true,
-    opacity: 0.45,
+    opacity: floorMarkOpacity,
     depthWrite: false,
     side: THREE.DoubleSide,
   });

@@ -6,7 +6,7 @@ import { addMissing680 } from './missing680';
 import type { RoomTextures } from './roomTextures';
 
 /** A stable imagined room and yard with all three dated details. */
-export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture, diagnosticShadows = false): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
+export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture, diagnosticShadows = false, floorMarkOpacity = 0.45): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
   const scene = new THREE.Scene();
   scene.background = sky ?? new THREE.Color(0xd9dad8);
 
@@ -152,7 +152,7 @@ export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture
   tallerPalm.scale.y = 1.19;
   const absent632 = addAbsent632(scene);
   const added661 = addAdded661(scene);
-  const missing680 = addMissing680(scene, tallerPalm);
+  const missing680 = addMissing680(scene, tallerPalm, floorMarkOpacity);
   added661.setVisible(false);
   missing680.setVisible(false);
   let disposed = false;

@@ -335,3 +335,9 @@ Repeat the temporary `0.30` floor-mark opacity probe at baseline sun `2.0` and P
 | [Full-size image](680-bags-shadow-pcf.png) | [Full-size image](680-bags-shadow-opacity30-probe.png) |
 
 The lower-opacity mark remains distinct beside the table and nearest mat, with more floor texture showing through. Its curved edge remains hard and disc-like. Pixel changes stay inside the mark (`x=322..464, y=245..299`); the table, wall traces, mat striping, and yard lighting are identical. Together with the doorway probe, this shows that `0.30` reduces the mark's brightness from two angles without changing nearby objects. It does not establish that visitors interpret the shape as a cleaned floor area. Keep production opacity at `0.45` until a visual decision considers both views and human feedback; source and live site remain at the baseline setting.
+
+## Live lower-opacity floor-mark preview · 2026-10-14
+
+The lower-opacity candidate can now be selected with [`?shadows=1&floorMarkOpacity=0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1&floorMarkOpacity=0.30); compare it with the [baseline PCF view](https://wangy113.github.io/after-632-gpt-sol-6/?shadows=1). Enter the room, select 680, and inspect the doorway and head-of-room places. The exact `floorMarkOpacity=0.30` value selects the candidate; absent or other values use baseline `0.45`. The option is independent of the shadow-filter option, and 632/661 have no 680 floor mark to change.
+
+A browser check captures the same settled 680 doorway pose for the default, an unrelated value, and `0.30`. The first two PNG buffers match byte for byte; the `0.30` image differs. The matched doorway and travel-corner probe images above show what that change looks like. The candidate retains a hard oval outline and has not been adopted for regular visits; student interpretation and real-device behavior remain open.

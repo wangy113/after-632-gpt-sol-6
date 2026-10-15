@@ -160,6 +160,36 @@ test('shadow filter URLs leave normal visits off and select PCF or VSM explicitl
   }
 });
 
+test('the lower-opacity floor mark changes the 680 image only when explicitly requested', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const captures: Buffer[] = [];
+  for (const query of ['', '&floorMarkOpacity=0.31', '&floorMarkOpacity=0.30']) {
+    await page.goto(`/?gl=1&shadows=1${query}`);
+    await page.getByRole('button', { name: 'Enter the room' }).click();
+    const canvas = page.locator('#scene-frame canvas');
+    await expect(canvas).toHaveAttribute('data-backend', 'WebGL2 fallback');
+    const beforeDate = Number(await canvas.getAttribute('data-frames'));
+    await page.locator('[data-room-date="680"]').click();
+    await expect(canvas).toHaveAttribute('data-date', '680');
+    await expect(canvas).toHaveAttribute('data-date-transition', 'false');
+    await expect.poll(async () => Number(await canvas.getAttribute('data-frames'))).toBeGreaterThan(beforeDate);
+
+    for (const direction of ['right', 'left']) {
+      const beforeLook = Number(await canvas.getAttribute('data-frames'));
+      await page.locator(`[data-look="${direction}"]`).click();
+      await expect.poll(async () => Number(await canvas.getAttribute('data-frames'))).toBeGreaterThan(beforeLook);
+    }
+    await expect(canvas).toHaveAttribute('data-place', 'doorway');
+    await expect(canvas).toHaveAttribute('data-position', '0.000,1.600,0.500');
+    await expect(canvas).toHaveAttribute('data-yaw', '0.000');
+    await expect(canvas).toHaveAttribute('data-pitch', '-0.300');
+    captures.push(await canvas.screenshot({ type: 'png' }));
+  }
+  expect(captures[0].equals(captures[1])).toBe(true);
+  expect(captures[0].equals(captures[2])).toBe(false);
+});
+
 test('the room scene fits on the first small-screen view', async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 }, deviceScaleFactor: 1,
