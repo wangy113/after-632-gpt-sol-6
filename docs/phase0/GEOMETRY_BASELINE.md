@@ -405,3 +405,9 @@ Fixed PNG crops converted to 8-bit grayscale give these screen-image means. The 
 | Travel floor below (`345,310..395,330`) | 103.8 / 103.8 / 103.8 | 65.8 / 65.8 / 65.8 |
 
 The shadow-free captures show the production lighting context, but they do not tell us whether visitors interpret the oval as a cleaned patch. Keep normal visits at shadow-free baseline opacity `0.45`; the hard and soft `0.30` variants remain opt-in for review. These software-rendered screenshots do not establish participant legibility, screen-reader behavior, or real-device performance. No application or asset source changed for this review.
+
+## Live shadow-free mark verification · 2026-10-15
+
+Open the public [baseline](https://wangy113.github.io/after-632-gpt-sol-6/), [hard `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30), and [soft `0.30`](https://wangy113.github.io/after-632-gpt-sol-6/?floorMarkOpacity=0.30&floorMarkEdge=soft) variants with `gl=1&metrics=1&sky=qwantani_morning_puresky` added for measurement. Do not enable diagnostic shadows. In Chromium 154.0.8037.57 with SwiftShader WebGL2, a 1440 × 900 viewport, DPR 1, and reduced motion, select 680 and repeat the doorway and travel-corner camera steps documented above. All six public canvas PNGs are **byte-identical** to their respective committed shadow-free images. Each has an 864 × 486 buffer and **2 renderer calls** at its matched pose; no page, request, or HTTP errors were observed. The remote `gh-pages` branch still points to built commit `423de19`.
+
+This confirms that the three variants in the [neutral participant sheet](680_FLOOR_MARK_REVIEW_SHEET.md) can be reviewed on the deployed site in the same shadow-free state as the saved images. It does not supply participant answers or a reason to adopt either opt-in treatment. No application files, built site files, or visual defaults changed in this verification.
