@@ -16,6 +16,8 @@ In the 661 or 680 room, hold Compare to see the preceding date immediately from 
 
 The pure state model defines all three dates, four viewpoints, Compare, and movement policy. The three date views, four viewpoints, and Compare are connected to the scene. A doorway still appears before the 3D room opens. [Into the present](https://wangy113.github.io/after-632-gpt-sol-6/exit.html) is a separate plain page with two dated Yemen report links, a sourced Zaydi/Twelver note, and an open question. It works without JavaScript; leaving the room unloads its renderer. The [source review](docs/phase0/REPORTING_EXIT_SOURCES.md) records what each source supports and its limits. Instructor and community review of the wording remains open.
 
+The [Phase 3 source and credit audit](docs/phase3/SOURCE_CREDIT_AUDIT.md) records the current passage, label, reporting, museum-reference, and asset checks. The 680 passage now links a second historical source for its family-casualty detail.
+
 ## Run
 
 Use Node.js 22.12 or later.
@@ -27,6 +29,7 @@ npm run dev
 
 The six pinned Poly Haven JPGs and two HDR sky candidates are committed under `public/assets/polyhaven/`. Run `npm run fetch:assets` to re-fetch missing files or verify existing copies against the sizes and MD5 hashes in `assets.config.json`; this command requires `curl`.
 Run `npm run check:assets` to build and verify the committed and built assets against their pinned records, confirm the recorded CC0 source, check the built HTML, linked CSS, and arrival still against the 300 KB first-view budget, and check the full built visit against the 15 MB budget. This check works offline and does not change the source assets. Run `npm run capture:sky` with Chromium installed to reproduce the comparison images.
+Run `npm run check:content` to build both pages and verify that their source links, report dates, credits, and no-photo treatment agree with the recorded content. This check is offline; publication still needs a live source-link review.
 
 For the production build and checks:
 

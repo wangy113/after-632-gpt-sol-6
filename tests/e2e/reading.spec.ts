@@ -14,6 +14,10 @@ test('all historical text is available without JavaScript or 3D', async ({ brows
   await expect(page.getByText(experience.shared.text, { exact: false })).toBeVisible();
   for (const moment of experience.moments) {
     await expect(page.getByText(moment.passage, { exact: true })).toBeVisible();
+    for (const id of moment.additionalSourceIds ?? []) {
+      await expect(page.locator(`#moment-${moment.id}`).getByRole('link', { name: 'Additional historical source' }))
+        .toHaveAttribute('href', `#source-${id}`);
+    }
   }
   await expect(page.getByRole('button', { name: 'Enter the room' })).toBeHidden();
 

@@ -16,7 +16,9 @@ describe('the reading page', () => {
     for (const moment of experience.moments) {
       expect(page).toContain(escapeHtml(moment.passage));
       expect(page).toContain('href="#source-' + moment.sourceId + '"');
+      for (const id of moment.additionalSourceIds ?? []) expect(page).toContain(`href="#source-${id}"`);
     }
+    expect(experience.moments.find(moment => moment.id === '680')?.additionalSourceIds).toContain('HIST-04');
   });
 
   it('rejects an overlong passage and a broken source reference', () => {
@@ -27,6 +29,28 @@ describe('the reading page', () => {
     const unsourced = structuredClone(experience);
     unsourced.moments[0].sourceId = 'missing';
     expect(() => validateContent(unsourced, sources)).toThrow('source is missing');
+
+    const missingAdditional = structuredClone(experience);
+    missingAdditional.moments[2].additionalSourceIds = ['missing'];
+    expect(() => validateContent(missingAdditional, sources)).toThrow('source is missing');
+
+    const duplicateAdditional = structuredClone(experience);
+    duplicateAdditional.moments[2].additionalSourceIds = ['HIST-01'];
+    expect(() => validateContent(duplicateAdditional, sources)).toThrow('passage sources must be distinct');
+  });
+
+  it('requires checked source records and the textbook license', () => {
+    const badDate = structuredClone(sources);
+    badDate[0].checkedOn = '2026-02-30';
+    expect(() => validateContent(experience, badDate)).toThrow('source check date must be valid');
+
+    const noLicense = structuredClone(sources);
+    delete (noLicense[0] as Partial<typeof noLicense[0]>).license;
+    expect(() => validateContent(experience, noLicense)).toThrow('Textbook needs its title and verified CC BY-SA 4.0 license');
+
+    const page = renderPage();
+    expect(page).toContain(sources[0].license!.url);
+    expect(page).toContain(sources[0].containerTitle!);
   });
 
   it('escapes authored text in the rendered HTML', () => {

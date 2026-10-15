@@ -1,6 +1,6 @@
 # Reporting exit: source review
 
-**Checked 2026-10-14 (America/Chicago; 2026-10-15 UTC).** This is the source record for the [plain-page exit](../../exit.html), not its student-facing copy. The two reports are dated snapshots of a changing conflict. Their publisher pages and dates were rechecked while building the exit preview; check them again before final release or replacing either report.
+**Checked again 2026-10-15 (America/Chicago).** This is the source record for the [plain-page exit](../../exit.html), not its student-facing copy. The two reports are dated snapshots of a changing conflict. All four links, publication dates, and the claims used in the exit were rechecked during the [Phase 3 source audit](../phase3/SOURCE_CREDIT_AUDIT.md); check them again before final release or replacing either report.
 
 ## Two reports to compare
 

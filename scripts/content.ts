@@ -13,6 +13,7 @@ export interface Moment {
   lens: string;
   passage: string;
   sourceId: string;
+  additionalSourceIds?: string[];
 }
 
 export interface Experience {
@@ -26,10 +27,12 @@ export interface Source {
   id: string;
   title: string;
   author: string;
+  containerTitle?: string;
   publisher: string;
   locator: string;
   url: string;
   checkedOn: string;
+  license?: { id: string; url: string };
 }
 
 export interface ChangeLabel {
@@ -78,6 +81,12 @@ const expectedLenses = new Map([
   ['680', 'Missing'],
 ]);
 
+function isIsoDate(value: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+    !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) &&
+    new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value;
+}
+
 export function validateContent(
   data: Experience = experience,
   records: Source[] = sources,
@@ -95,8 +104,16 @@ export function validateContent(
     throw new Error('Shared foundations need text and a source');
   }
   for (const source of records) {
-    if (!source.title.trim() || !source.author.trim() || !source.locator.trim()) throw new Error('Source details are required');
+    if (!source.title.trim() || !source.author.trim() || !source.publisher.trim() || !source.locator.trim()) {
+      throw new Error('Source details are required');
+    }
     if (new URL(source.url).protocol !== 'https:') throw new Error('Sources must use HTTPS');
+    if (!isIsoDate(source.checkedOn)) throw new Error(source.id + ': source check date must be valid');
+  }
+  const textbook = sourceById.get('HIST-01');
+  if (!textbook?.containerTitle?.trim() || textbook.license?.id !== 'CC-BY-SA-4.0' ||
+      textbook.license.url !== 'https://creativecommons.org/licenses/by-sa/4.0/') {
+    throw new Error('Textbook needs its title and verified CC BY-SA 4.0 license');
   }
 
   const objectById = new Map<string, ObjectRecord>();
@@ -131,7 +148,9 @@ export function validateContent(
     if (!moment.title.trim() || words < 1 || words > 60) {
       throw new Error(moment.id + ': passage must be 1–60 words');
     }
-    if (!sourceIds.has(moment.sourceId)) throw new Error(moment.id + ': source is missing');
+    const passageSources = [moment.sourceId, ...(moment.additionalSourceIds ?? [])];
+    if (passageSources.some(id => !sourceIds.has(id))) throw new Error(moment.id + ': source is missing');
+    if (new Set(passageSources).size !== passageSources.length) throw new Error(moment.id + ': passage sources must be distinct');
   }
 
   if (!changeSets['632'] || !changeSets['661'] || !changeSets['680']) {
@@ -203,6 +222,7 @@ export function renderPage(
   const e = escapeHtml;
   const roomDates = ['632', '661', '680'] as const;
   const sourceById = new Map(records.map(source => [source.id, source]));
+  const textbook = sourceById.get('HIST-01')!;
   const viewRecord = (date: RoomDate) => changeSets[date].labels.find(label => label.id === viewDescriptions[date].recordLabelId)!;
   const renderViewRecord = (date: RoomDate) => {
     const record = viewRecord(date);
@@ -238,6 +258,9 @@ export function renderPage(
   ).join('');
   const moments = data.moments.map(moment => {
     const date = roomDates.find(date => date === moment.id);
+    const passageSources = [moment.sourceId, ...(moment.additionalSourceIds ?? [])].map((id, index) =>
+      `<a href="#source-${e(id)}">${index === 0 ? 'Historical source' : 'Additional historical source'}</a>`
+    ).join(' · ');
     const sceneNotes = date ? `
       <details class="view-notes">
         <summary>Views from four places · ${date} CE</summary>
@@ -254,11 +277,11 @@ export function renderPage(
       <p class="lens">Look for what is ${e(moment.lens.toLowerCase())}</p>
       <h3 tabindex="-1">${e(moment.id)} CE — ${e(moment.title)}</h3>
       <p>${e(moment.passage)}</p>
-      <a href="#source-${e(moment.sourceId)}">Historical source</a>${sceneNotes}
+      ${passageSources}${sceneNotes}
     </article>`;
   }).join('');
   const sourceList = records.map(source =>
-    `<li id="source-${e(source.id)}"><a href="${e(source.url)}">${e(source.author)}, ${e(source.title)}</a>. ${e(source.publisher)}, ${e(source.locator)}.</li>`
+    `<li id="source-${e(source.id)}"><a href="${e(source.url)}">${e(source.author)}, ${e(source.title)}</a>. ${source.containerTitle ? `<cite>${e(source.containerTitle)}</cite>. ` : ''}${e(source.publisher)}, ${e(source.locator)}.</li>`
   ).join('');
 
   return `<main>
@@ -332,10 +355,11 @@ export function renderPage(
   <footer>
     <h2>Sources</h2>
     <ol>${sourceList}</ol>
-    <p>Textbook credit: <a href="#source-HIST-01">Brian Parkinson, “Islam to the Mamluks,” in <cite>World History: Cultures, States, and Societies to 1500</cite></a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. The historical passages here are condensed and rewritten summaries.</p>
+    <p>Textbook credit: <a href="#source-${e(textbook.id)}">${e(textbook.author)}, “${e(textbook.title)},” in <cite>${e(textbook.containerTitle!)}</cite></a>, <a href="${e(textbook.license!.url)}">CC BY-SA 4.0</a>. The historical passages here are condensed and rewritten summaries.</p>
+    <p>The <a href="#source-OBJ-01">British Museum coin entry</a> is a catalog reference for the interpretive replica; no museum photograph appears here.</p>
     <h2>Material and sky credits</h2>
     <p>Room wall and floor textures: <a href="https://polyhaven.com/a/clay_plaster">clay_plaster</a> and <a href="https://polyhaven.com/a/clay_floor_001">clay_floor_001</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>.</p>
-    <p>Sky preview: <a href="https://polyhaven.com/a/qwantani_morning_puresky">Qwantani morning</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>. <a href="https://polyhaven.com/a/qwantani_mid_morning_puresky">Qwantani mid-morning</a> is an alternate comparison candidate. The HDRI changes the background only; room lighting remains a prototype.</p>
+    <p>Sky preview: <a href="https://polyhaven.com/a/qwantani_morning_puresky">Qwantani morning</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>. <a href="https://polyhaven.com/a/qwantani_mid_morning_puresky">Qwantani mid-morning</a> by Poly Haven, CC0, is an alternate comparison candidate. The HDRI changes the background only; room lighting remains a prototype.</p>
     <p>This room is imagined. Its objects are interpretations, not evidence of these events.</p>
   </footer>`;
 }
