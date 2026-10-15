@@ -324,3 +324,14 @@ Temporarily change only `floorTrace.opacity` in `src/world/missing680.ts` from `
 The lower-opacity oval remains plainly visible, with more underlying floor texture showing through. It is less bright but retains its hard curved outline and still reads as a disc at this pose. The difference bounds are confined to the oval (`x=577..778, y=289..385`); every pixel outside those bounds is unchanged. Using the same grayscale crop method as the sun probes, the oval-center mean falls from **162.7 to 147.8**, while the lit floor remains **99.4**, near mat **118.3**, and shadowed left floor **65.0**. This adjusts the mark without dimming the room or mats, but does not establish whether students read it as a cleaned area.
 
 Keep the production opacity at `0.45` pending a matched travel-corner review and human interpretation. This evidence-only probe does not change the live site or establish device performance.
+
+## 680 travel-corner floor-mark opacity probe · 2026-10-14
+
+Repeat the temporary `0.30` floor-mark opacity probe at baseline sun `2.0` and PCF from the matched travel corner: select 680 and the head-of-room place, look left five times and down once. The camera is `(-1.55, 1.6, -3.65)`, yaw `2.042`, pitch `-0.340`. The fresh production capture uses Chromium 154 SwiftShader WebGL2, Qwantani morning sky, 1440 × 900 viewport, DPR 1, reduced motion, and an 864 × 486 buffer (864 × 487 PNG). It makes 3 renderer calls without script, request, or HTTP errors. Restore opacity `0.45` and rebuild; a restored capture is byte-identical to the committed PCF travel-corner baseline.
+
+| Baseline opacity `0.45` | Temporary opacity `0.30` |
+| --- | --- |
+| ![680 travel corner with baseline floor mark](680-bags-shadow-pcf.png) | ![Same travel corner with lower floor-mark opacity](680-bags-shadow-opacity30-probe.png) |
+| [Full-size image](680-bags-shadow-pcf.png) | [Full-size image](680-bags-shadow-opacity30-probe.png) |
+
+The lower-opacity mark remains distinct beside the table and nearest mat, with more floor texture showing through. Its curved edge remains hard and disc-like. Pixel changes stay inside the mark (`x=322..464, y=245..299`); the table, wall traces, mat striping, and yard lighting are identical. Together with the doorway probe, this shows that `0.30` reduces the mark's brightness from two angles without changing nearby objects. It does not establish that visitors interpret the shape as a cleaned floor area. Keep production opacity at `0.45` until a visual decision considers both views and human feedback; source and live site remain at the baseline setting.
