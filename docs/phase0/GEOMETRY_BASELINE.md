@@ -430,3 +430,21 @@ From a fresh production build, capture the normal room without `shadows=1` at 63
 The 632 view has the older loose mats and three cups, with small pale marks near the rear wall. The 661 view replaces that arrangement with a low table, aligned mats, two separate rounded travel forms, and a waterskin on the wall. At 680, the table and mat layout stay while the two bags disappear and a broad pale floor oval appears beside the table; the wall object also changes. The focused [shadow-free pegs view below](#matched-shadow-free-661680-pegs-wall--2026-10-15) shows that wall change more clearly. In these matched shadow-free PNGs, 661→680 changes 8,003 RGB pixels within `x=322..464, y=110..299`, covering the wall object and floor mark; there is no moving cast-shadow region. The older 632→661 arrangement changes a much larger part of the frame (99,647 RGB pixels, `x=0..863, y=107..485`).
 
 The earlier [PCF travel-corner sequence](#matched-661-and-680-floor-bag-review--2026-10-14) includes date-driven cast-shadow differences around the mats and yard. Without that pass, the room is brighter and the later mats appear flat gray; the date-driven props and traces remain separate at this pose. These invented forms demonstrate the implemented visual sequence, not historical belongings or a participant's interpretation. This software-rendered review does not establish real-device performance or student legibility. No app code or visual default changed.
+
+## Matched shadow-free 661/680 pegs wall · 2026-10-15
+
+From a fresh production build, capture 661 and 680 at the pegs place without `shadows=1`. Use Chromium 154 SwiftShader WebGL2 with `?gl=1&metrics=1&sky=qwantani_morning_puresky`, a 1440 × 900 viewport, DPR 1, and reduced motion. Look right and left to settle each view at camera `(2, 1.6, -1.35)`, yaw `1.571`, pitch `-0.100`. Both canvas buffers are 864 × 486 (PNG 864 × 487), measure **2 renderer calls**, and have no page, request, or HTTP errors.
+
+| 661: waterskin at the hook | 680: empty hook and wall trace |
+| --- | --- |
+| ![Shadow-free 661 pegs wall with a waterskin and three smaller bare pegs](661-pegs-shadow-off.png) | ![Shadow-free 680 pegs wall with an empty hook, pale outline, and three smaller pegs](680-pegs-shadow-off.png) |
+| [Full-size image](661-pegs-shadow-off.png) | [Full-size image](680-pegs-shadow-off.png) |
+
+| Date | Draw calls | Submitted triangles | Renderer calls |
+| --- | ---: | ---: | ---: |
+| 661 | 25 | 2,517 | 2 |
+| 680 | 24 | 2,329 | 2 |
+
+The waterskin occupies the left hook position at 661; at 680 a bare hook sits above a tall pale rectangular wall trace. The three smaller dark pegs and their pale traces remain in the same places. The shadow-free 661→680 PNG comparison changes 10,240 RGB pixels, all within `x=235..327, y=208..352` around that one wall object. The [matched PCF pair](#matched-661-pegs-filter-and-date-review--2026-10-14) changes 10,398 pixels in the same bounds. The normal shadow-free wall is brighter and its surface texture more apparent; a fixed unoccupied left-wall crop (`x=70..170, y=100..180`) has an 8-bit grayscale mean of **79.4** in both shadow-free dates versus **61.8** in both PCF dates. These are screenshot values, not physical light measurements.
+
+This close wall view clarifies the small wall change seen in the [shadow-free travel corner](#matched-shadow-free-three-date-travel-corner--2026-10-15). It does not show the floor bags, oval mark, or yard palm. The waterskin and traces are invented visual cues, not historical belongings. The captures do not establish participant interpretation or real-device performance. No app code or visual default changed.
