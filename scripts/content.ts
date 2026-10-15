@@ -332,6 +332,7 @@ export function renderPage(
   <footer>
     <h2>Sources</h2>
     <ol>${sourceList}</ol>
+    <p>Textbook credit: <a href="#source-HIST-01">Brian Parkinson, “Islam to the Mamluks,” in <cite>World History: Cultures, States, and Societies to 1500</cite></a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. The historical passages here are condensed and rewritten summaries.</p>
     <h2>Material and sky credits</h2>
     <p>Room wall and floor textures: <a href="https://polyhaven.com/a/clay_plaster">clay_plaster</a> and <a href="https://polyhaven.com/a/clay_floor_001">clay_floor_001</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>.</p>
     <p>Sky preview: <a href="https://polyhaven.com/a/qwantani_morning_puresky">Qwantani morning</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>. <a href="https://polyhaven.com/a/qwantani_mid_morning_puresky">Qwantani mid-morning</a> is an alternate comparison candidate. The HDRI changes the background only; room lighting remains a prototype.</p>
