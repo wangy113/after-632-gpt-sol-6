@@ -14,6 +14,7 @@ async function assetFixture() {
   await cp(join(projectRoot, 'public/assets/polyhaven'), committed, { recursive: true });
   await cp(join(projectRoot, 'public/assets/polyhaven'), built, { recursive: true });
   await copyFile(join(projectRoot, 'assets.config.json'), join(root, 'assets.config.json'));
+  await copyFile(join(projectRoot, 'package.json'), join(root, 'package.json'));
   await mkdir(join(root, 'dist/stills'), { recursive: true });
   await copyFile(join(projectRoot, 'public/stills/632-arrival.webp'),
     join(root, 'dist/stills/632-arrival.webp'));
@@ -24,12 +25,14 @@ async function assetFixture() {
 }
 
 describe('pinned asset gate', () => {
-  it('accepts the Low maps and rejects changed or unlisted variants', async () => {
+  it('accepts pinned Low assets and rejects changed or unlisted variants', async () => {
     const fixture = await assetFixture();
     try {
       const result = await checkAssets(fixture.root);
-      expect(result).toMatchObject({ textureCount: 2, mapCount: 6, lowMapCount: 6, skyCount: 2 });
+      expect(result).toMatchObject({ textureCount: 2, mapCount: 6, lowMapCount: 6,
+        skyCount: 2, lowSkyCount: 2 });
       expect(result.lowTextureBytes).toBeLessThan(result.textureBytes);
+      expect(result.lowSkyBytes).toBeLessThan(result.skyBytes);
       expect(result.visitBytes).toBeLessThan(result.visitBudgetBytes);
 
       const config = JSON.parse(await readFile(join(fixture.root, 'assets.config.json'), 'utf8'));
@@ -40,6 +43,13 @@ describe('pinned asset gate', () => {
       await expect(checkAssets(fixture.root)).rejects.toThrow(`Committed Low ${texture.id}/Diffuse: expected`);
 
       await writeFile(lowMap, original);
+      const sky = config.skies[0];
+      const lowSky = join(fixture.built, 'sky', sky.low.file.file);
+      const originalSky = await readFile(lowSky);
+      await writeFile(lowSky, Buffer.alloc(originalSky.length));
+      await expect(checkAssets(fixture.root)).rejects.toThrow(`Built Low sky/${sky.id}: expected`);
+
+      await writeFile(lowSky, originalSky);
       await writeFile(join(fixture.built, texture.id, 'unlisted_512.webp'), 'extra map');
       await expect(checkAssets(fixture.root)).rejects.toThrow(
         'Built Poly Haven files must match the pinned asset list exactly');

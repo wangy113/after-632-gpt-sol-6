@@ -61,7 +61,11 @@ export async function createRoomView(
   const textures = await loadRoomTextures(tier);
   let sky: THREE.DataTexture | undefined;
   try {
-    const filename = skyRecord.file.url.slice(skyRecord.file.url.lastIndexOf('/') + 1);
+    // Keep the pinned full sky available for matched Low-only resolution reviews.
+    const useLowSky = tier === 'low' && params.get('skyResolution') !== '1k';
+    const filename = useLowSky
+      ? skyRecord.low.file.file
+      : skyRecord.file.url.slice(skyRecord.file.url.lastIndexOf('/') + 1);
     sky = await new HDRLoader().loadAsync(`${import.meta.env.BASE_URL}assets/polyhaven/sky/${filename}`);
     sky.mapping = THREE.EquirectangularReflectionMapping;
   } catch (error) {

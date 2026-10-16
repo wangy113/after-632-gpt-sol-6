@@ -2,7 +2,11 @@ import { createHash } from 'node:crypto';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { isDeepStrictEqual } from 'node:util';
 import sharp from 'sharp';
+import { FloatType } from 'three';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
+import { lowSkyGenerator } from './generate-low-skies.mjs';
 
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 const firstViewBudgetBytes = 300_000;
@@ -29,6 +33,7 @@ async function verifyFile(path, map, label) {
   const md5 = createHash('md5').update(bytes).digest('hex');
   requireRecord(bytes.length === map.sizeBytes && md5 === map.md5,
     `${label}: expected ${map.sizeBytes} bytes / ${map.md5}, got ${bytes.length} bytes / ${md5}`);
+  return bytes;
 }
 
 async function verifyLowFile(path, map, label) {
@@ -39,6 +44,38 @@ async function verifyLowFile(path, map, label) {
   const image = await sharp(bytes).metadata();
   requireRecord(image.format === 'webp' && image.width === 512 && image.height === 512,
     `${label}: expected a 512 × 512 WebP map`);
+}
+
+const hdrLoader = new HDRLoader().setDataType(FloatType);
+
+function readSkyRadiance(bytes, width, height, label) {
+  const parsed = hdrLoader.parse(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
+  requireRecord(parsed.width === width && parsed.height === height
+    && parsed.data.length === width * height * 4,
+  `${label}: expected a complete ${width} × ${height} RGBE sky`);
+  let peakLuminance = 0;
+  let brightPixels = 0;
+  for (let pixel = 0; pixel < parsed.data.length; pixel += 4) {
+    const luminance = 0.2126 * parsed.data[pixel]
+      + 0.7152 * parsed.data[pixel + 1]
+      + 0.0722 * parsed.data[pixel + 2];
+    requireRecord(Number.isFinite(luminance) && luminance >= 0,
+      `${label}: invalid HDR radiance`);
+    peakLuminance = Math.max(peakLuminance, luminance);
+    if (luminance > 10) brightPixels++;
+  }
+  return { peakLuminance, brightPixels };
+}
+
+async function verifyLowSkyFile(path, pin, sourcePeakLuminance, label) {
+  const bytes = await readFile(path);
+  const sha256 = createHash('sha256').update(bytes).digest('hex');
+  requireRecord(bytes.length === pin.sizeBytes && sha256 === pin.sha256,
+    `${label}: expected ${pin.sizeBytes} bytes / ${pin.sha256}, got ${bytes.length} bytes / ${sha256}`);
+  const sky = readSkyRadiance(bytes, 512, 256, label);
+  requireRecord(sky.brightPixels > 0 && sky.peakLuminance > 10
+    && sky.peakLuminance > sourcePeakLuminance / 10,
+  `${label}: Low sky lost HDR highlights`);
 }
 
 function tagAttribute(tag, name) {
@@ -106,6 +143,9 @@ export async function checkFirstView(distDirectory) {
 /** Offline check of pinned provenance, committed textures, and the full built visit. */
 export async function checkAssets(root = repositoryRoot) {
   const config = JSON.parse(await readFile(join(root, 'assets.config.json'), 'utf8'));
+  const packageJson = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
+  requireRecord(packageJson.dependencies?.three === lowSkyGenerator.version,
+    'Low sky generation needs the pinned Three.js version');
   requireRecord(config && config.version === 1 && config.provider === 'Poly Haven'
     && Array.isArray(config.textures) && config.textures.length > 0
     && Array.isArray(config.skies) && config.skies.length > 0,
@@ -126,6 +166,7 @@ export async function checkAssets(root = repositoryRoot) {
   let textureBytes = 0;
   let lowTextureBytes = 0;
   let skyBytes = 0;
+  let lowSkyBytes = 0;
   let mapCount = 0;
   let lowMapCount = 0;
 
@@ -207,9 +248,28 @@ export async function checkAssets(root = repositoryRoot) {
     `${sky.id}: invalid pinned sky URL, size, or MD5`);
     const path = join('sky', filename);
     expectedPaths.add(path);
-    await verifyFile(join(sourceDirectory, path), file, `Committed sky/${sky.id}`);
+    const sourceBytes = await verifyFile(join(sourceDirectory, path), file, `Committed sky/${sky.id}`);
     await verifyFile(join(distDirectory, 'assets/polyhaven', path), file, `Built sky/${sky.id}`);
+    const sourcePeakLuminance = readSkyRadiance(sourceBytes, 1024, 512,
+      `Committed sky/${sky.id}`).peakLuminance;
     skyBytes += file.sizeBytes;
+
+    const low = sky.low;
+    requireRecord(low?.resolution === '512' && low.sourceResolution === sky.resolution
+      && isDeepStrictEqual(low.generator, lowSkyGenerator),
+    `${sky.id}: Low sky needs the pinned 512 × 256 HDR recipe`);
+    const lowFilename = `${sky.id}_512.hdr`;
+    requireRecord(low.file?.file === lowFilename
+      && Number.isSafeInteger(low.file.sizeBytes) && low.file.sizeBytes > 0
+      && typeof low.file.sha256 === 'string' && /^[a-f0-9]{64}$/.test(low.file.sha256),
+    `${sky.id}: invalid pinned Low sky file, size, or SHA-256`);
+    const lowPath = join('sky', lowFilename);
+    expectedPaths.add(lowPath);
+    await verifyLowSkyFile(join(sourceDirectory, lowPath), low.file, sourcePeakLuminance,
+      `Committed Low sky/${sky.id}`);
+    await verifyLowSkyFile(join(distDirectory, 'assets/polyhaven', lowPath), low.file, sourcePeakLuminance,
+      `Built Low sky/${sky.id}`);
+    lowSkyBytes += low.file.sizeBytes;
   }
 
   const actualPaths = new Set((await listFiles(sourceDirectory)).map(path => relative(sourceDirectory, path)));
@@ -229,7 +289,8 @@ export async function checkAssets(root = repositoryRoot) {
   requireRecord(visitBytes <= visitBudgetBytes,
     `Built visit is ${visitBytes} bytes, above the ${visitBudgetBytes}-byte budget`);
   return { textureCount: config.textures.length, mapCount, textureBytes, lowMapCount, lowTextureBytes, ...firstView,
-    skyCount: config.skies.length, skyBytes, visitBytes, visitBudgetBytes };
+    skyCount: config.skies.length, skyBytes, lowSkyCount: config.skies.length, lowSkyBytes,
+    visitBytes, visitBudgetBytes };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
@@ -237,6 +298,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   console.log(`Verified ${result.mapCount} maps across ${result.textureCount} Poly Haven textures (${result.textureBytes} bytes).`);
   console.log(`Verified ${result.lowMapCount} derived Low maps (${result.lowTextureBytes} bytes).`);
   console.log(`Verified ${result.skyCount} Poly Haven skies (${result.skyBytes} bytes).`);
+  console.log(`Verified ${result.lowSkyCount} derived Low skies (${result.lowSkyBytes} bytes).`);
   console.log(`Built first view (HTML, CSS, arrival still): ${result.firstViewBytes} / ${result.firstViewBudgetBytes} bytes.`);
   console.log(`Built visit: ${result.visitBytes} / ${result.visitBudgetBytes} bytes.`);
 }

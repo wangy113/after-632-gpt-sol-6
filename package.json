@@ -17,6 +17,7 @@
     "measure:tier": "npm run build && node scripts/measure-tier.mjs",
     "fetch:assets": "node scripts/fetch-polyhaven.mjs",
     "generate:low-textures": "node scripts/generate-low-textures.mjs",
+    "generate:low-skies": "node scripts/generate-low-skies.mjs",
     "capture:arrival": "node scripts/capture-arrival.mjs",
     "capture:sky": "node scripts/capture-sky-comparison.mjs",
     "capture:shadow-pair": "npm run build && node scripts/capture-shadow-pair.mjs",

@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test';
 
 const textureIds = ['clay_plaster', 'clay_floor_001'];
 const mapKinds = ['diff', 'nor_gl', 'arm'];
-const skyPath = 'sky/qwantani_morning_puresky_1k.hdr';
+const morningSky = 'qwantani_morning_puresky';
+const alternateSky = 'qwantani_mid_morning_puresky';
 
 function assetPath(url: string): string | null {
   const pathname = new URL(url).pathname;
@@ -11,20 +12,23 @@ function assetPath(url: string): string | null {
   return index < 0 ? null : pathname.slice(index + marker.length);
 }
 
-function expectedAssets(tier: 'baseline' | 'low'): string[] {
+function expectedAssets(tier: 'baseline' | 'low', skyId: string, fullSky = false): string[] {
   const suffix = tier === 'low' ? '512.webp' : '1k.jpg';
   return [
     ...textureIds.flatMap(id => mapKinds.map(kind => `${id}/${id}_${kind}_${suffix}`)),
-    skyPath,
+    `sky/${skyId}_${tier === 'low' && !fullSky ? '512' : '1k'}.hdr`,
   ].sort();
 }
 
-test('the explicit Low preview caps a DPR 2 canvas at 1 while other URLs retain 1.5', async ({ browser }) => {
+test('the explicit Low preview selects smaller maps and sky at DPR 1', async ({ browser }) => {
   const samples = [];
-  for (const [query, tier, pixelRatio] of [
-    ['', 'baseline', 1.5],
-    ['&tier=low', 'low', 1],
-    ['&tier=unknown', 'baseline', 1.5],
+  for (const [query, tier, pixelRatio, skyId, fullSky] of [
+    ['', 'baseline', 1.5, morningSky, false],
+    ['&tier=low', 'low', 1, morningSky, false],
+    ['&tier=low&skyResolution=1k', 'low', 1, morningSky, true],
+    ['&tier=unknown', 'baseline', 1.5, morningSky, false],
+    [`&sky=${alternateSky}`, 'baseline', 1.5, alternateSky, false],
+    [`&tier=low&sky=${alternateSky}`, 'low', 1, alternateSky, false],
   ] as const) {
     // Each visit gets a fresh cache so the request list describes an actual load.
     const context = await browser.newContext({
@@ -48,6 +52,7 @@ test('the explicit Low preview caps a DPR 2 canvas at 1 while other URLs retain 
       const canvas = page.locator('#scene-frame canvas');
       await expect(canvas).toHaveAttribute('data-backend', 'WebGL2 fallback');
       await expect(canvas).toHaveAttribute('data-tier', tier);
+      await expect(canvas).toHaveAttribute('data-sky', skyId);
       await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
       const sample = await canvas.evaluate(element => {
         const rect = element.getBoundingClientRect();
@@ -69,7 +74,7 @@ test('the explicit Low preview caps a DPR 2 canvas at 1 while other URLs retain 
       expect(sample.triangles).toBeGreaterThan(0);
       expect(sample.renderCalls).toBe(2);
       samples.push(sample);
-      expect(responses.map(response => response.path).sort()).toEqual(expectedAssets(tier));
+      expect(responses.map(response => response.path).sort()).toEqual(expectedAssets(tier, skyId, fullSky));
       expect(responses.every(response => response.status === 200)).toBe(true);
       expect(requestFailures).toEqual([]);
       expect(pageErrors).toEqual([]);
@@ -78,8 +83,8 @@ test('the explicit Low preview caps a DPR 2 canvas at 1 while other URLs retain 
     }
   }
   expect(samples[0].width * samples[0].height).toBeGreaterThan(samples[1].width * samples[1].height * 2.2);
-  expect(samples[2].width).toBe(samples[0].width);
-  expect(samples[2].height).toBe(samples[0].height);
+  expect(samples[3].width).toBe(samples[0].width);
+  expect(samples[3].height).toBe(samples[0].height);
 });
 
 test('the Low preview keeps date, movement, keyboard look, idle, and room cleanup working', async ({ browser }) => {

@@ -13,7 +13,11 @@ const captureTextures = process.argv.includes('--capture-textures');
 const captureDirectory = new URL('../docs/phase4/', import.meta.url);
 const textureIds = ['clay_plaster', 'clay_floor_001'];
 const mapKinds = ['diff', 'nor_gl', 'arm'];
-const skyPath = 'sky/qwantani_morning_puresky_1k.hdr';
+const skyId = 'qwantani_morning_puresky';
+
+function skyPath(tier, fullSky = false) {
+  return `sky/${skyId}_${tier === 'low' && !fullSky ? '512' : '1k'}.hdr`;
+}
 
 function assetPath(url) {
   const pathname = new URL(url).pathname;
@@ -22,11 +26,11 @@ function assetPath(url) {
   return index < 0 ? null : pathname.slice(index + marker.length);
 }
 
-function expectedAssets(tier) {
+function expectedAssets(tier, fullSky = false) {
   const suffix = tier === 'low' ? '512.webp' : '1k.jpg';
   return [
     ...textureIds.flatMap(id => mapKinds.map(kind => `${id}/${id}_${kind}_${suffix}`)),
-    skyPath,
+    skyPath(tier, fullSky),
   ].sort();
 }
 
@@ -45,7 +49,7 @@ try {
     args: ['--no-sandbox', '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
   });
 
-  async function measure(tier, dpr = deviceScaleFactor) {
+  async function measure(tier, dpr = deviceScaleFactor, fullSky = false) {
     // Fresh contexts prevent the baseline visit from caching Low's comparison.
     const context = await browser.newContext({ viewport, deviceScaleFactor: dpr, reducedMotion: 'reduce' });
     const page = await context.newPage();
@@ -58,7 +62,7 @@ try {
       if (assetPath(response.url())) assetResponses.push(response);
     });
     try {
-      await page.goto(`${origin}/?gl=1&metrics=1${tier === 'low' ? '&tier=low' : ''}`);
+      await page.goto(`${origin}/?gl=1&metrics=1${tier === 'low' ? '&tier=low' : ''}${fullSky ? '&skyResolution=1k' : ''}`);
       await page.getByRole('button', { name: 'Enter the room' }).click();
       const canvas = page.locator('#scene-frame canvas');
 
@@ -134,11 +138,11 @@ try {
         assert.ok(responseBodySize > 0, `${tier} asset transferred no body bytes: ${response.url()}`);
         return { path: assetPath(response.url()), bytes: responseBodySize };
       }));
-      assert.deepEqual(assets.map(asset => asset.path).sort(), expectedAssets(tier), `${tier} asset request set`);
+      assert.deepEqual(assets.map(asset => asset.path).sort(), expectedAssets(tier, fullSky), `${tier} asset request set`);
       assert.deepEqual(pageErrors, [], `${tier} page errors`);
       assert.deepEqual(requestFailures, [], `${tier} request failures`);
-      const textureBytes = assets.filter(asset => asset.path !== skyPath).reduce((sum, asset) => sum + asset.bytes, 0);
-      const skyBytes = assets.find(asset => asset.path === skyPath).bytes;
+      const textureBytes = assets.filter(asset => asset.path !== skyPath(tier, fullSky)).reduce((sum, asset) => sum + asset.bytes, 0);
+      const skyBytes = assets.find(asset => asset.path === skyPath(tier, fullSky)).bytes;
       return { views: [doorway, yard], transfer: { tier, dpr, textureBytes, skyBytes, textureAndSkyBytes: textureBytes + skyBytes } };
     } finally {
       await context.close();
@@ -185,14 +189,15 @@ try {
   })));
   console.table(comparisons);
   assert.ok(lowRun.transfer.textureBytes < baselineRun.transfer.textureBytes, 'Low maps did not reduce texture transfer bytes');
-  assert.equal(lowRun.transfer.skyBytes, baselineRun.transfer.skyBytes, 'Tier changed the sky transfer size');
+  assert.ok(lowRun.transfer.skyBytes < baselineRun.transfer.skyBytes, 'Low sky did not reduce transfer bytes');
   console.table([baselineRun.transfer, lowRun.transfer]);
-  console.log(`Low texture transfer: ${(100 * lowRun.transfer.textureBytes / baselineRun.transfer.textureBytes).toFixed(1)}% of baseline; textures plus sky: ${(100 * lowRun.transfer.textureAndSkyBytes / baselineRun.transfer.textureAndSkyBytes).toFixed(1)}% of baseline. Encoded response bodies only, excluding headers, code, and the arrival still.`);
+  console.log(`Low map transfer: ${(100 * lowRun.transfer.textureBytes / baselineRun.transfer.textureBytes).toFixed(1)}% of baseline; Low sky transfer: ${(100 * lowRun.transfer.skyBytes / baselineRun.transfer.skyBytes).toFixed(1)}% of baseline; maps plus sky: ${(100 * lowRun.transfer.textureAndSkyBytes / baselineRun.transfer.textureAndSkyBytes).toFixed(1)}% of baseline. Encoded response bodies only, excluding headers, code, and the arrival still.`);
   if (capture) console.log('Saved DPR 2 asset-preview doorway images to docs/phase4/texture-*-dpr2.png.');
 
   if (captureTextures) {
     const normalTextures = await measure('baseline', 1);
-    const lowTextures = await measure('low', 1);
+    // Match the original 1k sky so this optional capture still isolates map resolution.
+    const lowTextures = await measure('low', 1, true);
     for (let index = 0; index < normalTextures.views.length; index++) {
       const normal = normalTextures.views[index];
       const reduced = lowTextures.views[index];

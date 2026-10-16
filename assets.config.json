@@ -130,6 +130,23 @@
         "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/qwantani_morning_puresky_1k.hdr",
         "md5": "0458a3c3dcb2c4b6e19d469a16611335",
         "sizeBytes": 1118343
+      },
+      "low": {
+        "resolution": "512",
+        "sourceResolution": "1k",
+        "generator": {
+          "tool": "three/HDRLoader",
+          "version": "0.186.1",
+          "sourceType": "Float32",
+          "downsample": "linear-rgb-2x2-box",
+          "encoding": "radiance-rgbe-scanline-rle",
+          "quantization": "ceil-log2-max-round-nearest-255"
+        },
+        "file": {
+          "file": "qwantani_morning_puresky_512.hdr",
+          "sizeBytes": 306120,
+          "sha256": "040045cb36ba77ba8562a583a20c4c855775825146df78e9acf837d1a2794014"
+        }
       }
     },
     {
@@ -143,6 +160,23 @@
         "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/qwantani_mid_morning_puresky_1k.hdr",
         "md5": "798068e149c607fa1639cbbcd5f6b66a",
         "sizeBytes": 1121866
+      },
+      "low": {
+        "resolution": "512",
+        "sourceResolution": "1k",
+        "generator": {
+          "tool": "three/HDRLoader",
+          "version": "0.186.1",
+          "sourceType": "Float32",
+          "downsample": "linear-rgb-2x2-box",
+          "encoding": "radiance-rgbe-scanline-rle",
+          "quantization": "ceil-log2-max-round-nearest-255"
+        },
+        "file": {
+          "file": "qwantani_mid_morning_puresky_512.hdr",
+          "sizeBytes": 308787,
+          "sha256": "b780326887f1d676ec1700c6be626da8db438e54e9bf7fbf5ca964f84fcd88cb"
+        }
       }
     }
   ]

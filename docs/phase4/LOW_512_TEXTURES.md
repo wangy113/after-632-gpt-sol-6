@@ -1,6 +1,8 @@
 # Low 512-pixel texture preview · 2026-10-15
 
-Exact `?tier=low` now uses six 512-pixel WebP wall and floor maps as well as the [earlier DPR 1 cap](LOW_TIER_PREVIEW.md). The normal URL keeps its six pinned 1k JPG maps and DPR 1.5 cap. Both use the selected 1k sky HDR, the same room geometry, and the same antialiasing setting. Tier selection is still manual.
+At this checkpoint, exact `?tier=low` used six 512-pixel WebP wall and floor maps as well as the [earlier DPR 1 cap](LOW_TIER_PREVIEW.md). The normal URL kept its six pinned 1k JPG maps and DPR 1.5 cap. Both used the selected 1k sky HDR, the same room geometry, and the same antialiasing setting. Tier selection was manual.
+
+This page records the texture-only checkpoint at source commit `2ca4fb0`. The later [Low sky checkpoint](LOW_512_SKIES.md) changes the current Low sky to 512 × 256. On the current branch, `measure:tier` reports the newer sky transfer; `--capture-textures` still selects the 1k sky for the DPR 1 texture-only images below.
 
 ## Source and reproducibility
 
@@ -68,4 +70,4 @@ Low materials look a little smoother in these software-rendered frames. No missi
 
 ## Remaining Phase 4 work
 
-The 1k sky remains unchanged. There is no irradiance bake, GTAO, or FXAA in this prototype to reduce or disable. Automatic tier selection, any antialiasing change, and a possible smaller sky or bake require separate evidence. The local Chromium measurements establish requested asset sets, bytes, drawing buffers, and submitted work; they do not establish real-device frame rate, memory use, or readability. Test the planned laptop, Chromebook, and phone before choosing a default tier.
+The 1k sky remained unchanged at this checkpoint; the later [Low sky checkpoint](LOW_512_SKIES.md) evaluates a smaller variant. There is no irradiance bake, GTAO, or FXAA in this prototype to reduce or disable. Automatic tier selection, any antialiasing change, and a possible bake require separate evidence. The local Chromium measurements establish requested asset sets, bytes, drawing buffers, and submitted work; they do not establish real-device frame rate, memory use, or readability. Test the planned laptop, Chromebook, and phone before choosing a default tier.
