@@ -356,6 +356,55 @@ test('renderer failure returns the visitor to readable history', async ({ page }
   }
 });
 
+test('retry after WebGL context loss restores the selected room with one new canvas', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const pageErrors: string[] = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+  await page.goto('/?gl=1');
+  await page.getByRole('button', { name: 'Enter the room' }).click();
+
+  const room = page.locator('#room-view');
+  const canvas = page.locator('#scene-frame canvas');
+  await expect(canvas).toHaveAttribute('data-backend', 'WebGL2 fallback');
+  await page.locator('[data-room-date="661"]').click();
+  await page.locator('[data-room-place="pegs"]').click();
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-place', 'pegs');
+  await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
+  const oldCanvas = await canvas.elementHandle();
+  expect(oldCanvas).not.toBeNull();
+
+  await page.locator('#scene-frame').focus();
+  const lostWithExtension = await canvas.evaluate((element: HTMLCanvasElement) => {
+    const gl = element.getContext('webgl2');
+    const extension = gl?.getExtension('WEBGL_lose_context');
+    if (!extension) return false;
+    extension.loseContext();
+    return true;
+  });
+  expect(lostWithExtension).toBe(true);
+  await expect(room).toBeHidden();
+  await expect(page.locator('#scene-status')).toContainText('room view is unavailable');
+  await expect(page.locator('#reading-title')).toBeFocused();
+  await expect(canvas).toHaveCount(0);
+  expect(await oldCanvas!.evaluate(element => element.isConnected)).toBe(false);
+  for (const moment of experience.moments) {
+    await expect(page.getByText(moment.passage, { exact: true })).toBeVisible();
+  }
+
+  const retry = page.getByRole('button', { name: 'Try the room again' });
+  await expect(retry).toBeEnabled();
+  await retry.click();
+  await expect(room).toBeVisible();
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-place', 'pegs');
+  await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
+  await expect(room.locator('#room-title')).toBeFocused();
+  expect(await oldCanvas!.evaluate(element => element.isConnected)).toBe(false);
+  expect(pageErrors).toEqual([]);
+});
+
 test('the 632 room explains three imagined traces and links to the passage', async ({ page }) => {
   await page.goto('/?gl=1');
   await page.getByRole('button', { name: 'Enter the room' }).click();

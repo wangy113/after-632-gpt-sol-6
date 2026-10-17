@@ -17,3 +17,13 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run e2e -- tests/e2e/k
 ```
 
 Both keyboard paths pass. This Chromium check covers the sampled flow, not every tab stop or browser and assistive technology combination. A manual screen-reader pass, real-phone check, and review of all focus announcements remain open.
+
+## Context-loss focus and retry follow-up · 2026-10-17
+
+The focused `room.spec.ts` recovery check uses Chromium's `WEBGL_lose_context` extension after selecting 661 CE at the pegs. The room closes, the old canvas detaches, and focus moves to the reading heading while all three passages remain available. Activating **Try the room again** opens one new rendered canvas at the same date and place and focuses the room title. Three initial local runs and a fourth after integrating the recorder and reed-roof changes passed without page errors. This checks the WebGL2 software fallback and app recovery path; it does not establish behavior on a physical device, WebGPU hardware, or a screen reader. The test activates retry by click, so it does not replace the keyboard path above.
+
+Run after `npm run build`:
+
+```sh
+PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run e2e -- tests/e2e/room.spec.ts -g 'retry after WebGL context loss'
+```
