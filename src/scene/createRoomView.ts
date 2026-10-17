@@ -8,6 +8,7 @@ import type { PlaceId } from '../state/places';
 import { viewDirection, type ViewDirection } from '../state/viewDirections';
 import { createRoomWorld } from '../world/room';
 import { loadRoomTextures } from '../world/roomTextures';
+import skyAnalysis from '../render/skyAnalysis.json' with { type: 'json' };
 
 export interface RoomView {
   look(direction: 'left' | 'right' | 'up' | 'down' | 'reset'): void;
@@ -67,6 +68,11 @@ export async function createRoomView(
   const skyId = params.get('sky') ?? 'qwantani_morning_puresky';
   const skyRecord = assetConfig.skies.find(record => record.id === skyId);
   if (!skyRecord) throw new Error(`Unknown sky candidate: ${skyId}`);
+  const light = params.get('light') === 'sky' ? 'sky' : 'fixed';
+  const skySun = light === 'sky'
+    ? skyAnalysis.skies[skyRecord.id as keyof typeof skyAnalysis.skies]
+    : undefined;
+  if (light === 'sky' && !skySun) throw new Error(`No analyzed sun for sky: ${skyRecord.id}`);
   const textures = await loadRoomTextures(tier, roof === 'reed');
   let sky: THREE.DataTexture | undefined;
   try {
@@ -100,7 +106,7 @@ export async function createRoomView(
     renderer.shadowMap.enabled = true;
     if (params.get('shadowFilter') === 'vsm') renderer.shadowMap.type = THREE.VSMShadowMap;
   }
-  const world = createRoomWorld(textures, sky, diagnosticShadows, floorMarkOpacity, softFloorMarkEdge);
+  const world = createRoomWorld(textures, sky, diagnosticShadows, floorMarkOpacity, softFloorMarkEdge, skySun);
   const camera = new THREE.PerspectiveCamera(65, 1, 0.1, 100);
   camera.position.set(...viewpoints.doorway.position);
   renderer.setPixelRatio(Math.min(devicePixelRatio, renderTiers[tier].maxPixelRatio));
@@ -140,6 +146,7 @@ export async function createRoomView(
   canvas.dataset.aa = aa;
   canvas.dataset.roof = roof;
   canvas.dataset.sky = skyRecord.id;
+  canvas.dataset.light = light;
   canvas.dataset.date = '632';
   canvas.dataset.place = 'doorway';
   canvas.dataset.moving = 'false';

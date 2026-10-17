@@ -5,8 +5,13 @@ import { addAdded661 } from './added661';
 import { addMissing680 } from './missing680';
 import type { RoomTextures } from './roomTextures';
 
+export interface SkySun {
+  direction: readonly number[];
+  color: readonly number[];
+}
+
 /** A stable imagined room and yard with all three dated details. */
-export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture, diagnosticShadows = false, floorMarkOpacity = 0.45, softFloorMarkEdge = false): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
+export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture, diagnosticShadows = false, floorMarkOpacity = 0.45, softFloorMarkEdge = false, skySun?: SkySun): { scene: THREE.Scene; setDate(date: RoomDate): void; dispose(): void } {
   const scene = new THREE.Scene();
   scene.background = sky ?? new THREE.Color(0xd9dad8);
 
@@ -156,8 +161,19 @@ export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture
 
   const ambient = new THREE.AmbientLight(0xffffff, 1.2);
   const sun = new THREE.DirectionalLight(0xffffff, 2.0);
-  sun.position.set(-3, 8, 5);
   sun.target.position.set(0, 0, -2);
+  if (skySun) {
+    // This opt-in preview holds the prototype intensity and ambient light fixed.
+    // Only the sun's measured HDR direction and normalized color change.
+    sun.position.set(
+      sun.target.position.x + skySun.direction[0] * 10,
+      sun.target.position.y + skySun.direction[1] * 10,
+      sun.target.position.z + skySun.direction[2] * 10,
+    );
+    sun.color.setRGB(skySun.color[0], skySun.color[1], skySun.color[2]);
+  } else {
+    sun.position.set(-3, 8, 5);
+  }
   if (diagnosticShadows) {
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);

@@ -227,3 +227,9 @@
 
 - Pin the plan-listed Poly Haven `reed_roof_04` source maps and reproducible 512-pixel Low derivatives, with a CC0 credit. Exact `?roof=reed` adds a tiled underside sheet below the existing roof; ordinary visits keep their plain roof and seven room assets. This is a material candidate, not evidence for historical construction.
 - The [matched three-date review](phase4/REED_ROOF_PREVIEW.md) shows the roof change at the doorway, head, and pegs in Normal and Low. The settled candidate adds one draw and two triangles without another renderer call; it requests three extra maps. Repeated dark rows and flat gray beams remain visible. Keep the plain roof by default pending visual, instructor, and physical-device review.
+
+## Opt-in sky-aligned sun · 2026-10-17
+
+- Analyze both pinned 1k HDR candidates offline and verify the generated direction and normalized color against their source pins during the asset gate. Exact `?light=sky` uses the chosen sky's measured sun direction and chromaticity with the existing prototype directional intensity and ambient light; ordinary visits keep the fixed white light. Diagnostic `?shadows=1` remains separate.
+- The [matched Normal/Low comparison](phase4/SKY_LIGHT_PREVIEW.md) keeps each sky, pose, and seven room asset requests fixed. With shadows on, the sky-aligned sun shifts a broad lit area across the 632 front mats and moves most of the 680 yard palm shadow out of the central view. The 632 cups and footprints and the 680 pale floor mark stay visible, but hard lighting boundaries interrupt the room composition.
+- Keep fixed lighting by default. This analysis does not convert HDR radiance to a physical sun intensity, create a clamped environment map or irradiance bake, resolve the wall-corner shadow artifact, or establish a real-device performance or historical-lighting result. Review lighting balance and dated-trace legibility with people before adoption.
