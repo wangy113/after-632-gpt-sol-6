@@ -222,3 +222,8 @@
 
 - Load the existing tier probe only for exact `?probe=1`. With `metrics=1`, its room panel records the settled Enter, 661 CE, and Head of room actions, an idle second, the requested room assets, and the selected tier and antialiasing path. The tester can copy or download a versioned JSON report locally; ordinary visits load neither the panel nor its script.
 - Keep cold-transfer visits and displayed-frame traces on ordinary URLs without `metrics` or `probe`. The recorder times completed JavaScript render callbacks and adds instrumentation overhead; it cannot establish GPU duration, displayed fps, or a tier/FXAA default. The [real-device sheet](phase4/REAL_DEVICE_TIER_TEST.md) separates these methods and leaves all physical results blank.
+
+## Opt-in reed roof underside · 2026-10-17
+
+- Pin the plan-listed Poly Haven `reed_roof_04` source maps and reproducible 512-pixel Low derivatives, with a CC0 credit. Exact `?roof=reed` adds a tiled underside sheet below the existing roof; ordinary visits keep their plain roof and seven room assets. This is a material candidate, not evidence for historical construction.
+- The [matched three-date review](phase4/REED_ROOF_PREVIEW.md) shows the roof change at the doorway, head, and pegs in Normal and Low. The settled candidate adds one draw and two triangles without another renderer call; it requests three extra maps. Repeated dark rows and flat gray beams remain visible. Keep the plain roof by default pending visual, instructor, and physical-device review.

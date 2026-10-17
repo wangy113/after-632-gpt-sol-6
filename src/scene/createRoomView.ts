@@ -55,6 +55,7 @@ export async function createRoomView(
 ): Promise<RoomView> {
   const params = new URLSearchParams(location.search);
   const tier = renderTierFromSearch(location.search);
+  const roof = params.get('roof') === 'reed' ? 'reed' : 'plain';
   // Keep antialiasing comparisons opt-in until real-device image and timing reviews.
   const requestedAA = params.get('aa');
   const aa = tier === 'low' && (requestedAA === 'fxaa' || requestedAA === 'off')
@@ -66,7 +67,7 @@ export async function createRoomView(
   const skyId = params.get('sky') ?? 'qwantani_morning_puresky';
   const skyRecord = assetConfig.skies.find(record => record.id === skyId);
   if (!skyRecord) throw new Error(`Unknown sky candidate: ${skyId}`);
-  const textures = await loadRoomTextures(tier);
+  const textures = await loadRoomTextures(tier, roof === 'reed');
   let sky: THREE.DataTexture | undefined;
   try {
     // Keep the pinned full sky available for matched Low-only resolution reviews.
@@ -137,6 +138,7 @@ export async function createRoomView(
   canvas.dataset.backend = backend;
   canvas.dataset.tier = tier;
   canvas.dataset.aa = aa;
+  canvas.dataset.roof = roof;
   canvas.dataset.sky = skyRecord.id;
   canvas.dataset.date = '632';
   canvas.dataset.place = 'doorway';

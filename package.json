@@ -16,6 +16,7 @@
     "measure:geometry": "npm run build && node scripts/measure-geometry.mjs",
     "measure:tier": "npm run build && node scripts/measure-tier.mjs",
     "measure:low-aa": "npm run build && node scripts/measure-low-aa.mjs",
+    "measure:reed-roof": "npm run build && node scripts/measure-reed-roof.mjs",
     "fetch:assets": "node scripts/fetch-polyhaven.mjs",
     "generate:low-textures": "node scripts/generate-low-textures.mjs",
     "generate:low-skies": "node scripts/generate-low-skies.mjs",

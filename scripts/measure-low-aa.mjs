@@ -12,6 +12,9 @@ const viewport = { width: 1440, height: 900 };
 const outputDirectory = new URL('../docs/phase4/', import.meta.url);
 const sky = assetConfig.skies.find(record => record.id === 'qwantani_morning_puresky');
 assert.ok(sky, 'Pinned sky is missing from assets.config.json');
+const roomTextures = assetConfig.textures.filter(record =>
+  record.role === 'room-walls' || record.role === 'room-floor');
+assert.equal(roomTextures.length, 2, 'Expected the wall and floor records used by ordinary visits');
 const variants = [
   { name: 'default', aa: 'msaa', query: '' },
   { name: 'off', aa: 'off', query: '&aa=off' },
@@ -23,7 +26,7 @@ const poses = [
   { name: '680-yard', date: '680', place: 'yard' },
 ];
 const expectedAssets = [
-  ...assetConfig.textures.flatMap(texture => ['Diffuse', 'nor_gl', 'arm'].map(map =>
+  ...roomTextures.flatMap(texture => ['Diffuse', 'nor_gl', 'arm'].map(map =>
     `${texture.id}/${texture.low.maps[map].file}`)),
   `sky/${sky.low.file.file}`,
 ].sort();

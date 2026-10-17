@@ -1,7 +1,7 @@
 {
   "version": 1,
   "provider": "Poly Haven",
-  "verifiedOn": "2026-10-13",
+  "verifiedOn": "2026-10-17",
   "license": {
     "id": "CC0-1.0",
     "url": "https://polyhaven.com/license"
@@ -113,6 +113,61 @@
             "file": "clay_floor_001_arm_512.webp",
             "sizeBytes": 227764,
             "sha256": "6278208635914c22311d987d69d0e9816de33f6a44a10ced3a2b9a1317aeaf0a"
+          }
+        }
+      }
+    },
+    {
+      "role": "roof-underside",
+      "status": "candidate",
+      "id": "reed_roof_04",
+      "sourceUrl": "https://polyhaven.com/a/reed_roof_04",
+      "filesApiUrl": "https://api.polyhaven.com/files/reed_roof_04",
+      "resolution": "1k",
+      "format": "jpg",
+      "maps": {
+        "Diffuse": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/reed_roof_04/reed_roof_04_diff_1k.jpg",
+          "md5": "4ba30d52babf87bacc4aaff24aced8c9",
+          "sizeBytes": 727872
+        },
+        "nor_gl": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/reed_roof_04/reed_roof_04_nor_gl_1k.jpg",
+          "md5": "a6a758ca10874374793d207ef13d96af",
+          "sizeBytes": 1234920
+        },
+        "arm": {
+          "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/reed_roof_04/reed_roof_04_arm_1k.jpg",
+          "md5": "6d40f2b14191bcfc31edc01af3b25dad",
+          "sizeBytes": 283531
+        }
+      },
+      "low": {
+        "resolution": "512",
+        "sourceResolution": "1k",
+        "generator": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "fastShrinkOnLoad": false,
+          "diffuse": { "format": "webp", "quality": 90, "effort": 4, "smartSubsample": true },
+          "data": { "format": "webp", "lossless": true, "effort": 4 }
+        },
+        "maps": {
+          "Diffuse": {
+            "file": "reed_roof_04_diff_512.webp",
+            "sizeBytes": 134888,
+            "sha256": "39d6419cadc817459405c207011181809f8d3377f08765131b00ce362a865844"
+          },
+          "nor_gl": {
+            "file": "reed_roof_04_nor_gl_512.webp",
+            "sizeBytes": 632270,
+            "sha256": "bfac13289d5be9333ea72680603e087654cee25aae8dcdb4192dece03f275a18"
+          },
+          "arm": {
+            "file": "reed_roof_04_arm_512.webp",
+            "sizeBytes": 491232,
+            "sha256": "5d03ee956826e3525e2f3dcbb192bf7240e92bad1e0f01f28994b178eed6050d"
           }
         }
       }

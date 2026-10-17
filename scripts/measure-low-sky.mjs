@@ -12,6 +12,9 @@ const viewport = { width: 1440, height: 900 };
 const outputDirectory = new URL('../docs/phase4/', import.meta.url);
 const skyDirectory = new URL('../public/assets/polyhaven/sky/', import.meta.url);
 const mapNames = ['Diffuse', 'nor_gl', 'arm'];
+const roomTextures = assetConfig.textures.filter(record =>
+  record.role === 'room-walls' || record.role === 'room-floor');
+assert.equal(roomTextures.length, 2, 'Expected the wall and floor records used by ordinary visits');
 
 function assetPath(url) {
   const pathname = new URL(url).pathname;
@@ -28,7 +31,7 @@ function skyFile(sky, resolution) {
 
 function expectedAssets(sky, resolution) {
   return [
-    ...assetConfig.textures.flatMap(texture => mapNames.map(map =>
+    ...roomTextures.flatMap(texture => mapNames.map(map =>
       `${texture.id}/${texture.low.maps[map].file}`)),
     `sky/${skyFile(sky, resolution)}`,
   ].sort();

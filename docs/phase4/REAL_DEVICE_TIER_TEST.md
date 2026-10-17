@@ -94,3 +94,14 @@ Copy this blank block for each device. Keep raw recorder JSON and traces with it
 Preferred option and reason, or **unverified**: __________
 
 The [local Low AA images](LOW_FXAA_PREVIEW.md) are references for framing, not physical-device evidence. Keep the current Low default until a device comparison supports a change.
+
+## Optional reed roof material add-on
+
+Use this only if considering the [reed underside candidate](REED_ROOF_PREVIEW.md) for ordinary visits. Compare each tier's plain roof with its exact `roof=reed` URL on the same physical device at the same orientation, power setting, and cache condition. The material adds three maps, so use a cold Network log for transfer, then separate warmed uninstrumented Performance/Frames traces for motion. If collecting JavaScript timing as well, use the corresponding `metrics=1&probe=1&roof=reed` URL and keep that report separate from the displayed-frame trace.
+
+| Tier | Plain URL | Reed URL |
+| --- | --- | --- |
+| Normal | `https://wangy113.github.io/after-632-gpt-sol-6/` | `https://wangy113.github.io/after-632-gpt-sol-6/?roof=reed` |
+| Low | `https://wangy113.github.io/after-632-gpt-sol-6/?tier=low` | `https://wangy113.github.io/after-632-gpt-sol-6/?tier=low&roof=reed` |
+
+At 632 doorway, 661 head, and 680 pegs, look upward from each default place orientation and compare the roof's apparent material, repeated horizontal rows, beam integration, and whether the dated cues below remain easy to find. Ask for an unprompted description first; do not tell the tester what construction the texture is supposed to represent. Record the device, browser/backend, plain and reed URL, cold transferred bytes, raw trace IDs and limits, and the tester's own words. If memory cannot be measured by that browser, mark it unverified. Keep the plain roof until material, instructor, and physical-device observations support a change; no results have been collected here.

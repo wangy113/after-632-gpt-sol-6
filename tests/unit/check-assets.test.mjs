@@ -29,7 +29,7 @@ describe('pinned asset gate', () => {
     const fixture = await assetFixture();
     try {
       const result = await checkAssets(fixture.root);
-      expect(result).toMatchObject({ textureCount: 2, mapCount: 6, lowMapCount: 6,
+      expect(result).toMatchObject({ textureCount: 3, mapCount: 9, lowMapCount: 9,
         skyCount: 2, lowSkyCount: 2 });
       expect(result.lowTextureBytes).toBeLessThan(result.textureBytes);
       expect(result.lowSkyBytes).toBeLessThan(result.skyBytes);

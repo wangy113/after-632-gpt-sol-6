@@ -18,7 +18,7 @@ const content = () => ({
 describe('release content gate', () => {
   it('finds all sources and credits in the generated pages', () => {
     expect(checkBuiltContent(content())).toMatchObject({
-      historicalSources: 5, labels: 11, reports: 2, contextSources: 2, polyHavenAssets: 4,
+      historicalSources: 5, labels: 11, reports: 2, contextSources: 2, polyHavenAssets: 5,
     });
   });
 

@@ -376,6 +376,7 @@ export function renderPage(
     <p>The <a href="#source-OBJ-01">British Museum coin entry</a> is a catalog reference for the interpretive replica; no museum photograph appears here.</p>
     <h2>Material and sky credits</h2>
     <p>Room wall and floor textures: <a href="https://polyhaven.com/a/clay_plaster">clay_plaster</a> and <a href="https://polyhaven.com/a/clay_floor_001">clay_floor_001</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>.</p>
+    <p>Optional roof material preview: <a href="https://polyhaven.com/a/reed_roof_04">reed_roof_04</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>. This is a visual candidate, not a claim about the historical roof.</p>
     <p>Sky preview: <a href="https://polyhaven.com/a/qwantani_morning_puresky">Qwantani morning</a> by Poly Haven, <a href="https://polyhaven.com/license">CC0</a>. <a href="https://polyhaven.com/a/qwantani_mid_morning_puresky">Qwantani mid-morning</a> by Poly Haven, CC0, is an alternate comparison candidate. The HDRI changes the background only; room lighting remains a prototype.</p>
     <p>This room is imagined. Its objects are interpretations, not evidence of these events.</p>
   </footer>`;

@@ -11,6 +11,7 @@ interface TextureSet {
 export interface RoomTextures {
   wall: TextureSet;
   floor: TextureSet;
+  reed?: TextureSet;
   dispose(): void;
 }
 
@@ -24,14 +25,18 @@ function textureUrl(record: TextureRecord, map: MapName, tier: RenderTier): stri
   return `${import.meta.env.BASE_URL}assets/polyhaven/${record.id}/${fileName}`;
 }
 
-/** Load committed, verified copies before showing the room. */
-export async function loadRoomTextures(tier: RenderTier): Promise<RoomTextures> {
+/** Load committed, verified copies before showing the room. The roof preview is opt-in. */
+export async function loadRoomTextures(tier: RenderTier, reedRoof = false): Promise<RoomTextures> {
   const wall = assetConfig.textures.find(record => record.role === 'room-walls');
   const floor = assetConfig.textures.find(record => record.role === 'room-floor');
   if (!wall || !floor) throw new Error('Wall or floor texture record is missing');
+  const reed = reedRoof
+    ? assetConfig.textures.find(record => record.role === 'roof-underside' && record.id === 'reed_roof_04')
+    : undefined;
+  if (reedRoof && !reed) throw new Error('Reed roof texture record is missing');
 
   const loader = new THREE.TextureLoader();
-  const requests = [wall, floor].flatMap(record =>
+  const requests = [wall, floor, ...(reed ? [reed] : [])].flatMap(record =>
     (['Diffuse', 'nor_gl', 'arm'] as const).map(map => loader.loadAsync(textureUrl(record, map, tier))),
   );
   const results = await Promise.allSettled(requests);
@@ -51,6 +56,7 @@ export async function loadRoomTextures(tier: RenderTier): Promise<RoomTextures> 
   return {
     wall: { diffuse: loaded[0], normal: loaded[1], arm: loaded[2] },
     floor: { diffuse: loaded[3], normal: loaded[4], arm: loaded[5] },
+    ...(reed ? { reed: { diffuse: loaded[6], normal: loaded[7], arm: loaded[8] } } : {}),
     dispose() { for (const texture of loaded) texture.dispose(); },
   };
 }

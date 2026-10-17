@@ -35,10 +35,20 @@ export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture
     } : {}),
   });
   const roof = new THREE.MeshStandardMaterial({ color: 0x9d9e9b, roughness: 1 });
+  const reed = textures?.reed ? new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    roughness: 1,
+    aoMapIntensity: 0.6,
+    map: textures.reed.diffuse,
+    normalMap: textures.reed.normal,
+    aoMap: textures.reed.arm,
+    roughnessMap: textures.reed.arm,
+  }) : undefined;
   const beam = new THREE.MeshStandardMaterial({ color: 0x7e807d, roughness: 1 });
   const stone = new THREE.MeshStandardMaterial({ color: 0x898b88, roughness: 1, side: THREE.DoubleSide });
   const foliage = new THREE.MeshStandardMaterial({ color: 0x919590, roughness: 1 });
   for (const material of [plaster, ground, roof, beam, stone, foliage]) materials.add(material);
+  if (reed) materials.add(reed);
 
   function add(
     name: string,
@@ -96,6 +106,21 @@ export function createRoomWorld(textures?: RoomTextures, sky?: THREE.DataTexture
   box('doorway right wall', 2.4, 3.1, 0.2, 2.8, 1.55, 0.1, plaster);
   box('doorway lintel', 3.2, 0.55, 0.2, 0, 2.825, 0.1, plaster);
   box('roof', 8.4, 0.16, 5.4, 0, 3.18, -2.5, roof);
+  if (reed) {
+    // One downward-facing sheet sits below the roof's 3.10 m bottom and just
+    // above the 3.095 m beam tops. Its single-sided material leaves the top,
+    // exterior edges, beams, lights, and roof geometry unchanged.
+    const underside = new THREE.PlaneGeometry(8.4, 5.4);
+    const uv = underside.getAttribute('uv') as THREE.BufferAttribute;
+    for (let vertex = 0; vertex < uv.count; vertex += 1) {
+      uv.setXY(vertex, uv.getX(vertex) * 8.4 / 1.6, uv.getY(vertex) * 5.4 / 1.6);
+    }
+    uv.needsUpdate = true;
+    const surface = add('reed roof underside', underside, reed);
+    surface.rotation.x = Math.PI / 2;
+    surface.position.set(0, 3.097, -2.5);
+    surface.castShadow = false;
+  }
   for (const [index, z] of [-4.55, -3.15, -1.75, -0.35].entries()) {
     box(`roof beam ${index + 1}`, 8.1, 0.17, 0.16, 0, 3.01, z, beam);
   }
