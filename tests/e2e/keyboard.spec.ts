@@ -56,6 +56,16 @@ test('the small-screen room path works with keyboard input alone', async ({ page
 
   await page.keyboard.press('Tab');
   await expect(page.locator('[data-graphics-choice="room"] [data-graphics-tier="baseline"]')).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  const lowGraphics = page.locator('[data-graphics-choice="room"] [data-graphics-tier="low"]');
+  await expect(lowGraphics).toBeChecked();
+  await expect(canvas).toHaveAttribute('data-tier', 'low');
+  await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
+  await expect(canvas).toHaveAttribute('data-date', '661');
+  await expect(canvas).toHaveAttribute('data-place', 'yard');
+  await expect(lowGraphics).toBeFocused();
+  await expect(canvas).toHaveCount(1);
+
   await page.keyboard.press('Tab');
   await expect(page.locator('#describe-view summary')).toBeFocused();
   await page.keyboard.press('Enter');
