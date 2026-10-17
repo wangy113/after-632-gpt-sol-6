@@ -55,6 +55,14 @@ export async function createRoomView(
 ): Promise<RoomView> {
   const params = new URLSearchParams(location.search);
   const tier = renderTierFromSearch(location.search);
+  // Keep antialiasing comparisons opt-in until real-device image and timing reviews.
+  const requestedAA = params.get('aa');
+  const aa = tier === 'low' && (requestedAA === 'fxaa' || requestedAA === 'off')
+    ? requestedAA
+    : 'msaa';
+  const FXAANode = aa === 'fxaa'
+    ? (await import('three/addons/tsl/display/FXAANode.js')).default
+    : null;
   const skyId = params.get('sky') ?? 'qwantani_morning_puresky';
   const skyRecord = assetConfig.skies.find(record => record.id === skyId);
   if (!skyRecord) throw new Error(`Unknown sky candidate: ${skyId}`);
@@ -74,7 +82,7 @@ export async function createRoomView(
   }
   let rendered;
   try {
-    rendered = await createRenderer({ antialias: true, forceWebGL });
+    rendered = await createRenderer({ antialias: aa === 'msaa', forceWebGL });
   } catch (error) {
     textures.dispose();
     sky?.dispose();
@@ -99,8 +107,9 @@ export async function createRoomView(
   renderer.toneMapping = THREE.AgXToneMapping;
 
   // Both dates are captured at one camera pose, then blended in screen space.
-  const outgoingTarget = new THREE.RenderTarget(1, 1, { depthBuffer: true });
-  const incomingTarget = new THREE.RenderTarget(1, 1, { depthBuffer: true });
+  const captureType = aa === 'fxaa' ? THREE.HalfFloatType : THREE.UnsignedByteType;
+  const outgoingTarget = new THREE.RenderTarget(1, 1, { depthBuffer: true, type: captureType });
+  const incomingTarget = new THREE.RenderTarget(1, 1, { depthBuffer: true, type: captureType });
   const dateMix = THREE.TSL.uniform(0);
   const dissolveMaterial = new THREE.MeshBasicNodeMaterial({ depthTest: false, depthWrite: false });
   dissolveMaterial.colorNode = THREE.TSL.mix(
@@ -110,10 +119,24 @@ export async function createRoomView(
   );
   const dissolveQuad = new THREE.QuadMesh(dissolveMaterial);
 
+  // FXAA samples tone-mapped sRGB, while the room and dissolve stay linear HDR
+  // until this final pass. The other modes render directly to the canvas.
+  const finalTarget = aa === 'fxaa'
+    ? new THREE.RenderTarget(1, 1, { depthBuffer: true, type: THREE.HalfFloatType })
+    : null;
+  const fxaaInput = finalTarget
+    ? THREE.TSL.rtt(THREE.TSL.renderOutput(THREE.TSL.texture(finalTarget.texture)))
+    : null;
+  const fxaaPipeline = fxaaInput && FXAANode
+    ? new THREE.RenderPipeline(renderer, new FXAANode(fxaaInput))
+    : null;
+  if (fxaaPipeline) fxaaPipeline.outputColorTransform = false;
+
   const canvas = renderer.domElement;
   canvas.setAttribute('aria-hidden', 'true');
   canvas.dataset.backend = backend;
   canvas.dataset.tier = tier;
+  canvas.dataset.aa = aa;
   canvas.dataset.sky = skyRecord.id;
   canvas.dataset.date = '632';
   canvas.dataset.place = 'doorway';
@@ -185,22 +208,30 @@ export async function createRoomView(
       aimCamera();
       try {
         if (measureGeometry) renderer.info.reset();
-        if (dateTransition) {
-          const active = dateTransition;
-          active.startedAt ??= now;
-          const progress = Math.min(1, (now - active.startedAt) / dateDuration);
-          if (progress === 1) {
-            dateTransition = null;
-            canvas.dataset.dateTransition = 'false';
-            renderer.render(world.scene, camera);
-            active.onArrive?.();
+        let onDateArrive: (() => void) | undefined;
+        if (finalTarget) renderer.setRenderTarget(finalTarget);
+        try {
+          if (dateTransition) {
+            const active = dateTransition;
+            active.startedAt ??= now;
+            const progress = Math.min(1, (now - active.startedAt) / dateDuration);
+            if (progress === 1) {
+              dateTransition = null;
+              canvas.dataset.dateTransition = 'false';
+              renderer.render(world.scene, camera);
+              onDateArrive = active.onArrive;
+            } else {
+              dateMix.value = progress;
+              dissolveQuad.render(renderer);
+            }
           } else {
-            dateMix.value = progress;
-            dissolveQuad.render(renderer);
+            renderer.render(world.scene, camera);
           }
-        } else {
-          renderer.render(world.scene, camera);
+        } finally {
+          if (finalTarget) renderer.setRenderTarget(null);
         }
+        fxaaPipeline?.render();
+        onDateArrive?.();
         if (measureGeometry) {
           canvas.dataset.drawCalls = String(renderer.info.render.drawCalls);
           canvas.dataset.triangles = String(renderer.info.render.triangles);
@@ -286,6 +317,8 @@ export async function createRoomView(
     const drawingSize = renderer.getDrawingBufferSize(new THREE.Vector2());
     outgoingTarget.setSize(drawingSize.x, drawingSize.y);
     incomingTarget.setSize(drawingSize.x, drawingSize.y);
+    finalTarget?.setSize(drawingSize.x, drawingSize.y);
+    fxaaInput?.setSize(drawingSize.x, drawingSize.y);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
     requestRender();
@@ -398,6 +431,9 @@ export async function createRoomView(
       world.dispose();
       outgoingTarget.dispose();
       incomingTarget.dispose();
+      finalTarget?.dispose();
+      fxaaPipeline?.dispose();
+      fxaaInput?.dispose();
       dissolveMaterial.dispose();
       try { renderer.dispose(); } finally { canvas.remove(); }
     },

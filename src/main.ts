@@ -316,8 +316,9 @@ function chooseGraphics(tier: RenderTier, source: HTMLInputElement) {
   const url = new URL(location.href);
   if (tier === 'low') url.searchParams.set('tier', 'low');
   else url.searchParams.delete('tier');
-  // A manual full-sky diagnostic must not override a visible choice of Low.
+  // Low-only diagnostics must not override a visible Graphics choice.
   url.searchParams.delete('skyResolution');
+  url.searchParams.delete('aa');
   history.replaceState(history.state, '', url);
   syncGraphicsChoice(tier);
 

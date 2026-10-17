@@ -87,6 +87,106 @@ test('the explicit Low preview selects smaller maps and sky at DPR 1', async ({ 
   expect(samples[3].height).toBe(samples[0].height);
 });
 
+test('only the exact Low antialiasing diagnostics change the render path', async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const captures = new Map<string, Buffer>();
+  const pageErrors: string[] = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+
+  for (const { query, tier, aa } of [
+    { query: 'tier=low', tier: 'low', aa: 'msaa' },
+    { query: 'tier=low&aa=off', tier: 'low', aa: 'off' },
+    { query: 'tier=low&aa=fxaa', tier: 'low', aa: 'fxaa' },
+    { query: 'tier=low&aa=FXAA', tier: 'low', aa: 'msaa' },
+    { query: 'aa=fxaa', tier: 'baseline', aa: 'msaa' },
+  ]) {
+    await page.goto(`/?gl=1&metrics=1&${query}`);
+    await page.getByRole('button', { name: 'Enter the room' }).click();
+    const canvas = page.locator('#scene-frame canvas');
+    await expect(canvas).toHaveAttribute('data-backend', 'WebGL2 fallback');
+    await expect(canvas).toHaveAttribute('data-tier', tier);
+    await expect(canvas).toHaveAttribute('data-aa', aa);
+    await expect(canvas).toHaveAttribute('data-date', '632');
+    await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
+    if (aa === 'off' || aa === 'fxaa') captures.set(aa, await canvas.screenshot({ type: 'png' }));
+  }
+
+  expect(captures.get('off')!.equals(captures.get('fxaa')!)).toBe(false);
+  expect(pageErrors).toEqual([]);
+});
+
+test('Low FXAA redraws through date, place, Compare, resize, and a graphics change', async ({ browser }) => {
+  test.setTimeout(90_000);
+  const context = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    deviceScaleFactor: 2,
+    reducedMotion: 'no-preference',
+  });
+  try {
+    const page = await context.newPage();
+    const pageErrors: string[] = [];
+    page.on('pageerror', error => pageErrors.push(error.message));
+    await page.goto('/?gl=1&metrics=1&tier=low&aa=fxaa');
+    await page.getByRole('button', { name: 'Enter the room' }).click();
+    const canvas = page.locator('#scene-frame canvas');
+    await expect(canvas).toHaveAttribute('data-aa', 'fxaa');
+    await expect(canvas).toHaveAttribute('data-frames', /[1-9]/);
+
+    const transitionStarted = await page.locator('[data-room-date="661"]').evaluate((button: HTMLButtonElement) => {
+      button.click();
+      return document.querySelector<HTMLCanvasElement>('#scene-frame canvas')?.dataset.dateTransition;
+    });
+    expect(transitionStarted).toBe('true');
+    await expect(canvas).toHaveAttribute('data-date-transition', 'false', { timeout: 4_000 });
+    await expect(canvas).toHaveAttribute('data-date', '661');
+    await page.locator('[data-room-place="head"]').click();
+    await expect(canvas).toHaveAttribute('data-moving', 'false', { timeout: 4_000 });
+    await expect(canvas).toHaveAttribute('data-place', 'head');
+
+    await page.locator('[data-room-date="680"]').click();
+    await expect(canvas).toHaveAttribute('data-date-transition', 'false', { timeout: 4_000 });
+    const compare = page.locator('#compare-toggle');
+    await compare.click();
+    await expect(canvas).toHaveAttribute('data-date', '661');
+    await expect(canvas).toHaveAttribute('data-place', 'head');
+    await expect(page.locator('[data-room-date="680"]')).toHaveAttribute('aria-pressed', 'true');
+    await compare.click();
+    await expect(canvas).toHaveAttribute('data-date', '680');
+
+    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+    const stillFrames = await canvas.getAttribute('data-frames');
+    const wideCssWidth = await canvas.evaluate(element => element.getBoundingClientRect().width);
+    await page.waitForTimeout(300);
+    await expect(canvas).toHaveAttribute('data-frames', stillFrames!);
+    await page.setViewportSize({ width: 600, height: 700 });
+    await expect.poll(async () => canvas.evaluate(element => element.getBoundingClientRect().width)).toBeLessThan(wideCssWidth);
+    await expect.poll(async () => canvas.evaluate((element: HTMLCanvasElement) => {
+      const width = element.getBoundingClientRect().width;
+      return Math.abs(element.width - width);
+    })).toBeLessThanOrEqual(2);
+    await expect.poll(async () => Number(await canvas.getAttribute('data-frames'))).toBeGreaterThan(Number(stillFrames));
+    await compare.click();
+    await expect(canvas).toHaveAttribute('data-date', '661');
+    await compare.click();
+    await expect(canvas).toHaveAttribute('data-date', '680');
+
+    const originalCanvas = await canvas.elementHandle();
+    const normal = page.locator('[data-graphics-choice="room"] [data-graphics-tier="baseline"]');
+    await normal.check();
+    await expect(canvas).toHaveAttribute('data-tier', 'baseline');
+    await expect(canvas).toHaveAttribute('data-aa', 'msaa');
+    await expect(canvas).toHaveAttribute('data-date', '680');
+    await expect(canvas).toHaveAttribute('data-place', 'head');
+    expect(await originalCanvas!.evaluate(element => element.isConnected)).toBe(false);
+    expect(new URL(page.url()).searchParams.has('aa')).toBe(false);
+    await expect(normal).toBeFocused();
+    expect(pageErrors).toEqual([]);
+  } finally {
+    await context.close();
+  }
+});
+
 test('the Low preview keeps date, movement, keyboard look, idle, and room cleanup working', async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 1440, height: 900 },
