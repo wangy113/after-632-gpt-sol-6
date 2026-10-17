@@ -8,6 +8,7 @@ import { PLACE_LABELS, PLACE_ORIENTATIONS, type PlaceId } from './state/places';
 import type { ViewDirection } from './state/viewDirections';
 import { compareAvailable, initialState, isComparing, reduce, visibleDate } from './state/store';
 import { renderTierFromSearch, type RenderTier } from './render/tiers';
+import tierProbeUrl from '../scripts/device-tier-probe.js?url';
 
 const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
 const readLink = document.querySelector<HTMLAnchorElement>('#read-link')!;
@@ -482,3 +483,8 @@ lookButtons.forEach(button => {
 window.addEventListener('pagehide', () => { if (loading || room) closeRoom(); });
 enterButton.hidden = false;
 graphicsIntro.hidden = false;
+if (new URLSearchParams(location.search).get('probe') === '1') {
+  const script = document.createElement('script');
+  script.src = tierProbeUrl;
+  document.head.append(script);
+}

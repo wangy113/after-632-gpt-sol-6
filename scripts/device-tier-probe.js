@@ -1,4 +1,4 @@
-// Paste this entire file into the browser Console before entering the room.
+// Loaded by the app for ?probe=1; can also be pasted into the Console before entry.
 // JS completed-frame pacing is not GPU render time or a display-frame benchmark.
 (() => {
   'use strict';
@@ -9,9 +9,15 @@
 
   const installedAt = performance.now();
   const actions = [];
+  const idleSamples = [];
   const seenFrames = new WeakMap();
   let pending = null;
   let active = true;
+  let panel = null;
+  let readyNotice = null;
+  let panelStyle = null;
+  let panelSummary = null;
+  let panelStatus = null;
 
   const canvas = () => root.querySelector('canvas');
   const round = value => Math.round(value * 10) / 10;
@@ -43,6 +49,17 @@
       ...pacing(times),
     });
     pending = null;
+    updatePanelSummary();
+  }
+
+  function updatePanelSummary() {
+    if (!panelSummary) return;
+    const settled = actions.filter(action => action.status === 'settled').length;
+    panelSummary.textContent = `${settled} settled action${settled === 1 ? '' : 's'} and ${idleSamples.length} idle sample${idleSamples.length === 1 ? '' : 's'} recorded.`;
+  }
+
+  function announce(message) {
+    if (panelStatus) panelStatus.textContent = message;
   }
 
   function clicked(event) {
@@ -120,6 +137,7 @@
       roomOpen: Boolean(element),
       backend: element?.dataset.backend ?? null,
       tier: element?.dataset.tier ?? null,
+      aa: element?.dataset.aa ?? null,
       date: element?.dataset.date ?? null,
       place: element?.dataset.place ?? null,
       moving: element?.dataset.moving ?? null,
@@ -154,6 +172,8 @@
       framesAfter1s: end,
       idleFrameDelta: end - start,
     };
+    idleSamples.push(result);
+    updatePanelSummary();
     console.log('After 632 idle sample (JS completed frames):', result);
     return result;
   }
@@ -184,7 +204,10 @@
     if (current.documentHidden) warnings.push('The tab is hidden; frame samples are not valid.');
     if (current.reducedMotion || current.motionPaused) warnings.push('Motion is reduced or paused; move and date changes may complete in one frame.');
     if (current.drawCalls === null) warnings.push('Open with ?metrics=1 to include renderer counters.');
+    if (pending) warnings.push('An action is still in progress; wait for it to settle before exporting.');
     const result = {
+      schemaVersion: 1,
+      capturedAt: new Date().toISOString(),
       measurement: 'JS completed-frame pacing, not GPU render time or displayed fps',
       warnings,
       snapshot: current,
@@ -192,9 +215,31 @@
         kind: pending.kind, target: pending.target, status: 'pending',
         elapsedMs: round(performance.now() - pending.startedAt), ...pacing(pending.times),
       }] : [])],
+      idleSamples: [...idleSamples],
       resources: resources(),
     };
     console.log('After 632 tier probe:', result);
+    return result;
+  }
+
+  async function copy() {
+    if (!navigator.clipboard?.writeText) throw new Error('Clipboard access is unavailable; use Download JSON.');
+    const result = report();
+    await navigator.clipboard.writeText(JSON.stringify(result, null, 2));
+    return result;
+  }
+
+  function download() {
+    const result = report();
+    const blobUrl = URL.createObjectURL(new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' }));
+    const link = document.createElement('a');
+    const stamp = result.capturedAt.replace(/[:.]/g, '-');
+    link.href = blobUrl;
+    link.download = `after632-tier-${result.snapshot.tier ?? 'unopened'}-${result.snapshot.aa ?? 'unknown'}-${stamp}.json`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     return result;
   }
 
@@ -204,9 +249,82 @@
     finish('stopped');
     observer.disconnect();
     document.removeEventListener('click', clicked, true);
+    panel?.remove();
+    readyNotice?.remove();
+    panelStyle?.remove();
   }
 
-  window.__after632TierProbe = { snapshot, idle, report, stop };
+  window.__after632TierProbe = { snapshot, idle, report, copy, download, stop };
+  if (new URLSearchParams(location.search).get('probe') === '1') {
+    panelStyle = document.createElement('style');
+    panelStyle.textContent = `
+      #tier-probe-panel { margin-block: 1rem; padding: 1rem; border: 2px solid #244b50; background: #fffdf8; }
+      #tier-probe-panel h3 { margin-top: 0; }
+      #tier-probe-panel .tier-probe-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
+      #tier-probe-panel button { min-height: 44px; padding: .5rem .75rem; border: 2px solid #244b50; background: #244b50; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+      #tier-probe-panel button:focus-visible { outline: 3px solid #ad552f; outline-offset: 4px; }
+      #tier-probe-panel button:disabled { cursor: wait; opacity: .65; }
+      #tier-probe-panel p { max-width: 70ch; }
+      #tier-probe-status:empty { display: none; }
+    `;
+    document.head.append(panelStyle);
+
+    readyNotice = document.createElement('p');
+    readyNotice.id = 'tier-probe-ready';
+    readyNotice.setAttribute('role', 'status');
+    readyNotice.textContent = 'Tier recorder ready. Enter the room; export controls appear below the room controls.';
+    document.querySelector('.entry-actions')?.after(readyNotice);
+
+    panel = document.createElement('section');
+    panel.id = 'tier-probe-panel';
+    panel.setAttribute('aria-labelledby', 'tier-probe-title');
+    panel.innerHTML = `
+      <h3 id="tier-probe-title">Tier test recorder</h3>
+      <p>Choose Enter, 661 CE, then Head of room. Sample one idle second after movement settles, then save the JSON for this run.</p>
+      <p>These are JavaScript render callback timings, not displayed frame rate or GPU time. Capture a separate browser Performance trace without this recorder for frame-rate decisions.</p>
+      <p id="tier-probe-summary"></p>
+      <div class="tier-probe-actions">
+        <button type="button" id="tier-probe-idle">Sample idle second</button>
+        <button type="button" id="tier-probe-copy">Copy JSON</button>
+        <button type="button" id="tier-probe-download">Download JSON</button>
+      </div>
+      <p id="tier-probe-status" role="status"></p>
+    `;
+    document.querySelector('#room-view .look-controls')?.after(panel);
+    panelSummary = panel.querySelector('#tier-probe-summary');
+    panelStatus = panel.querySelector('#tier-probe-status');
+    updatePanelSummary();
+
+    const idleButton = panel.querySelector('#tier-probe-idle');
+    idleButton.addEventListener('click', async () => {
+      idleButton.disabled = true;
+      announce('Sampling one idle second. Keep this tab visible and still.');
+      try {
+        const sample = await idle();
+        announce(`Idle sample recorded: ${sample.idleFrameDelta} additional room frames.`);
+      } catch (error) {
+        announce(`Idle sample unavailable: ${error.message}`);
+      } finally {
+        idleButton.disabled = false;
+      }
+    });
+    panel.querySelector('#tier-probe-copy').addEventListener('click', async () => {
+      try {
+        await copy();
+        announce('Tier report copied as JSON. Nothing was uploaded.');
+      } catch (error) {
+        announce(`Could not copy the report: ${error.message}`);
+      }
+    });
+    panel.querySelector('#tier-probe-download').addEventListener('click', () => {
+      try {
+        download();
+        announce('Tier report downloaded as JSON. Nothing was uploaded.');
+      } catch (error) {
+        announce(`Could not download the report: ${error.message}`);
+      }
+    });
+  }
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
     console.warn('After 632 tier probe: reduced motion is on; enable motion for movement and date pacing samples.');
   }
