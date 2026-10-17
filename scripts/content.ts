@@ -294,6 +294,14 @@ export function renderPage(
         <a class="read-link" id="read-link" href="#reading">Read without 3D</a>
       </div>
       <p id="scene-status" role="status" aria-live="polite"></p>
+      <fieldset class="graphics-choice" data-graphics-choice="intro" aria-describedby="graphics-intro-help" hidden>
+        <legend>Graphics</legend>
+        <div class="graphics-options">
+          <label><input type="radio" name="graphics-intro" data-graphics-tier="baseline" checked> Normal</label>
+          <label><input type="radio" name="graphics-intro" data-graphics-tier="low"> Low</label>
+        </div>
+        <p id="graphics-intro-help">Low loads smaller images and may look softer. You can change this in the room.</p>
+      </fieldset>
       <figure class="arrival-still">
         <img id="arrival-still" src="./stills/632-arrival.webp" width="864" height="487" fetchpriority="high" alt="A rendered view of the imagined 632 CE room from the doorway: mats sit in an open circle around three cups, and footprints cross the floor.">
         <figcaption>632 CE · A material preview of an imagined room, not a reconstruction of a documented place.</figcaption>
@@ -319,6 +327,15 @@ export function renderPage(
         <button type="button" id="compare-toggle" aria-pressed="false" aria-describedby="compare-help" disabled>Keep earlier date visible</button>
       </div>
       <p id="compare-help" class="room-note">Choose 661 or 680 CE to compare with the previous date from the same viewpoint.</p>
+      <fieldset class="graphics-choice" data-graphics-choice="room" aria-describedby="graphics-room-help">
+        <legend>Graphics</legend>
+        <div class="graphics-options">
+          <label><input type="radio" name="graphics-room" data-graphics-tier="baseline" checked> Normal</label>
+          <label><input type="radio" name="graphics-room" data-graphics-tier="low"> Low</label>
+        </div>
+        <p id="graphics-room-help">Low loads smaller images and may look softer.</p>
+        <p id="graphics-loading" role="status" hidden>Updating graphics…</p>
+      </fieldset>
       <details id="describe-view" class="describe-view">
         <summary>Describe this view</summary>
         <div id="view-description" aria-live="polite" aria-atomic="true">

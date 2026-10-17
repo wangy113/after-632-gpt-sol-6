@@ -7,6 +7,7 @@ import { dateChangeCaption, previousDate } from './state/dates';
 import { PLACE_LABELS, PLACE_ORIENTATIONS, type PlaceId } from './state/places';
 import type { ViewDirection } from './state/viewDirections';
 import { compareAvailable, initialState, isComparing, reduce, visibleDate } from './state/store';
+import { renderTierFromSearch, type RenderTier } from './render/tiers';
 
 const enterButton = document.querySelector<HTMLButtonElement>('#enter-room')!;
 const readLink = document.querySelector<HTMLAnchorElement>('#read-link')!;
@@ -27,6 +28,10 @@ const sceneFrame = document.querySelector<HTMLElement>('#scene-frame')!;
 const dateCaption = document.querySelector<HTMLElement>('#date-transition-caption')!;
 const roomHelp = document.querySelector<HTMLElement>('#room-help')!;
 const status = document.querySelector<HTMLElement>('#scene-status')!;
+const graphicsIntro = document.querySelector<HTMLFieldSetElement>('[data-graphics-choice="intro"]')!;
+const graphicsInputs = Array.from(document.querySelectorAll<HTMLInputElement>('[data-graphics-tier]'));
+const graphicsLoading = document.querySelector<HTMLElement>('#graphics-loading')!;
+const lookButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-look]'));
 const viewLocation = document.querySelector<HTMLElement>('#view-location')!;
 const viewImagined = document.querySelector<HTMLElement>('#view-imagined')!;
 const viewStarting = document.querySelector<HTMLElement>('#view-starting')!;
@@ -156,7 +161,16 @@ function renderRoomDate(message?: string, transition?: { token: number; animate:
   return true;
 }
 
-function closeRoom(message = '') {
+function setRoomControlsLoading(value: boolean) {
+  for (const button of [...dateButtons, ...placeButtons, ...lookButtons, skipMovementButton, pauseMotionButton]) {
+    button.disabled = value;
+  }
+  sceneFrame.tabIndex = value ? -1 : 0;
+  compareHold.disabled = value || !compareAvailable(state);
+  compareToggle.disabled = value || !compareAvailable(state);
+}
+
+function closeRoom(message = '', keepRoomVisible = false) {
   generation++;
   clearTimeout(deadline);
   deadline = undefined;
@@ -165,11 +179,18 @@ function closeRoom(message = '') {
   const currentRoom = room;
   room = null;
   resetCompare();
+  compareHold.setAttribute('aria-pressed', 'false');
+  compareToggle.setAttribute('aria-pressed', 'false');
   state = reduce(state, { type: 'skipMovement' });
   dateCaption.hidden = true;
   try { currentRoom?.dispose(); } catch { sceneFrame.replaceChildren(); }
-  roomSection.hidden = true;
-  enterButton.setAttribute('aria-expanded', 'false');
+  roomSection.hidden = !keepRoomVisible;
+  graphicsLoading.hidden = !keepRoomVisible;
+  if (keepRoomVisible) sceneFrame.setAttribute('aria-busy', 'true');
+  else sceneFrame.removeAttribute('aria-busy');
+  if (keepRoomVisible) roomTitle.textContent = `${state.date} CE · Inside the imagined room`;
+  setRoomControlsLoading(keepRoomVisible);
+  enterButton.setAttribute('aria-expanded', String(keepRoomVisible));
   enterButton.disabled = false;
   enterButton.textContent = 'Enter the room';
   status.textContent = message;
@@ -234,7 +255,7 @@ function fail() {
   else if (restoreEntryFocus) enterButton.focus({ preventScroll: true });
 }
 
-async function enter() {
+async function enter(focusAfterOpen?: HTMLInputElement) {
   if (loading) return;
   if (room) {
     roomTitle.focus({ preventScroll: true });
@@ -266,17 +287,52 @@ async function enter() {
     room.moveTo(state.place, false);
     renderRoomPlace();
     roomSection.hidden = false;
+    graphicsLoading.hidden = true;
+    sceneFrame.removeAttribute('aria-busy');
+    setRoomControlsLoading(false);
     enterButton.setAttribute('aria-expanded', 'true');
     loading = false;
     restoreEntryFocusOnFailure = false;
     enterButton.disabled = false;
     enterButton.textContent = 'Enter the room';
-    if (!renderRoomDate(`${state.date} room view open. The full reading remains below.`)) return;
-    roomTitle.focus({ preventScroll: true });
-    roomSection.scrollIntoView({ block: 'start' });
+    const tierMessage = focusAfterOpen ? `${focusAfterOpen.dataset.graphicsTier === 'low' ? 'Low' : 'Normal'} graphics ready. ` : '';
+    if (!renderRoomDate(`${tierMessage}${state.date} room view open. The full reading remains below.`)) return;
+    if (focusAfterOpen?.isConnected) focusAfterOpen.focus({ preventScroll: true });
+    else {
+      roomTitle.focus({ preventScroll: true });
+      roomSection.scrollIntoView({ block: 'start' });
+    }
   } catch {
     if (generation === token) fail();
   }
+}
+
+function syncGraphicsChoice(tier: RenderTier) {
+  for (const input of graphicsInputs) input.checked = input.dataset.graphicsTier === tier;
+}
+
+function chooseGraphics(tier: RenderTier, source: HTMLInputElement) {
+  if (tier === renderTierFromSearch(location.search)) return;
+  const url = new URL(location.href);
+  if (tier === 'low') url.searchParams.set('tier', 'low');
+  else url.searchParams.delete('tier');
+  // A manual full-sky diagnostic must not override a visible choice of Low.
+  url.searchParams.delete('skyResolution');
+  history.replaceState(history.state, '', url);
+  syncGraphicsChoice(tier);
+
+  if (room || loading) {
+    const keepRoomVisible = !roomSection.hidden;
+    closeRoom('', keepRoomVisible);
+    void enter(keepRoomVisible ? source : undefined);
+  }
+}
+
+syncGraphicsChoice(renderTierFromSearch(location.search));
+for (const input of graphicsInputs) {
+  input.addEventListener('change', () => {
+    if (input.checked) chooseGraphics(input.dataset.graphicsTier as RenderTier, input);
+  });
 }
 
 enterButton.addEventListener('click', () => { void enter(); });
@@ -419,8 +475,9 @@ window.addEventListener('keydown', event => {
   event.preventDefault();
   skipCurrentMovement();
 });
-document.querySelectorAll<HTMLButtonElement>('[data-look]').forEach(button => {
+lookButtons.forEach(button => {
   button.addEventListener('click', () => room?.look(button.dataset.look as Parameters<RoomView['look']>[0]));
 });
 window.addEventListener('pagehide', () => { if (loading || room) closeRoom(); });
 enterButton.hidden = false;
+graphicsIntro.hidden = false;

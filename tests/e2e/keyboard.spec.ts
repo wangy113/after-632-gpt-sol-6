@@ -55,6 +55,8 @@ test('the small-screen room path works with keyboard input alone', async ({ page
   await expect(page.locator('#compare-toggle')).toHaveAttribute('aria-pressed', 'false');
 
   await page.keyboard.press('Tab');
+  await expect(page.locator('[data-graphics-choice="room"] [data-graphics-tier="baseline"]')).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(page.locator('#describe-view summary')).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('#describe-view')).toHaveAttribute('open', '');
