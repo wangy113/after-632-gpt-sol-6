@@ -1,4 +1,4 @@
-import{T as e,a as Z,V as H}from"./createRoomView-CDou5hyB.js";import"./index-Bq3EAb9i.js";/* empty css               *//**
+import{T as e,a as Z,V as H}from"./createRoomView-CkjHwy1t.js";import"./index-_wrfWUqU.js";/* empty css               *//**
  * @license
  * Copyright 2010-2026 Three.js Authors
  * SPDX-License-Identifier: MIT
