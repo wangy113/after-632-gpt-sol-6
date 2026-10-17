@@ -1,6 +1,6 @@
 # Low antialiasing comparison · 2026-10-17
 
-The Low tier now has two **opt-in** antialiasing diagnostics. `?tier=low&aa=off` disables the renderer's requested antialiasing. `?tier=low&aa=fxaa` renders the room or completed date blend into a half-float target, applies the normal AgX output conversion, then runs Three.js r186 FXAA over that image. Exact `?tier=low` keeps its existing antialiasing request, as does Normal; unknown or differently cased `aa` values do nothing. Changing Graphics through the visible controls clears `aa` and recreates the room at the selected date and place. The FXAA code loads only for its diagnostic URL.
+The Low tier now has two **opt-in** antialiasing diagnostics. `?tier=low&aa=off` disables the renderer's requested antialiasing. `?tier=low&aa=fxaa` renders the room or date blend into a half-float target, applies the normal AgX output conversion, then runs Three.js r186 FXAA over that image. Exact `?tier=low` keeps its existing antialiasing request, as does Normal; unknown or differently cased `aa` values do nothing. Changing Graphics through the visible controls clears `aa` and recreates the room at the selected date and place. The FXAA code loads only for its diagnostic URL.
 
 ## Matched local comparison
 
