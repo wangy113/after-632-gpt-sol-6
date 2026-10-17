@@ -55,3 +55,31 @@ Copy this block for each of the six device/tier cells. Keep the raw Console repo
 | 3 |  |  |  |  |
 
 Keep failed or interrupted runs in the record with a reason; repeat them rather than filling a missing value. Compare paired tiers on the same device before deciding whether to change quality defaults. A real-device result alone does not replace the outstanding instructor/community, participant, and screen-reader reviews.
+
+## Optional Low antialiasing add-on
+
+Use this add-on if deciding whether FXAA should become the Low default. Keep the Normal/Low runs above as the tier baseline. On each physical device, compare these exact links at the same orientation, zoom, power setting, and room pose. Reload the link for each run; using the visible Graphics radios clears the `aa` option.
+
+| Low option | URL |
+| --- | --- |
+| Current default | `https://wangy113.github.io/after-632-gpt-sol-6/?metrics=1&tier=low` |
+| No antialiasing reference | `https://wangy113.github.io/after-632-gpt-sol-6/?metrics=1&tier=low&aa=off` |
+| FXAA candidate | `https://wangy113.github.io/after-632-gpt-sol-6/?metrics=1&tier=low&aa=fxaa` |
+
+For each option, check the 661 waterskin and pegs, the 680 empty hook and wall trace, and the 680 yard edge and palm. Write an unprompted first impression before checking those details. Watch the 661-to-680 dissolve from the pegs for edge shimmer, blur, or a brightness jump. To compare timing, make three warmed runs per option and alternate option order; the ordinary Low runs above can supply its three samples if conditions match. Use the same Console probe and a browser Performance/Frames trace during the date change and Head of room move. Record the actual presented-frame result separately from the probe's JavaScript intervals. Record measured memory only if the device's browser tool exposes it, with the tool and method; otherwise mark memory **unverified**. Note any context loss, tab reload, or unusually warm device.
+
+Copy this blank block for each device. Keep raw probe reports and traces with it. These fields contain no device findings.
+
+| Device; browser/backend; date; orientation; power setting | Entry |
+| --- | --- |
+| Context and inspector/profiler |  |
+
+| Low option | Three warm run IDs/order | 661 pegs, 680 pegs, 680 yard: first impression and detail/edge notes | 661→680 pegs dissolve notes | Presented-frame trace result and tool | Memory result and tool, or unverified; failures |
+| --- | --- | --- | --- | --- | --- |
+| Current default |  |  |  |  |  |
+| No AA |  |  |  |  |  |
+| FXAA |  |  |  |  |  |
+
+Preferred option and reason, or **unverified**: __________
+
+The [local Low AA images](LOW_FXAA_PREVIEW.md) are references for framing, not physical-device evidence. Keep the current Low default until a device comparison supports a change.
